@@ -1,6 +1,7 @@
 import { Form, Button, Modal } from "react-bootstrap";
 import { useState } from "react";
 import "./Announcements.css";
+import AnnouncementPage from "./AnnouncementPage.js";
 
 const announcements_aray = [
   {
@@ -23,15 +24,32 @@ const announcements_aray = [
   },
 ];
 
+const selected_announcement = {
+  id_announcement: 2,
+  title: "Chleb biały",
+  id_product_category: 2,
+  id_product: 4,
+};
+
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
   const [inputProductId, setInputProductId] = useState("");
   const [inputCategoryId, setInputCategoryId] = useState("");
 
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const handleSelection = (id) => setSelectedAnnouncement(id);
+  const handleBack = () => setSelectedAnnouncement(null);
+
   return (
     <div className="content">
-      <Forms />
-      <AnnouncementsList />
+      {selectedAnnouncement !== null ? (
+        <AnnouncementPage handleBack={handleBack} id={selectedAnnouncement} />
+      ) : (
+        <>
+          <Forms />
+          <AnnouncementsList handleSelection={handleSelection} />
+        </>
+      )}
     </div>
   );
 }
@@ -52,6 +70,7 @@ function Forms() {
         <div className="col-3 d-md-block d-lg-none">
           <FiltersModal />
         </div>
+        {/* Widoczne tylko dla lg i większych */}
         <div className="col-3 d-none d-lg-block">
           <Form.Select name="product_id" className="search-form">
             <option className="default-product">Produkt</option>
@@ -71,34 +90,36 @@ function Forms() {
   );
 }
 
-function AnnouncementsList({ announcements }) {
+function AnnouncementsList({ handleSelection }) {
   return (
     <>
       <div className="row mt-2 mx-3">
-        <div className="col-12 col-xl-6 mt-3">
-          <Announcement announcement={announcements_aray[0]} />
-        </div>
-        <div className="col-12 col-xl-6 mt-3">
-          <Announcement announcement={announcements_aray[1]} />
-        </div>
-        <div className="col-12 col-xl-6 mt-3">
-          <Announcement announcement={announcements_aray[2]} />
-        </div>
+        {announcements_aray.map((element) => (
+          <div className="col-12 col-xl-6 mt-3">
+            <Announcement
+              announcement={element}
+              handleSelection={handleSelection}
+            />
+          </div>
+        ))}
       </div>
     </>
   );
 }
 
-function Map() {}
+function AnnouncementsMap() {}
 
-function Announcement({ announcement }) {
+function Announcement({ announcement, handleSelection }) {
   return (
-    <div className="announcement-element d-flex align-items-center">
+    <div
+      onClick={() => handleSelection(announcement.id)}
+      className="announcement-element d-flex align-items-center"
+    >
       <div className="col-3">
         <img src="category.png" className="img-fluid p-4" />
       </div>
       <div className="description col-6">
-        <p className="title">Title</p>
+        <p className="title">{announcement.title}</p>
         <p className="area">Dzielnica: XXX</p>
         <p className="date">Data ważności: YYY</p>
       </div>
