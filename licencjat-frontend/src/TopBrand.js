@@ -1,9 +1,15 @@
 import { Navbar, Container, Button, NavDropdown, Nav } from "react-bootstrap";
+import "./TopBrand.css";
 
 export default function TopBrand() {
   return (
-    <Navbar collapseOnSelect expand="lg" className="brand-background">
-      <Container>
+    <Navbar
+      id="top-brand"
+      collapseOnSelect
+      expand="lg"
+      className="brand-background"
+    >
+      <Container className="dropdown-brand">
         <Navbar.Brand href="#home">
           <img
             alt=""
