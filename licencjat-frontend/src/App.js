@@ -1,9 +1,11 @@
-import { Button } from "react-bootstrap";
+import TopBrand from "./TopBrand";
+import Menu from "./Menu";
 
 function App() {
   return (
     <div>
-      <Button>Przycisk</Button>
+      <TopBrand />
+      <Menu />
     </div>
   );
 }
