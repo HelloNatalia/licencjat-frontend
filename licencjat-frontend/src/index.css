@@ -1,3 +1,20 @@
 html {
   background-color: #e4e4e4;
 }
+
+.content {
+  padding-top: 65px;
+  background-color: #e4e4e4;
+}
+
+@media (max-width: 991px) {
+  .content {
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 992px) {
+  .content {
+    padding-left: 220px;
+  }
+}
