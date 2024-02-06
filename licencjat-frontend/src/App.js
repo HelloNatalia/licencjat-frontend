@@ -1,9 +1,9 @@
-import { Button } from "react-bootstrap";
+import TopBrand from "./Brand";
 
 function App() {
   return (
-    <div>
-      <Button>Przycisk</Button>
+    <div className="custom-container-fluid">
+      <TopBrand />
     </div>
   );
 }

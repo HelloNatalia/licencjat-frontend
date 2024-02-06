@@ -1,0 +1,30 @@
+.brand-background {
+  background-color: #f5f5f5;
+}
+
+.btn-signup {
+  border-width: 2px !important;
+  border-color: #489645 !important;
+  background-color: #f5f5f5 !important;
+  color: #489645 !important;
+  font-family: monospace !important;
+}
+
+.btn-signup:hover {
+  background-color: #489645 !important;
+  color: #f5f5f5 !important;
+}
+
+.btn-signin {
+  background-color: #489645 !important;
+  border-color: #489645 !important;
+  border-width: 2px !important;
+  font-family: monospace !important;
+}
+
+.btn-signin:hover {
+  background-color: #f5f5f5 !important;
+  border-color: #489645 !important;
+  color: #489645 !important;
+  border-width: 2px !important;
+}
