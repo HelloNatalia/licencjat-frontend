@@ -39,7 +39,7 @@ export default function Announcements() {
 function Forms() {
   return (
     <div>
-      <div className="row mt-2 mx-2">
+      <div className="row mt-3 mx-2">
         <div className="col-9 col-md-6">
           <Form.Control
             name="title"
@@ -53,20 +53,18 @@ function Forms() {
           <FiltersModal />
         </div>
         <div className="col-3 d-none d-lg-block">
-          <Form.Control
-            name="product_id"
-            type="text"
-            placeholder="Produkt"
-            className="search-form"
-          />
+          <Form.Select name="product_id" className="search-form">
+            <option className="default-product">Produkt</option>
+            <option>Makaron</option>
+            <option>Chleb</option>
+          </Form.Select>
         </div>
         <div className="col-3 d-none d-lg-block">
-          <Form.Control
-            name="category_id"
-            type="text"
-            placeholder="Kategoria"
-            className="search-form"
-          />
+          <Form.Select name="category_id" className="search-form">
+            <option className="default-category">Kategoria</option>
+            <option>Nabiał</option>
+            <option>Pieczywo</option>
+          </Form.Select>
         </div>
       </div>
     </div>
@@ -76,9 +74,17 @@ function Forms() {
 function AnnouncementsList({ announcements }) {
   return (
     <>
-      <Announcement announcement={announcements_aray[0]} />
-      <Announcement announcement={announcements_aray[1]} />
-      <Announcement announcement={announcements_aray[2]} />
+      <div className="row mt-2 mx-3">
+        <div className="col-12 col-xl-6 mt-3">
+          <Announcement announcement={announcements_aray[0]} />
+        </div>
+        <div className="col-12 col-xl-6 mt-3">
+          <Announcement announcement={announcements_aray[1]} />
+        </div>
+        <div className="col-12 col-xl-6 mt-3">
+          <Announcement announcement={announcements_aray[2]} />
+        </div>
+      </div>
     </>
   );
 }
@@ -87,9 +93,18 @@ function Map() {}
 
 function Announcement({ announcement }) {
   return (
-    <div>
-      <img src="logo192.png" />
-      <p>{announcement.title}</p>
+    <div className="announcement-element d-flex align-items-center">
+      <div className="col-3">
+        <img src="category.png" className="img-fluid p-4" />
+      </div>
+      <div className="description col-6">
+        <p className="title">Title</p>
+        <p className="area">Dzielnica: XXX</p>
+        <p className="date">Data ważności: YYY</p>
+      </div>
+      <div className="col-3 d-inline-block p-2">
+        <img src="announcement-img/1.png" className="img-fluid" />
+      </div>
     </div>
   );
 }
@@ -114,21 +129,19 @@ function FiltersModal() {
           <div className="row">
             <div className="col-12">
               <Form.Label className="ms-1">Typ produktu:</Form.Label>
-              <Form.Control
-                name="product_id"
-                type="text"
-                placeholder="Produkt"
-                className="search-form"
-              />
+              <Form.Select name="product_id" className="search-form">
+                <option className="default-product">Produkt</option>
+                <option>Makaron</option>
+                <option>Chleb</option>
+              </Form.Select>
             </div>
             <div className="col-12 my-4">
               <Form.Label className="ms-1">Kategoria produktu:</Form.Label>
-              <Form.Control
-                name="category_id"
-                type="text"
-                placeholder="Kategoria"
-                className="search-form"
-              />
+              <Form.Select name="category_id" className="search-form">
+                <option className="default-category">Kategoria</option>
+                <option>Nabiał</option>
+                <option>Pieczywo</option>
+              </Form.Select>
             </div>
           </div>
         </Modal.Body>

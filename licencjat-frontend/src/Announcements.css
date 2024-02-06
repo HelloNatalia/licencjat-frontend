@@ -19,3 +19,28 @@
   background-color: #489645 !important;
   border-color: #489645 !important;
 }
+
+.default-category,
+.default-product {
+  color: #b8b8b8 !important;
+}
+
+.announcement-element {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+}
+
+.announcement-element img {
+  width: 80%;
+  display: block;
+  text-align: center;
+}
+
+.description {
+  font-size: medium;
+  padding: 10px;
+}
+.description .title {
+  font-size: x-large;
+}
