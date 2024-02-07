@@ -1,5 +1,7 @@
 .search-form {
   border-radius: 20px !important;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
 }
 
 .search-form::placeholder {
@@ -20,6 +22,13 @@
   border-color: #489645 !important;
 }
 
+.form-btn:hover {
+  border-radius: 20px !important;
+  background-color: white !important;
+  border-color: #489645 !important;
+  color: #489645 !important;
+}
+
 .default-category,
 .default-product {
   color: #b8b8b8 !important;
@@ -30,6 +39,11 @@
   border-radius: 15px;
   box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
   cursor: pointer;
+}
+
+.announcement-element:hover {
+  background-color: #eeeeee;
+  transition: 0.3s;
 }
 
 .announcement-element img {

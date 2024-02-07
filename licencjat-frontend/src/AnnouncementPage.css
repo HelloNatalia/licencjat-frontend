@@ -8,6 +8,12 @@
   border-radius: 10px !important;
 }
 
+.back-btn:hover {
+  background-color: #489645 !important;
+  border-color: #489645 !important;
+  color: #fff !important;
+}
+
 .category-info {
   background-color: #f29d38 !important;
   border-color: #f29d38 !important;
@@ -91,6 +97,13 @@
   width: 50%;
   font-weight: 600 !important;
   font-size: medium !important;
+}
+
+.pickup-btn:hover {
+  background-color: white !important;
+  border-color: #489645 !important;
+  font-size: medium !important;
+  color: #489645 !important;
 }
 
 .hours {

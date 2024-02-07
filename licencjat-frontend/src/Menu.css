@@ -10,6 +10,10 @@
   box-shadow: 2px 0 5px rgba(41, 41, 41, 0.1);
 }
 
+li:hover {
+  font-weight: 600;
+}
+
 .sidebar {
   font-family: monospace;
   font-size: larger;
