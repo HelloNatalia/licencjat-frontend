@@ -1,7 +1,11 @@
+import React from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { useState } from "react";
 import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+// https://github.com/PaulLeCam/react-leaflet/issues/1052
 
 const announcements_aray = [
   {
@@ -41,8 +45,14 @@ export default function Announcements() {
   const handleBack = () => setSelectedAnnouncement(null);
 
   const [mapView, setMapView] = useState(true);
-  const handleMapView = () => setMapView(true);
-  const handleListView = () => setMapView(false);
+  const handleMapView = () => {
+    setMapView(true);
+    setSelectedAnnouncement(null);
+  };
+  const handleListView = () => {
+    setMapView(false);
+    setSelectedAnnouncement(null);
+  };
 
   return (
     <div className="content">
@@ -107,7 +117,7 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
   return (
     <>
       <div className="plus-btn d-flex justify-content-center align-items-center">
-        <img src="plus-icon.png" />
+        <img src="plus-icon.png" alt="icon to add new announcement" />
       </div>
       <div className="change-view-btn d-flex justify-content-center align-items-center">
         <div
@@ -117,7 +127,11 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
             (mapView === true ? "active-view" : "normal")
           }
         >
-          <img className="map-btn" src="map-icon-btn.png" />
+          <img
+            className="map-btn"
+            src="map-icon-btn.png"
+            alt="icon to change for map view"
+          />
         </div>
         <div
           onClick={() => handleListView()}
@@ -126,7 +140,11 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
             (mapView === false ? "active-view" : "normal")
           }
         >
-          <img className="list-btn" src="list-icon-btn.png" />
+          <img
+            className="list-btn"
+            src="list-icon-btn.png"
+            alt="icon to change to list view"
+          />
         </div>
       </div>
     </>
@@ -151,7 +169,28 @@ function AnnouncementsList({ handleSelection }) {
 }
 
 function AnnouncementsMap() {
-  return <p>MAPA</p>;
+  return (
+    <div className="row">
+      <div className="col map-col m-4">
+        <MapContainer
+          center={[51.505, -0.09]}
+          zoom={13}
+          scrollWheelZoom={false}
+          className="map-area"
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[51.505, -0.09]}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+        </MapContainer>
+      </div>
+    </div>
+  );
 }
 
 function Announcement({ announcement, handleSelection }) {
@@ -161,7 +200,7 @@ function Announcement({ announcement, handleSelection }) {
       className="announcement-element d-flex align-items-center"
     >
       <div className="col-3">
-        <img src="category.png" className="img-fluid p-4" />
+        <img src="category.png" className="img-fluid p-4" alt="category" />
       </div>
       <div className="description col-6">
         <p className="title">{announcement.title}</p>
@@ -169,7 +208,7 @@ function Announcement({ announcement, handleSelection }) {
         <p className="date">Data ważności: YYY</p>
       </div>
       <div className="col-3 d-inline-block p-2">
-        <img src="announcement-img/1.png" className="img-fluid" />
+        <img src="announcement-img/1.png" className="img-fluid" alt="product" />
       </div>
     </div>
   );

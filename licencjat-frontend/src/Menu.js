@@ -6,11 +6,11 @@ export default function Menu() {
       <ul className="list-unstyled sidebar">
         <hr className="mx-3 mb-1 sidebar-divider" />
         <li>
-          <a href="#">STRONA GŁÓWNA</a>
+          <a href="/">STRONA GŁÓWNA</a>
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
-          <a href="#">OGŁOSZENIA</a>
+          <a href="/announcements">OGŁOSZENIA</a>
         </li>
         <li>
           <a href="#">POWIADOMIENIA</a>

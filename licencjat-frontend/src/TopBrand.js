@@ -21,8 +21,8 @@ export default function TopBrand() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto d-lg-none">
-            <Nav.Link href="#">Strona główna</Nav.Link>
-            <Nav.Link href="#">Ogłoszenia</Nav.Link>
+            <Nav.Link href="/">Strona główna</Nav.Link>
+            <Nav.Link href="/announcement">Ogłoszenia</Nav.Link>
             <Nav.Link href="#">Powiadomienia</Nav.Link>
             <Nav.Link href="#">Moje ogłoszenia</Nav.Link>
             <NavDropdown title="Przepisy" id="collapsible-nav-dropdown">
