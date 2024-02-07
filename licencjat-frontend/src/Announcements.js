@@ -40,6 +40,10 @@ export default function Announcements() {
   const handleSelection = (id) => setSelectedAnnouncement(id);
   const handleBack = () => setSelectedAnnouncement(null);
 
+  const [mapView, setMapView] = useState(true);
+  const handleMapView = () => setMapView(true);
+  const handleListView = () => setMapView(false);
+
   return (
     <div className="content">
       {selectedAnnouncement !== null ? (
@@ -47,9 +51,18 @@ export default function Announcements() {
       ) : (
         <>
           <Forms />
-          <AnnouncementsList handleSelection={handleSelection} />
+          {mapView === true ? (
+            <AnnouncementsMap />
+          ) : (
+            <AnnouncementsList handleSelection={handleSelection} />
+          )}
         </>
       )}
+      <FixedButtons
+        handleMapView={handleMapView}
+        handleListView={handleListView}
+        mapView={mapView}
+      />
     </div>
   );
 }
@@ -90,6 +103,36 @@ function Forms() {
   );
 }
 
+function FixedButtons({ handleMapView, handleListView, mapView }) {
+  return (
+    <>
+      <div className="plus-btn d-flex justify-content-center align-items-center">
+        <img src="plus-icon.png" />
+      </div>
+      <div className="change-view-btn d-flex justify-content-center align-items-center">
+        <div
+          onClick={() => handleMapView()}
+          className={
+            "map-half-btn d-flex justify-content-center align-items-center " +
+            (mapView === true ? "active-view" : "normal")
+          }
+        >
+          <img className="map-btn" src="map-icon-btn.png" />
+        </div>
+        <div
+          onClick={() => handleListView()}
+          className={
+            "list-half-btn d-flex justify-content-center align-items-center " +
+            (mapView === false ? "active-view" : "normal")
+          }
+        >
+          <img className="list-btn" src="list-icon-btn.png" />
+        </div>
+      </div>
+    </>
+  );
+}
+
 function AnnouncementsList({ handleSelection }) {
   return (
     <>
@@ -107,7 +150,9 @@ function AnnouncementsList({ handleSelection }) {
   );
 }
 
-function AnnouncementsMap() {}
+function AnnouncementsMap() {
+  return <p>MAPA</p>;
+}
 
 function Announcement({ announcement, handleSelection }) {
   return (

@@ -54,6 +54,85 @@
   font-size: medium;
   padding: 10px;
 }
+
 .description .title {
   font-size: x-large;
+}
+
+.plus-btn {
+  background-color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 100px;
+  text-align: center;
+  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.247);
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+}
+
+.plus-btn:hover {
+  cursor: pointer;
+  background-color: #eeeeee;
+  transition: 0.3s;
+}
+
+.plus-btn img {
+  width: 50px;
+  height: 50px;
+}
+
+.change-view-btn {
+  background-color: white;
+  width: 140px;
+  height: 50px;
+  border-radius: 100px;
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.247);
+}
+
+.map-btn {
+  width: 40px;
+  height: auto;
+  margin-left: 8%;
+}
+
+.map-half-btn {
+  background-color: #f8f8f8;
+  width: 70px;
+  height: 50px;
+  border-radius: 100px 0 0 100px;
+}
+
+.map-half-btn:hover {
+  background-color: #e6e6e6;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.list-btn {
+  width: 45px;
+  margin-right: 8%;
+}
+
+.list-half-btn {
+  background-color: #f8f8f8;
+  width: 70px;
+  height: 50px;
+  border-radius: 0 100px 100px 0;
+}
+
+.list-half-btn:hover {
+  background-color: #e6e6e6;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.active-view {
+  background-color: #e6e6e6;
+  transition: 0.3s;
 }
