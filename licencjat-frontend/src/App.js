@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./HomePage";
 import Announcements from "./Announcements";
 import { Helmet } from "react-helmet";
+import Requests from "./Requests.js";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/announcements" element={<Announcements />} />
+          <Route path="/requests" element={<Requests />} />
         </Routes>
       </div>
     </Router>

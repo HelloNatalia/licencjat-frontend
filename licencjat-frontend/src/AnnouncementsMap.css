@@ -21,6 +21,7 @@
   border-radius: 20px;
   padding: 20px;
   transition: 0.3s;
+  transition-delay: 0.5s;
 }
 
 .map-tooltip .title {

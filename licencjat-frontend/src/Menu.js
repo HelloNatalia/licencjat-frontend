@@ -13,7 +13,7 @@ export default function Menu() {
           <a href="/announcements">OGŁOSZENIA</a>
         </li>
         <li>
-          <a href="#">POWIADOMIENIA</a>
+          <a href="/requests">POWIADOMIENIA</a>
         </li>
         <li>
           <a href="#">MOJE OGŁOSZENIA</a>

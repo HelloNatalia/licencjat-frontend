@@ -10,7 +10,7 @@ export default function TopBrand() {
       className="brand-background"
     >
       <Container className="dropdown-brand">
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/announcements">
           <img
             alt=""
             src="logo.png"
@@ -23,7 +23,7 @@ export default function TopBrand() {
           <Nav className="me-auto d-lg-none">
             <Nav.Link href="/">Strona główna</Nav.Link>
             <Nav.Link href="/announcements">Ogłoszenia</Nav.Link>
-            <Nav.Link href="#">Powiadomienia</Nav.Link>
+            <Nav.Link href="/requests">Powiadomienia</Nav.Link>
             <Nav.Link href="#">Moje ogłoszenia</Nav.Link>
             <NavDropdown title="Przepisy" id="collapsible-nav-dropdown">
               <NavDropdown.Item href="#">Przepisy</NavDropdown.Item>
