@@ -1,0 +1,65 @@
+.map-area {
+  height: 100% !important;
+  border-radius: 15px;
+  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.247);
+}
+
+.map-col {
+  width: 100vw;
+  height: 82vh;
+}
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+.leaflet-control-zoom {
+}
+
+.map-tooltip {
+  width: auto;
+  border-radius: 20px;
+  padding: 20px;
+  transition: 0.3s;
+}
+
+.map-tooltip .title {
+  font-size: large;
+  white-space: wrap;
+}
+
+.map-tooltip .title-sm {
+  font-size: medium;
+  max-width: 200px;
+  white-space: wrap;
+}
+
+.map-tooltip-user-name {
+  margin-top: 15px;
+}
+
+.map-tooltip-user-img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.map-tooltip-product-img {
+  height: 150px;
+  border-radius: 15px;
+  margin-left: calc((100% - 150px) / 2);
+}
+
+.exp-date {
+  margin-top: 10px;
+  margin-bottom: 3px;
+}
+
+.exp-date span {
+  font-weight: 600;
+}
+
+.map-tooltip-days-left {
+  color: red;
+  font-weight: 600;
+  margin-bottom: 0px;
+}

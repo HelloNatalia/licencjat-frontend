@@ -137,17 +137,3 @@
   background-color: #e6e6e6;
   transition: 0.3s;
 }
-/* 
-#map {
-  height: 400px !important;
-} */
-.map-area {
-  height: 100% !important;
-  border-radius: 15px;
-  box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.247);
-}
-
-.map-col {
-  width: 100vw;
-  height: 82vh;
-}

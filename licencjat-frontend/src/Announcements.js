@@ -3,9 +3,7 @@ import { Form, Button, Modal } from "react-bootstrap";
 import { useState } from "react";
 import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-// https://github.com/PaulLeCam/react-leaflet/issues/1052
+import AnnouncementsMap from "./AnnouncementsMap.js";
 
 const announcements_aray = [
   {
@@ -13,18 +11,21 @@ const announcements_aray = [
     title: "Pierogi ruskie",
     id_product_category: 1,
     id_product: 2,
+    coordinates: [53.42366704388721, 14.536882650570943],
   },
   {
     id_announcement: 2,
     title: "Chleb biały",
     id_product_category: 2,
     id_product: 4,
+    coordinates: [53.420453223292974, 14.54080017383933],
   },
   {
     id_announcement: 3,
     title: "Makaron pełnoziarnisty Bella",
     id_product_category: 3,
     id_product: 6,
+    coordinates: [53.424341688310555, 14.512939336167545],
   },
 ];
 
@@ -62,7 +63,10 @@ export default function Announcements() {
         <>
           <Forms />
           {mapView === true ? (
-            <AnnouncementsMap />
+            <AnnouncementsMap
+              handleSelection={handleSelection}
+              announcements_aray={announcements_aray}
+            />
           ) : (
             <AnnouncementsList handleSelection={handleSelection} />
           )}
@@ -168,35 +172,10 @@ function AnnouncementsList({ handleSelection }) {
   );
 }
 
-function AnnouncementsMap() {
-  return (
-    <div className="row">
-      <div className="col map-col m-4">
-        <MapContainer
-          center={[51.505, -0.09]}
-          zoom={13}
-          scrollWheelZoom={false}
-          className="map-area"
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={[51.505, -0.09]}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </div>
-    </div>
-  );
-}
-
 function Announcement({ announcement, handleSelection }) {
   return (
     <div
-      onClick={() => handleSelection(announcement.id)}
+      onClick={() => handleSelection(announcement.id_announcement)}
       className="announcement-element d-flex align-items-center"
     >
       <div className="col-3">
