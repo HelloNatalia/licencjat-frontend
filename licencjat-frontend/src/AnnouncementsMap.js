@@ -1,7 +1,14 @@
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // https://github.com/PaulLeCam/react-leaflet/issues/1052
 import "./AnnouncementsMap.css";
+import { useState, useEffect } from "react";
 
 import { CategoryMarker } from "./icons-declaration.js";
 
@@ -9,15 +16,33 @@ export default function AnnouncementsMap({
   handleSelection,
   announcements_aray,
 }) {
+  const [userLocation, setUserLocation] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      },
+      (error) => {
+        console.error("Błąd geolokalizacji:", error);
+      }
+    );
+  }, []);
+
   return (
-    <div className="row">
-      <div className="col map-col m-4">
+    <div className="row p-4">
+      <div className="col map-col">
         <MapContainer
-          center={[53.412554539511184, 14.527779834142521]}
+          center={
+            userLocation
+              ? userLocation
+              : [51.685555094635546, 18.984997985743345]
+          }
           zoom={13}
           scrollWheelZoom={true}
           className="map-area"
         >
+          <MapComponent userLocation={userLocation} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -44,6 +69,19 @@ export default function AnnouncementsMap({
       </div>
     </div>
   );
+}
+
+function MapComponent({ userLocation }) {
+  const map = useMap();
+
+  useEffect(() => {
+    // Jeśli lokalizacja użytkownika jest dostępna, ustawia środek mapy
+    if (userLocation) {
+      map.setView(userLocation, 13);
+    }
+  }, [map, userLocation]);
+
+  return null;
 }
 
 function LargeTooltip({ element }) {
