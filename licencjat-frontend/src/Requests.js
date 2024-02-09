@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Requests.css";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
@@ -249,9 +249,7 @@ function SentRequest({ status }) {
           )}
           {status === "accepted" && (
             <>
-              <Button className=" me-2 answer-request-btn positive-request-btn">
-                ZOBACZ SZCZEGÓŁY
-              </Button>
+              <SeeDetails />
               <Button className="answer-request-btn negative-request-btn">
                 ANULUJ REZERWACJĘ
               </Button>
@@ -285,5 +283,143 @@ function ReceivedMessage({ message }) {
         <i class="bi bi-x-lg"></i>
       </p>
     </div>
+  );
+}
+
+function SeeDetails() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button
+        className="me-2 answer-request-btn positive-request-btn"
+        variant="primary"
+        onClick={handleShow}
+      >
+        ZOBACZ SZCZEGÓŁY
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <p className="modal-title mb-0">Makaron pełnoziarnisty</p>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row">
+            <div className="col-12 col-lg-6 pe-3">
+              <div className="row">
+                <div className="col-12 modal-img-box text-center">
+                  <img src="announcement-img/1.png" alt="produkt" />
+                </div>
+                <div className="col-12">
+                  <div className="my-3 outlined-box">
+                    <div className="mt-2 d-flex justify-content-center pe-4">
+                      <img className="user-img" src="user.png" alt="user" />
+                      <p className="ms-2 mt-3">
+                        <b>Anna12</b>
+                      </p>
+                    </div>
+                    <div className="d-flex mt-3 ms-3 pe-4 justify-content-center">
+                      <div className="mb-3">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                      </div>
+                      <p className="ms-1 stars">(15 ocen)</p>
+                    </div>
+                    <div className="my-3 d-flex justify-content-center pe-4">
+                      <i class="bi bi-telephone-fill me-2"></i>
+                      <p>
+                        <b>123 456 789</b>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="ps-3 col-12 col-lg-6">
+              <div className="row">
+                <div className="col-12">
+                  <div className="mb-3 outlined-box text-center">
+                    <p className="mt-2">
+                      Data ważności:{" "}
+                      <span className="ms-2 modal-date">15.02.2024</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="outlined-box pickup-details pb-2">
+                    <p className="fs-5">Kiedy odebrać?</p>
+                    <div className="d-flex datetime mt-2">
+                      <img
+                        className="datetime-icon"
+                        src="calendar.png"
+                        alt="ikona kalendarza"
+                      />
+
+                      <p className="mt-2 ms-3">10.12 Niedziela</p>
+                      <p className="hours mt-1">11:00 - 12:00</p>
+                    </div>
+                    <div className="d-flex datetime mt-2">
+                      <img
+                        className="datetime-icon"
+                        src="calendar.png"
+                        alt="ikona kalendarza"
+                      />
+
+                      <p className="mt-2 ms-3">10.12 Niedziela</p>
+                      <p className="hours mt-1">11:00 - 12:00</p>
+                    </div>
+                    <div className="d-flex datetime mt-2">
+                      <img
+                        className="datetime-icon"
+                        src="calendar.png"
+                        alt="ikona kalendarza"
+                      />
+
+                      <p className="mt-2 ms-3">10.12 Niedziela</p>
+                      <p className="hours mt-1">11:00 - 12:00</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="mt-3 outlined-box pickup-details pb-2">
+                    <p className="fs-5">Gdzie odebrać?</p>
+                    <div className="d-flex localization">
+                      <img
+                        className="localization-icon"
+                        src="area.png"
+                        alt="ikona lokalizacji"
+                      />
+                      <p className="mt-2 ms-3">
+                        Dzielnica:{" "}
+                        <span className="fw-bold ms-1">Pomorzany</span>
+                      </p>
+                    </div>
+                    <div className="d-flex localization mt-2">
+                      <img
+                        className="localization-icon"
+                        src="street.png"
+                        alt="ikona lokalizacji"
+                      />
+                      <p className="mt-2 ms-3">
+                        Ulica:{" "}
+                        <span className="fw-bold ms-1">
+                          Powstańców Wielkopolskich
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 }
