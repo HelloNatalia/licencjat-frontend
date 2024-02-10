@@ -1,0 +1,46 @@
+.selected-product {
+  display: inline;
+  background-color: white;
+}
+
+.selected-product {
+  align-items: center; /* Wyśrodkowanie zawartości w pionie */
+  margin-right: 10px; /* Dodatkowy margines między elementami */
+  padding: 8px;
+  border-radius: 25px;
+  color: rgb(167, 167, 167);
+}
+
+.selected-product p,
+.selected-product i {
+  margin: 0;
+}
+
+.recipe-box {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.recipe-box:hover {
+  background-color: #eeeeee;
+}
+
+.description {
+  font-size: medium;
+  padding: 10px;
+}
+
+.description .title {
+  font-size: x-large;
+}
+
+.img-recipe-box {
+  margin-left: auto;
+}
+
+.img-recipe-box img {
+  width: 100%;
+}

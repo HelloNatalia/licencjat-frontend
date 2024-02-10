@@ -1,4 +1,5 @@
 import "./Menu.css";
+import { NavLink } from "react-router-dom";
 
 export default function Menu() {
   return (
@@ -6,21 +7,31 @@ export default function Menu() {
       <ul className="list-unstyled sidebar">
         <hr className="mx-3 mb-1 sidebar-divider" />
         <li>
-          <a href="/">STRONA GŁÓWNA</a>
+          <NavLink exact to="/" activeClassName="active">
+            STRONA GŁÓWNA
+          </NavLink>
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
-          <a href="/announcements">OGŁOSZENIA</a>
+          <NavLink to="/announcements" activeClassName="active">
+            OGŁOSZENIA
+          </NavLink>
         </li>
         <li>
-          <a href="/requests">POWIADOMIENIA</a>
+          <NavLink to="/requests" activeClassName="active">
+            POWIADOMIENIA
+          </NavLink>
         </li>
         <li>
-          <a href="/my-announcements">MOJE OGŁOSZENIA</a>
+          <NavLink to="/my-announcements" activeClassName="active">
+            MOJE OGŁOSZENIA
+          </NavLink>
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
-          <a href="#">PRZEPISY</a>
+          <NavLink to="/recipes" activeClassName="active">
+            PRZEPISY
+          </NavLink>
         </li>
         <li>
           <a href="#">WSKAZÓWKI</a>

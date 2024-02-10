@@ -44,3 +44,7 @@ li:hover {
 .sidebar li:last-child {
   text-align: left;
 }
+
+.active {
+  font-weight: bold;
+}

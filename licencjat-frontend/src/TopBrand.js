@@ -26,7 +26,7 @@ export default function TopBrand() {
             <Nav.Link href="/requests">Powiadomienia</Nav.Link>
             <Nav.Link href="/my-announcements">Moje ogłoszenia</Nav.Link>
             <NavDropdown title="Przepisy" id="collapsible-nav-dropdown">
-              <NavDropdown.Item href="#">Przepisy</NavDropdown.Item>
+              <NavDropdown.Item href="/recipes">Przepisy</NavDropdown.Item>
               <NavDropdown.Item href="#">Dodaj przepis</NavDropdown.Item>
               <NavDropdown.Item href="#">Twoje przepisy</NavDropdown.Item>
               <NavDropdown.Divider />
