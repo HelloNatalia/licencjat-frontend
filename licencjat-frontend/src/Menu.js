@@ -16,7 +16,7 @@ export default function Menu() {
           <a href="/requests">POWIADOMIENIA</a>
         </li>
         <li>
-          <a href="#">MOJE OGŁOSZENIA</a>
+          <a href="/my-announcements">MOJE OGŁOSZENIA</a>
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
@@ -29,7 +29,7 @@ export default function Menu() {
         <hr className="mx-3 mb-1 sidebar-bottom sidebar-divider" />
         <li className=" mb-2">
           <a href="#">
-            <img src="user.png" className="mx-2" />
+            <img src="user.png" className="mx-2" alt="user" />
             KONTO
           </a>
         </li>

@@ -1,0 +1,14 @@
+.announcement-box {
+  background-color: white;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 1px 1px 5px rgba(41, 41, 41, 0.15);
+}
+
+.page-title {
+  font-size: x-large;
+}
+
+.modal-content-question .modal-dialog {
+  max-width: 600px !important;
+}

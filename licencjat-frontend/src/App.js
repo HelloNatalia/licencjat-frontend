@@ -5,6 +5,7 @@ import HomePage from "./HomePage";
 import Announcements from "./Announcements";
 import { Helmet } from "react-helmet";
 import Requests from "./Requests.js";
+import MyAnnouncements from "./MyAnnouncements.js";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/announcements" element={<Announcements />} />
           <Route path="/requests" element={<Requests />} />
+          <Route path="/my-announcements" element={<MyAnnouncements />} />
         </Routes>
       </div>
     </Router>

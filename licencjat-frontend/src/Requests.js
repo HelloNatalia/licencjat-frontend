@@ -12,7 +12,7 @@ export default function Requests() {
         selectedRequestsType={selectedRequestsType}
         handleRequestsTypeChange={handleRequestsTypeChange}
       />
-      {selectedRequestsType == "received" ? (
+      {selectedRequestsType === "received" ? (
         <ReceivedRequests />
       ) : (
         <SentRequests />
@@ -130,7 +130,7 @@ function ReceivedRequest({ status }) {
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" />
+        <img src="announcement-img/1.png" alt="announcement" />
       </div>
       <div>
         <div className="d-flex">
@@ -221,7 +221,7 @@ function SentRequest({ status }) {
   return (
     <div className={"request-box d-flex"}>
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" />
+        <img src="announcement-img/1.png" alt="announcement" />
       </div>
       <div>
         <div className="title-line d-flex">
