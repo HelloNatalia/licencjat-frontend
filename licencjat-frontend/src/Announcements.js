@@ -85,7 +85,7 @@ function Forms() {
   return (
     <div>
       <div className="row mt-3 mx-2">
-        <div className="col-9 col-md-6">
+        <div className="col-9 col-md-5">
           <Form.Control
             name="title"
             type="text"
@@ -98,18 +98,25 @@ function Forms() {
           <FiltersModal />
         </div>
         {/* Widoczne tylko dla lg i większych */}
-        <div className="col-3 d-none d-lg-block">
+        <div className="col-2 d-none d-lg-block">
           <Form.Select name="product_id" className="search-form">
             <option className="default-product">Produkt</option>
             <option>Makaron</option>
             <option>Chleb</option>
           </Form.Select>
         </div>
-        <div className="col-3 d-none d-lg-block">
+        <div className="col-2 d-none d-lg-block">
           <Form.Select name="category_id" className="search-form">
             <option className="default-category">Kategoria</option>
             <option>Nabiał</option>
             <option>Pieczywo</option>
+          </Form.Select>
+        </div>
+        <div className="col-2 d-none d-lg-block">
+          <Form.Select name="city_id" className="search-form">
+            <option className="default-category">Miasto</option>
+            <option>Szczecin</option>
+            <option>Koszalin</option>
           </Form.Select>
         </div>
       </div>
@@ -219,12 +226,20 @@ function FiltersModal() {
                 <option>Chleb</option>
               </Form.Select>
             </div>
-            <div className="col-12 my-4">
+            <div className="col-12 mt-4">
               <Form.Label className="ms-1">Kategoria produktu:</Form.Label>
               <Form.Select name="category_id" className="search-form">
                 <option className="default-category">Kategoria</option>
                 <option>Nabiał</option>
                 <option>Pieczywo</option>
+              </Form.Select>
+            </div>
+            <div className="col-12 my-4">
+              <Form.Label className="ms-1">Miasto:</Form.Label>
+              <Form.Select name="city_id" className="search-form">
+                <option className="default-category">Miasto</option>
+                <option>Szczecin</option>
+                <option>Koszalin</option>
               </Form.Select>
             </div>
           </div>
