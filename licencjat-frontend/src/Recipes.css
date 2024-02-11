@@ -42,5 +42,28 @@
 }
 
 .img-recipe-box img {
-  width: 100%;
+  width: 140px;
+}
+
+.white-box {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+  height: 100%;
+}
+
+.recipe-img {
+  height: 100%;
+  max-height: 400px;
+}
+
+.have-info {
+  margin-left: 20px;
+  color: green;
+}
+
+.not-have-info {
+  margin-left: 20px;
+  color: rgb(201, 8, 8);
+  text-decoration: underline;
 }

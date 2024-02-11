@@ -107,7 +107,7 @@ function Recipe({ recipe, handleHideListView }) {
           <p className="area">Brakuje: 0</p>
           <p className="date">{recipe.id_recipe_category}</p>
         </div>
-        <div className="img-recipe-box col-4 p-2 text-center">
+        <div className="img-recipe-box col-4 p-2 text-end">
           <img
             src="announcement-img/1.png"
             className="img-fluid"
@@ -120,7 +120,12 @@ function Recipe({ recipe, handleHideListView }) {
 }
 
 function RecipePage({ handleShowListView }) {
-  return <RecipeButtons handleShowListView={handleShowListView} />;
+  return (
+    <>
+      <RecipeButtons handleShowListView={handleShowListView} />
+      <RecipeContent />
+    </>
+  );
 }
 
 function RecipeButtons({ handleShowListView }) {
@@ -138,6 +143,96 @@ function RecipeButtons({ handleShowListView }) {
         <div className="col">
           <div className="d-flex">
             <div className="btn btn-sm category-info px-3">NAZWA KATEGORII</div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function RecipeContent() {
+  return (
+    <>
+      <div className="row p-4">
+        <div className="col-12 col-lg-4 p-2">
+          <div className="white-box text-center">
+            <img
+              src="announcement-img/1.png"
+              className="recipe-img"
+              alt="product"
+            />
+          </div>
+        </div>
+        <div className="col p-2">
+          <div className="white-box p-3">
+            <p className="fs-4">Makaron pełnoziarnisty</p>
+            <ul>
+              <table>
+                <tr>
+                  <th>
+                    <li>
+                      <a
+                        href="#"
+                        className="fs-5 text-decoration-none text-black"
+                      >
+                        Mąka - 400g
+                      </a>
+                    </li>
+                  </th>
+                  <th>
+                    <span className="not-have-info">
+                      <i class="bi bi-x"></i> 1 w pobliżu
+                    </span>
+                  </th>
+                </tr>
+                <tr>
+                  <th>
+                    <li>
+                      <p className="fs-5 mb-0">Masło - 200g</p>
+                    </li>
+                  </th>
+                  <th>
+                    <span className="have-info">
+                      <i class="bi bi-check2"></i> posiadasz
+                    </span>
+                  </th>
+                </tr>
+                <tr>
+                  <th>
+                    <li>
+                      <a
+                        href="#"
+                        className="fs-5 text-decoration-none text-black"
+                      >
+                        jajko - 400g
+                      </a>
+                    </li>
+                  </th>
+                  <th>
+                    <span className="not-have-info">
+                      <i class="bi bi-x"></i> 0 w pobliżu
+                    </span>
+                  </th>
+                </tr>
+              </table>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="row p-4 pt-1">
+        <div className="col">
+          <div className="white-box p-4">
+            Lorem ipsum dolor sit amet consectetur. Odio lectus maecenas varius
+            vel at. Egestas metus at nulla massa nulla leo ultrices vulputate.
+            Ornare pellentesque sem viverra orci diam nunc sed pharetra sit.
+            Eget malesuada et facilisis sit nisl duis tortor hendrerit etiam.
+            Curabitur ullamcorper porttitor vulputate euismod maecenas. Varius
+            integer quis tellus pretium. Sit ullamcorper nunc feugiat amet id.
+            Ac semper tellus faucibus cursus et duis. Venenatis quam ultricies
+            etiam egestas elit donec. Eu pellentesque orci vitae pulvinar.
+            Varius amet a pellentesque lacus quisque sapien sit. Curabitur
+            adipiscing faucibus amet accumsan dignissim. In sociis quis maecenas
+            mollis et id morbi. Pretium mauris curabitur ornare auctor.
           </div>
         </div>
       </div>
