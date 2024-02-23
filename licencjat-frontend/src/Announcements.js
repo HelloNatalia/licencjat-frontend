@@ -1,33 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { useState } from "react";
 import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
 import AnnouncementsMap from "./AnnouncementsMap.js";
+import { getDates } from "./AnnouncementsMap.js";
 
-const announcements_aray = [
-  {
-    id_announcement: 1,
-    title: "Pierogi ruskie",
-    id_product_category: 1,
-    id_product: 2,
-    coordinates: [53.42366704388721, 14.536882650570943],
-  },
-  {
-    id_announcement: 2,
-    title: "Chleb biały",
-    id_product_category: 2,
-    id_product: 4,
-    coordinates: [53.420453223292974, 14.54080017383933],
-  },
-  {
-    id_announcement: 3,
-    title: "Makaron pełnoziarnisty Bella",
-    id_product_category: 3,
-    id_product: 6,
-    coordinates: [53.424341688310555, 14.512939336167545],
-  },
-];
+// const announcements_aray = [
+//   {
+//     id_announcement: 1,
+//     title: "Pierogi ruskie",
+//     id_product_category: 1,
+//     id_product: 2,
+//     coordinates: [53.42366704388721, 14.536882650570943],
+//   },
+//   {
+//     id_announcement: 2,
+//     title: "Chleb biały",
+//     id_product_category: 2,
+//     id_product: 4,
+//     coordinates: [53.420453223292974, 14.54080017383933],
+//   },
+//   {
+//     id_announcement: 3,
+//     title: "Makaron pełnoziarnisty Bella",
+//     id_product_category: 3,
+//     id_product: 6,
+//     coordinates: [53.424341688310555, 14.512939336167545],
+//   },
+// ];
 
 const selected_announcement = {
   id_announcement: 2,
@@ -40,6 +41,8 @@ export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
   const [inputProductId, setInputProductId] = useState("");
   const [inputCategoryId, setInputCategoryId] = useState("");
+
+  const [announcements_array, setAnnouncementArray] = useState([]);
 
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
   const handleSelection = (id) => setSelectedAnnouncement(id);
@@ -55,20 +58,43 @@ export default function Announcements() {
     setSelectedAnnouncement(null);
   };
 
+  useEffect(
+    function () {
+      async function fetchAnnouncements() {
+        const res = await fetch(
+          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}`
+        );
+        console.log(
+          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}`
+        );
+        const data = await res.json();
+        setAnnouncementArray(data);
+      }
+      fetchAnnouncements();
+    },
+    [inputTitle, inputProductId]
+  );
+
   return (
     <div className="content">
       {selectedAnnouncement !== null ? (
         <AnnouncementPage handleBack={handleBack} id={selectedAnnouncement} />
       ) : (
         <>
-          <Forms />
+          <Forms
+            setInputTitle={setInputTitle}
+            setInputProductId={setInputProductId}
+          />
           {mapView === true ? (
             <AnnouncementsMap
               handleSelection={handleSelection}
-              announcements_aray={announcements_aray}
+              announcements_aray={announcements_array}
             />
           ) : (
-            <AnnouncementsList handleSelection={handleSelection} />
+            <AnnouncementsList
+              handleSelection={handleSelection}
+              announcements_aray={announcements_array}
+            />
           )}
         </>
       )}
@@ -81,7 +107,33 @@ export default function Announcements() {
   );
 }
 
-function Forms() {
+function Forms({ setInputTitle, setInputProductId }) {
+  const [products, setProducts] = useState([]);
+  useEffect(function () {
+    async function fetchProductsList() {
+      const res = await fetch(`http://localhost:4000/product/product-list`);
+      const data = await res.json();
+      console.log(data);
+      setProducts(data);
+    }
+    fetchProductsList();
+  }, []);
+
+  const handleSearchChange = (event) => {
+    if (event.target.value.length > 3 || event.target.value.length === 0) {
+      console.log(event.target.value);
+      setInputTitle(event.target.value);
+    }
+  };
+
+  const handleProductChange = (event) => {
+    if (event.target.value === "") setInputProductId("");
+    else {
+      setInputProductId(event.target.value);
+    }
+  };
+  if (!products) return <div>Loading ... </div>;
+
   return (
     <div>
       <div className="row mt-3 mx-2">
@@ -91,6 +143,7 @@ function Forms() {
             type="text"
             placeholder="Wyszukaj po nazwie ..."
             className="search-form search-form-with-icon"
+            onChange={handleSearchChange}
           />
         </div>
         {/* Widoczne tylko na sm i md */}
@@ -99,10 +152,17 @@ function Forms() {
         </div>
         {/* Widoczne tylko dla lg i większych */}
         <div className="col-2 d-none d-lg-block">
-          <Form.Select name="product_id" className="search-form">
-            <option className="default-product">Produkt</option>
-            <option>Makaron</option>
-            <option>Chleb</option>
+          <Form.Select
+            name="product_id"
+            className="search-form"
+            onChange={handleProductChange}
+          >
+            <option className="default-product" value="">
+              Produkt
+            </option>
+            {products.map((element) => {
+              return <option value={element.id_product}>{element.name}</option>;
+            })}
           </Form.Select>
         </div>
         <div className="col-2 d-none d-lg-block">
@@ -162,7 +222,7 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
   );
 }
 
-function AnnouncementsList({ handleSelection }) {
+function AnnouncementsList({ handleSelection, announcements_aray }) {
   return (
     <>
       <div className="row mt-2 mx-3">
@@ -180,6 +240,8 @@ function AnnouncementsList({ handleSelection }) {
 }
 
 function Announcement({ announcement, handleSelection }) {
+  const output = getDates(announcement);
+  const productDate = output[1];
   return (
     <div
       onClick={() => handleSelection(announcement.id_announcement)}
@@ -190,8 +252,8 @@ function Announcement({ announcement, handleSelection }) {
       </div>
       <div className="description col-6">
         <p className="title">{announcement.title}</p>
-        <p className="area">Dzielnica: XXX</p>
-        <p className="date">Data ważności: YYY</p>
+        <p className="area">Dzielnica: {announcement.district}</p>
+        <p className="date">Data ważności: {productDate}</p>
       </div>
       <div className="col-3 d-inline-block p-2">
         <img src="announcement-img/1.png" className="img-fluid" alt="product" />

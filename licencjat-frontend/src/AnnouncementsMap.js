@@ -48,10 +48,12 @@ export default function AnnouncementsMap({
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {announcements_aray.map((element) => {
+            const coordinatesArray = element.coordinates.split(",");
+            console.log(coordinatesArray);
             return (
               <Marker
                 icon={CategoryMarker(element.id_product_category)}
-                position={element.coordinates}
+                position={coordinatesArray}
                 eventHandlers={{
                   click: (e) => {
                     handleSelection(element.id_announcement);
@@ -85,6 +87,9 @@ function MapComponent({ userLocation }) {
 }
 
 function LargeTooltip({ element }) {
+  const output = getDates(element);
+  const dayDifference = output[0];
+  const productDate = output[1];
   return (
     <div className="d-none d-lg-block">
       <div className="d-flex">
@@ -96,12 +101,12 @@ function LargeTooltip({ element }) {
               src="user.png"
               alt="użytkownik"
             />
-            <p className="map-tooltip-user-name">Anna</p>
+            <p className="map-tooltip-user-name">{element.user.username}</p>
           </div>
           <p className="exp-date">
-            Data ważności: <span>15.02.2024</span>
+            Data ważności: <span>{productDate}</span>
           </p>
-          <p className="map-tooltip-days-left">Zostało 7 dni</p>
+          <p className="map-tooltip-days-left">Zostało {dayDifference} dni</p>
         </div>
         <img
           className="ms-4 map-tooltip-product-img"
@@ -114,6 +119,9 @@ function LargeTooltip({ element }) {
 }
 
 function SmallTooltip({ element }) {
+  const output = getDates(element);
+  const dayDifference = output[0];
+  const productDate = output[1];
   return (
     <div className="d-md-block d-lg-none">
       <div className="text-center">
@@ -124,13 +132,13 @@ function SmallTooltip({ element }) {
             src="user.png"
             alt="użytkownik"
           />
-          <p className="map-tooltip-user-name">Anna</p>
+          <p className="map-tooltip-user-name">{element.user.username}</p>
         </div>
 
         <p className="exp-date">
-          Data ważności: <span>15.02.2024</span>
+          Data ważności: <span>{productDate}</span>
         </p>
-        <p className="map-tooltip-days-left">Zostało 7 dni</p>
+        <p className="map-tooltip-days-left">Zostało {dayDifference} dni</p>
       </div>
       <div className="text-center mt-3">
         <img
@@ -141,4 +149,17 @@ function SmallTooltip({ element }) {
       </div>
     </div>
   );
+}
+
+export function getDates(element) {
+  const date = new Date(element.date);
+  const today = new Date();
+  const differenceInMs = date - today;
+  const dayDifference = Math.ceil(differenceInMs / (1000 * 60 * 60 * 24));
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const productDate = `${day}-${month < 10 ? "0" : ""}${month}-${year}`;
+
+  return [dayDifference, productDate];
 }

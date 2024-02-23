@@ -1,38 +1,49 @@
 import { Button } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./AnnouncementPage.css";
-
-const selected_announcement = {
-  id_announcement: 2,
-  title: "Chleb biały",
-  id_product_category: 2,
-  id_product: 4,
-};
+import { useState, useEffect } from "react";
+import { getDates } from "./AnnouncementsMap";
 
 export default function AnnouncementPage({ handleBack, id }) {
+  const [selected_announcement, setSelectedAnnouncement] = useState(null);
+
+  useEffect(function () {
+    async function fetchAnnouncement() {
+      const res = await fetch(`http://localhost:4000/announcement/${id}`);
+      const data = await res.json();
+      setSelectedAnnouncement(data);
+    }
+    fetchAnnouncement();
+  }, []);
+  if (!selected_announcement) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
-      <Buttons handleBack={handleBack} />
+      <Buttons
+        handleBack={handleBack}
+        selected_announcement={selected_announcement}
+      />
       <div className="row px-4 pt-1 pb-4">
         <div className="col-12 col-md-6 mt-3">
           <Images />
         </div>
         <div className="col-12 col-md-6 mt-3">
-          <MainInfo />
+          <MainInfo selected_announcement={selected_announcement} />
         </div>
         <div className="col-12 col-md-6 mt-3">
           {" "}
-          <ProductInfo />
+          <ProductInfo selected_announcement={selected_announcement} />
         </div>
         <div className="col-12 col-md-6 mt-3">
-          <PickupInfo />
+          <PickupInfo selected_announcement={selected_announcement} />
         </div>
       </div>
     </>
   );
 }
 
-function Buttons({ handleBack }) {
+function Buttons({ handleBack, selected_announcement }) {
   return (
     <>
       <div className="row d-flex mt-3 ms-2">
@@ -43,8 +54,12 @@ function Buttons({ handleBack }) {
         </div>
         <div className="col">
           <div className="d-flex">
-            <div className="btn btn-sm category-info px-3">NAZWA KATEGORII</div>
-            <div className="btn btn-sm product-info px-3 ms-2">PRODUKT</div>
+            <div className="btn btn-sm category-info px-3">
+              {selected_announcement.product_category.name}
+            </div>
+            <div className="btn btn-sm product-info px-3 ms-2">
+              {selected_announcement.product.name}
+            </div>
           </div>
         </div>
       </div>
@@ -60,14 +75,14 @@ function Images() {
   );
 }
 
-function MainInfo() {
+function MainInfo({ selected_announcement }) {
   return (
     <div className="box main-info justify-content-center py-3">
       <p className="announcement-title">{selected_announcement.title}</p>
       <div className="d-flex user justify-content-center align-items-center">
         <div className="d-flex align-items-center">
           <img src="user.png" />
-          <p className="fw-bold mt-3">Aneta</p>
+          <p className="fw-bold mt-3">{selected_announcement.user.username}</p>
         </div>
 
         <div className="d-flex mt-3 ms-3">
@@ -85,14 +100,17 @@ function MainInfo() {
   );
 }
 
-function ProductInfo() {
+function ProductInfo({ selected_announcement }) {
+  const output = getDates(selected_announcement);
+  const productDate = output[1];
+
   return (
     <>
       <div className="box px-4 pt-4 pb-2">
         <div className="row">
           <div className="col-12">
             <div className="outlined-box description-product mb-3">
-              Oddam nieotwarty makaron, 400g
+              {selected_announcement.description}
             </div>
           </div>
         </div>
@@ -100,7 +118,7 @@ function ProductInfo() {
           <div className="col-12 d-flex">
             <img className="date-icon" src="date_icon.png" />
             <p className="ms-3 mt-2">
-              Data ważności: <span className="fw-bold">15.12.2023r.</span>
+              Data ważności: <span className="fw-bold">{productDate}</span>
             </p>
           </div>
         </div>
@@ -116,7 +134,10 @@ function ProductInfo() {
   );
 }
 
-function PickupInfo() {
+function PickupInfo({ selected_announcement }) {
+  const datesAndHours = JSON.parse(selected_announcement.available_dates);
+  console.log(datesAndHours);
+
   return (
     <>
       <div className="box px-4 pt-4 pb-4">
@@ -127,7 +148,10 @@ function PickupInfo() {
               <div className="d-flex localization">
                 <img className="localization-icon" src="area.png" />
                 <p className="mt-2 ms-3">
-                  Dzielnica: <span className="fw-bold ms-1">Pomorzany</span>
+                  Dzielnica:{" "}
+                  <span className="fw-bold ms-1">
+                    {selected_announcement.district}
+                  </span>
                 </p>
               </div>
               <div className="d-flex localization mt-2">
@@ -135,7 +159,7 @@ function PickupInfo() {
                 <p className="mt-2 ms-3">
                   Ulica:{" "}
                   <span className="fw-bold ms-1">
-                    Powstańców Wielkopolskich
+                    {selected_announcement.street}
                   </span>
                 </p>
               </div>
@@ -147,21 +171,17 @@ function PickupInfo() {
           <div className="col-12">
             <div className="outlined-box pickup-details pb-2">
               <p className="fs-5">Kiedy odebrać?</p>
-              <div className="d-flex datetime mt-2">
-                <img className="datetime-icon" src="calendar.png" />
-                <p className="mt-2 ms-3">10.12 Niedziela</p>
-                <p className="hours mt-1">11:00 - 12:00</p>
-              </div>
-              <div className="d-flex datetime mt-2">
-                <img className="datetime-icon" src="calendar.png" />
-                <p className="mt-2 ms-3">10.12 Niedziela</p>
-                <p className="hours mt-1">11:00 - 12:00</p>
-              </div>
-              <div className="d-flex datetime mt-2">
-                <img className="datetime-icon" src="calendar.png" />
-                <p className="mt-2 ms-3">10.12 Niedziela</p>
-                <p className="hours mt-1">11:00 - 12:00</p>
-              </div>
+              {datesAndHours.map((element) => {
+                return (
+                  <div className="d-flex datetime mt-2">
+                    <img className="datetime-icon" src="calendar.png" />
+                    <p className="mt-2 ms-3">{element.date}</p>
+                    <p className="hours mt-1">
+                      {element.hours[0]} - {element.hours[1]}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -169,8 +189,3 @@ function PickupInfo() {
     </>
   );
 }
-<div className="d-flex ">
-  <img className="area-icon" src="area.png" />
-  <p className="mt-2">10.12 Niedziela</p>
-  <p className="hours">11:00 - 12:00</p>
-</div>;
