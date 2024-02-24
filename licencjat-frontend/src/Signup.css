@@ -1,0 +1,11 @@
+.signup-box {
+  background-color: white;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+}
+
+.signup-btn {
+  background-color: #489645 !important;
+  border-color: #489645 !important;
+}
