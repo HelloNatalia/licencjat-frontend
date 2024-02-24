@@ -36,10 +36,10 @@ export default function TopBrand() {
             <Nav.Link href="#">Konto</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link href="#">
+            <Nav.Link href="/signup">
               <Button className="btn-signup">Załóż konto</Button>
             </Nav.Link>
-            <Nav.Link href="#">
+            <Nav.Link href="/login">
               <Button className="btn-signin">Zaloguj</Button>
             </Nav.Link>
           </Nav>

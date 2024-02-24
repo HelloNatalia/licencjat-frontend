@@ -7,6 +7,8 @@ import { Helmet } from "react-helmet";
 import Requests from "./Requests.js";
 import MyAnnouncements from "./MyAnnouncements.js";
 import Recipes from "./Recipes.js";
+import Login from "./Login.js";
+import Signup from "./Signup.js";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
           <Route path="/requests" element={<Requests />} />
           <Route path="/my-announcements" element={<MyAnnouncements />} />
           <Route path="/recipes" element={<Recipes />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </div>
     </Router>
