@@ -62,17 +62,17 @@ export default function Announcements() {
     function () {
       async function fetchAnnouncements() {
         const res = await fetch(
-          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}`
+          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}`
         );
         console.log(
-          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}`
+          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}`
         );
         const data = await res.json();
         setAnnouncementArray(data);
       }
       fetchAnnouncements();
     },
-    [inputTitle, inputProductId]
+    [inputTitle, inputProductId, inputCategoryId]
   );
 
   return (
@@ -84,6 +84,7 @@ export default function Announcements() {
           <Forms
             setInputTitle={setInputTitle}
             setInputProductId={setInputProductId}
+            setInputCategoryId={setInputCategoryId}
           />
           {mapView === true ? (
             <AnnouncementsMap
@@ -107,14 +108,27 @@ export default function Announcements() {
   );
 }
 
-function Forms({ setInputTitle, setInputProductId }) {
+function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   useEffect(function () {
     async function fetchProductsList() {
       const res = await fetch(`http://localhost:4000/product/product-list`);
       const data = await res.json();
       console.log(data);
       setProducts(data);
+    }
+    fetchProductsList();
+  }, []);
+
+  useEffect(function () {
+    async function fetchProductsList() {
+      const res = await fetch(
+        `http://localhost:4000/product-category/category-list`
+      );
+      const data = await res.json();
+      console.log(data);
+      setCategories(data);
     }
     fetchProductsList();
   }, []);
@@ -132,6 +146,14 @@ function Forms({ setInputTitle, setInputProductId }) {
       setInputProductId(event.target.value);
     }
   };
+
+  const handleCategoryChange = (event) => {
+    if (event.target.value === "") setInputCategoryId("");
+    else {
+      setInputCategoryId(event.target.value);
+    }
+  };
+
   if (!products) return <div>Loading ... </div>;
 
   return (
@@ -166,10 +188,21 @@ function Forms({ setInputTitle, setInputProductId }) {
           </Form.Select>
         </div>
         <div className="col-2 d-none d-lg-block">
-          <Form.Select name="category_id" className="search-form">
-            <option className="default-category">Kategoria</option>
-            <option>Nabiał</option>
-            <option>Pieczywo</option>
+          <Form.Select
+            name="category_id"
+            className="search-form"
+            onChange={handleCategoryChange}
+          >
+            <option className="default-category" value="">
+              Kategoria
+            </option>
+            {categories.map((element) => {
+              return (
+                <option value={element.id_product_category}>
+                  {element.name}
+                </option>
+              );
+            })}
           </Form.Select>
         </div>
         <div className="col-2 d-none d-lg-block">
