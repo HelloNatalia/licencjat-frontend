@@ -1,6 +1,7 @@
 import { useFormik } from "formik";
 import "./Login.css";
 import { useState } from "react";
+import { setAuthTokenCookie } from "./cookies/auth-cookies";
 
 export default function Login() {
   return (
@@ -28,8 +29,9 @@ function LoginForm() {
       if (output === -1) setWrongDataInfo(true);
       else {
         setWrongDataInfo(false);
-        // tutaj trzeba zarządzić accessTokenem
-        console.log(output);
+        const { accessToken } = output;
+        setAuthTokenCookie(accessToken);
+        console.log(accessToken);
       }
     },
   });

@@ -1,7 +1,41 @@
 import { Navbar, Container, Button, NavDropdown, Nav } from "react-bootstrap";
 import "./TopBrand.css";
+import { useEffect, useState } from "react";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function TopBrand() {
+  const [userData, setUserData] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const accessToken = getAuthTokenFromCookie();
+  // Ogarnąć dalej co ma się pojawiać jeżeli użytkownik jest zalogowany i odwrotnie
+
+  useEffect(function () {
+    async function fetchUserData() {
+      try {
+        const res = await fetch("http://localhost:4000/auth/user-data", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (res.status === 401) setUserData = "";
+        const data = await res.json();
+        setUserData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (accessToken) {
+      fetchUserData();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+
   return (
     <Navbar
       id="top-brand"
@@ -36,12 +70,18 @@ export default function TopBrand() {
             <Nav.Link href="#">Konto</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link href="/signup">
-              <Button className="btn-signup">Załóż konto</Button>
-            </Nav.Link>
-            <Nav.Link href="/login">
-              <Button className="btn-signin">Zaloguj</Button>
-            </Nav.Link>
+            {userData === "" ? (
+              <>
+                <Nav.Link href="/signup">
+                  <Button className="btn-signup">Załóż konto</Button>
+                </Nav.Link>
+                <Nav.Link href="/login">
+                  <Button className="btn-signin">Zaloguj</Button>
+                </Nav.Link>
+              </>
+            ) : (
+              <>Zalogowany</>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
