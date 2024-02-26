@@ -1,8 +1,19 @@
 import { useFormik } from "formik";
 import "./Signup.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function Signup() {
+  const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
+
+  useEffect(() => {
+    if (accessToken !== null) {
+      navigation("/announcements");
+    }
+  }, [accessToken, navigation]);
+
   return (
     <div className="content">
       <div className="container">

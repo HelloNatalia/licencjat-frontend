@@ -1,7 +1,39 @@
 import "./Menu.css";
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function Menu() {
+  const accessToken = getAuthTokenFromCookie();
+  const [userData, setUserData] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(
+    function () {
+      async function fetchUserData() {
+        try {
+          const res = await fetch("http://localhost:4000/auth/user-data", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          if (res.status === 401) setUserData("");
+          const data = await res.json();
+          setUserData(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      if (accessToken) {
+        fetchUserData();
+      } else {
+        setIsLoading(false);
+      }
+    },
+    [accessToken]
+  );
+
   return (
     <nav id="sidebar" className="d-none d-lg-block">
       <ul className="list-unstyled sidebar">
@@ -41,7 +73,12 @@ export default function Menu() {
         <li className=" mb-2">
           <a href="#">
             <img src="user.png" className="mx-2" alt="user" />
-            KONTO
+
+            {isLoading
+              ? "KONTO"
+              : userData !== ""
+              ? userData.username
+              : "KONTO"}
           </a>
         </li>
       </ul>

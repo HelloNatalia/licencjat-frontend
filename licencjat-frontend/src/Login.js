@@ -1,9 +1,22 @@
 import { useFormik } from "formik";
 import "./Login.css";
-import { useState } from "react";
-import { setAuthTokenCookie } from "./cookies/auth-cookies";
+import { useState, useEffect } from "react";
+import {
+  getAuthTokenFromCookie,
+  setAuthTokenCookie,
+} from "./cookies/auth-cookies";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
+
+  useEffect(() => {
+    if (accessToken !== null) {
+      navigation("/announcements");
+    }
+  }, [accessToken, navigation]);
+
   return (
     <div className="content">
       <div className="container">
@@ -19,6 +32,7 @@ export default function Login() {
 
 function LoginForm() {
   const [wrongDataInfo, setWrongDataInfo] = useState(false);
+  const navigation = useNavigate();
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -31,7 +45,7 @@ function LoginForm() {
         setWrongDataInfo(false);
         const { accessToken } = output;
         setAuthTokenCookie(accessToken);
-        console.log(accessToken);
+        window.location.reload();
       }
     },
   });

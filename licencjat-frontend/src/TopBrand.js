@@ -5,12 +5,11 @@ import {
   getAuthTokenFromCookie,
   removeAuthTokenCookie,
 } from "./cookies/auth-cookies";
-import { Navigate, NavigateFunction, useNavigate } from "react-router-dom";
 
 export default function TopBrand() {
   const [userData, setUserData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const accessToken = getAuthTokenFromCookie();
+  const [accessToken, setAccessToken] = useState(getAuthTokenFromCookie());
 
   useEffect(
     function () {
@@ -37,6 +36,11 @@ export default function TopBrand() {
     },
     [accessToken]
   );
+
+  const handleLogout = () => {
+    setAccessToken(null);
+    setUserData("");
+  };
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -73,7 +77,9 @@ export default function TopBrand() {
               <NavDropdown.Item href="#">coś tam</NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="#">Wskazówki</Nav.Link>
-            <Nav.Link href="#">Konto</Nav.Link>
+            <Nav.Link href="#">
+              Konto {userData !== "" ? "(" + userData.username + ")" : ""}
+            </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
             {userData === "" ? (
@@ -87,7 +93,7 @@ export default function TopBrand() {
               </>
             ) : (
               <Nav.Link>
-                <LogoutButton />
+                <LogoutButton onClick={handleLogout} />
               </Nav.Link>
             )}
           </Nav>
@@ -98,10 +104,9 @@ export default function TopBrand() {
 }
 
 function LogoutButton() {
-  const navigate = useNavigate();
   const logout = () => {
     removeAuthTokenCookie();
-    navigate("/login");
+    window.location.reload();
   };
 
   return (
