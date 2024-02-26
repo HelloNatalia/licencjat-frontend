@@ -113,3 +113,11 @@
   font-size: x-large;
   font-weight: 600;
 }
+
+.pickup-data {
+  /* background-color: #489645; */
+  padding: 5px;
+  border-radius: 10px;
+  color: #489645;
+  font-weight: 700;
+}

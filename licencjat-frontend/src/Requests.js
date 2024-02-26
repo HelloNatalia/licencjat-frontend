@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Requests.css";
 import { Button, Modal } from "react-bootstrap";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { useNavigate } from "react-router-dom";
+import { getDates } from "./AnnouncementsMap";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
@@ -70,7 +73,7 @@ function ReceivedRequests() {
         <ReceivedRequest status={"accepted"} />
       </div>
       <div className="col-12 mt-3">
-        <ReceivedRequest status={"collected"} />
+        <ReceivedRequest status={"received"} />
       </div>
       <div className="col-12 mt-3">
         <ReceivedRequest status={"reviewed"} />
@@ -80,20 +83,46 @@ function ReceivedRequests() {
 }
 
 function SentRequests() {
+  const [sentRequests, setSentRequests] = useState([]);
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigate();
+
+  useEffect(function () {
+    async function fetchSentRequests() {
+      const res = await fetch(`http://localhost:4000/request/sent-requests`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      setSentRequests(data);
+      setIsLoading(false);
+    }
+    fetchSentRequests();
+  }, []);
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="row mx-3">
-      <div className="col-12 mt-3">
-        <SentRequest status={"sent"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"accepted"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"collected"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"reviewed"} />
-      </div>
+      {sentRequests.map((element) => {
+        const announcement = element.announcement;
+        const announcement_user = element.id_user_announcement;
+        return (
+          <div className="col-12 mt-3">
+            <SentRequest
+              status={element.status}
+              announcement={announcement}
+              announcement_user={announcement_user}
+              request={element}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -115,7 +144,7 @@ function ReceivedRequest({ status }) {
         </span>
       );
       break;
-    case "collected":
+    case "received":
     case "reviewed":
       message = (
         <span>
@@ -140,7 +169,7 @@ function ReceivedRequest({ status }) {
               <i class="bi bi-check-circle text-success"></i>
             </div>
           )}
-          {(status === "collected" || status === "reviewed") && (
+          {(status === "received" || status === "reviewed") && (
             <div className="booked-icon">
               <i class="bi bi-check-circle-fill text-success"></i>
             </div>
@@ -169,7 +198,7 @@ function ReceivedRequest({ status }) {
               </Button>
             </>
           )}
-          {status === "collected" && (
+          {status === "received" && (
             <>
               <Button className=" me-2 answer-request-btn opinion-request-btn">
                 WYSTAW OPINIĘ UŻYTKOWNIKOWI
@@ -189,34 +218,37 @@ function ReceivedRequest({ status }) {
   );
 }
 
-function SentRequest({ status }) {
+function SentRequest({ status, announcement, announcement_user, request }) {
   var message = "";
   switch (status) {
     case "sent":
       message = (
         <span>
-          Prośba została wysłana do użytkownika <b>Anna12</b>.
+          Prośba została wysłana do użytkownika{" "}
+          <b>{announcement_user.username}</b>.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          <b>Anna12</b> zaakceptował/a Twoją prośbę.
+          <b>{announcement_user.username}</b> zaakceptował/a Twoją prośbę.
         </span>
       );
       break;
-    case "collected":
+    case "received":
     case "reviewed":
       message = (
         <span>
-          Odebrano produkt od użytkownika <b>Anna12</b>.
+          Odebrano produkt od użytkownika <b>{announcement_user.username}</b>.
         </span>
       );
       break;
     default:
       break;
   }
+
+  const date = getDates(announcement)[1];
 
   return (
     <div className={"request-box d-flex"}>
@@ -225,13 +257,16 @@ function SentRequest({ status }) {
       </div>
       <div>
         <div className="title-line d-flex">
-          <p>Makaron pełnoziarnisty &#183; 15.02.2024</p>
+          <p>
+            {announcement.title} &#183; {date}
+          </p>
+
           {status === "accepted" && (
             <div className="booked-icon">
               <i class="bi-check-circle text-success"></i>
             </div>
           )}
-          {(status === "collected" || status === "reviewed") && (
+          {(status === "received" || status === "reviewed") && (
             <div className="booked-icon">
               <i class="bi bi-check-circle-fill text-success"></i>
             </div>
@@ -255,7 +290,7 @@ function SentRequest({ status }) {
               </Button>
             </>
           )}
-          {status === "collected" && (
+          {status === "received" && (
             <>
               <Button className=" me-2 answer-request-btn opinion-request-btn">
                 WYSTAW OPINIĘ UŻYTKOWNIKOWI
@@ -269,6 +304,9 @@ function SentRequest({ status }) {
               </Button>
             </>
           )}
+          <p className="pickup-data d-inline">
+            Data odbioru: {getDates(request)[1]} &#183; {request.hour}
+          </p>
         </div>
       </div>
     </div>

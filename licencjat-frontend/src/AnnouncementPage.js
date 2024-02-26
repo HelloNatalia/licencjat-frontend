@@ -44,7 +44,7 @@ export default function AnnouncementPage({ handleBack, id }) {
         });
         if (requestExists) setShowButton(false);
       }
-      if (selected_announcement) checkRequest();
+      if (selected_announcement && accessToken) checkRequest();
     },
     [selected_announcement, createdRequest]
   );
