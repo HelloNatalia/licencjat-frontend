@@ -3,9 +3,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./AnnouncementPage.css";
 import { useState, useEffect } from "react";
 import { getDates } from "./AnnouncementsMap";
+import RequestModal from "./RequestForm";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function AnnouncementPage({ handleBack, id }) {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);
+  const accessToken = getAuthTokenFromCookie();
+
+  const [showButton, setShowButton] = useState(true);
+  const [createdRequest, setCreatedRequest] = useState("");
 
   useEffect(function () {
     async function fetchAnnouncement() {
@@ -15,6 +21,33 @@ export default function AnnouncementPage({ handleBack, id }) {
     }
     fetchAnnouncement();
   }, []);
+
+  useEffect(
+    function () {
+      async function checkRequest() {
+        const res = await fetch(`http://localhost:4000/request/sent-requests`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            setShowButton(true);
+          }
+        }
+        const requests = await res.json();
+        const requestExists = requests.some((request) => {
+          return (
+            request.announcement.id_announcement ===
+            selected_announcement.id_announcement
+          );
+        });
+        if (requestExists) setShowButton(false);
+      }
+      if (selected_announcement) checkRequest();
+    },
+    [selected_announcement, createdRequest]
+  );
   if (!selected_announcement) {
     return <div>Loading...</div>;
   }
@@ -33,7 +66,11 @@ export default function AnnouncementPage({ handleBack, id }) {
         </div>
         <div className="col-12 col-md-6 mt-3">
           {" "}
-          <ProductInfo selected_announcement={selected_announcement} />
+          <ProductInfo
+            selected_announcement={selected_announcement}
+            showButton={showButton}
+            setCreatedRequest={setCreatedRequest}
+          />
         </div>
         <div className="col-12 col-md-6 mt-3">
           <PickupInfo selected_announcement={selected_announcement} />
@@ -100,7 +137,7 @@ function MainInfo({ selected_announcement }) {
   );
 }
 
-function ProductInfo({ selected_announcement }) {
+function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
   const output = getDates(selected_announcement);
   const productDate = output[1];
 
@@ -125,7 +162,16 @@ function ProductInfo({ selected_announcement }) {
         <div className="row mt-5 mb-5">
           <div className="col text-center">
             <a href="#">
-              <Button className="pickup-btn">CHCĘ ODEBRAĆ</Button>
+              {showButton ? (
+                <RequestModal
+                  announcement={selected_announcement}
+                  setCreatedRequest={setCreatedRequest}
+                />
+              ) : (
+                <Button className="btn btn-primary pickup-btn disabled">
+                  PROŚBA ZOSTAŁA WYSŁANA
+                </Button>
+              )}
             </a>
           </div>
         </div>
