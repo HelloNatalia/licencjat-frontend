@@ -14,3 +14,7 @@ export function getAuthTokenFromCookie() {
 
   return cookieValue || null;
 }
+
+export function removeAuthTokenCookie() {
+  Cookies.remove("authToken", { path: "/" });
+}

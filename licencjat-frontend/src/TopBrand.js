@@ -1,36 +1,42 @@
 import { Navbar, Container, Button, NavDropdown, Nav } from "react-bootstrap";
 import "./TopBrand.css";
 import { useEffect, useState } from "react";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import {
+  getAuthTokenFromCookie,
+  removeAuthTokenCookie,
+} from "./cookies/auth-cookies";
+import { Navigate, NavigateFunction, useNavigate } from "react-router-dom";
 
 export default function TopBrand() {
   const [userData, setUserData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const accessToken = getAuthTokenFromCookie();
-  // Ogarnąć dalej co ma się pojawiać jeżeli użytkownik jest zalogowany i odwrotnie
 
-  useEffect(function () {
-    async function fetchUserData() {
-      try {
-        const res = await fetch("http://localhost:4000/auth/user-data", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        if (res.status === 401) setUserData = "";
-        const data = await res.json();
-        setUserData(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error(error);
+  useEffect(
+    function () {
+      async function fetchUserData() {
+        try {
+          const res = await fetch("http://localhost:4000/auth/user-data", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          if (res.status === 401) setUserData("");
+          const data = await res.json();
+          setUserData(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error(error);
+        }
       }
-    }
-    if (accessToken) {
-      fetchUserData();
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
+      if (accessToken) {
+        fetchUserData();
+      } else {
+        setIsLoading(false);
+      }
+    },
+    [accessToken]
+  );
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -80,11 +86,27 @@ export default function TopBrand() {
                 </Nav.Link>
               </>
             ) : (
-              <>Zalogowany</>
+              <Nav.Link>
+                <LogoutButton />
+              </Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
+  );
+}
+
+function LogoutButton() {
+  const navigate = useNavigate();
+  const logout = () => {
+    removeAuthTokenCookie();
+    navigate("/login");
+  };
+
+  return (
+    <Button onClick={logout} className="btn-signup">
+      Wyloguj
+    </Button>
   );
 }
