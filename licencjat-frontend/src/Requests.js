@@ -54,6 +54,33 @@ function RequestsButton({ selectedRequestsType, handleRequestsTypeChange }) {
 }
 
 function ReceivedRequests() {
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigate();
+
+  useEffect(function () {
+    async function fetchReceivedRequests() {
+      const res = await fetch(
+        `http://localhost:4000/request/received-requests`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      setReceivedRequests(data);
+      setIsLoading(false);
+    }
+    fetchReceivedRequests();
+  }, []);
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="row mx-3">
       <div className="col-12 mt-3">
@@ -66,18 +93,21 @@ function ReceivedRequests() {
           }
         />
       </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"sent"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"accepted"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"received"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"reviewed"} />
-      </div>
+
+      {receivedRequests.map((element) => {
+        const announcement = element.announcement;
+        const request_user = element.id_user_request;
+        return (
+          <div className="col-12 mt-3">
+            <ReceivedRequest
+              status={element.status}
+              announcement={announcement}
+              request_user={request_user}
+              request={element}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -127,20 +157,21 @@ function SentRequests() {
   );
 }
 
-function ReceivedRequest({ status }) {
+function ReceivedRequest({ status, announcement, request_user, request }) {
   var message = "";
   switch (status) {
     case "sent":
       message = (
         <span>
-          Użytkownik <b>Anna12</b> chce zarezerwować Twój produkt.
+          Użytkownik <b>{request_user.username}</b> chce zarezerwować Twój
+          produkt.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          Twój produkt jest zarezerwowany dla <b>Anna12</b>.
+          Twój produkt jest zarezerwowany dla <b>{request_user.username}</b>.
         </span>
       );
       break;
@@ -148,7 +179,7 @@ function ReceivedRequest({ status }) {
     case "reviewed":
       message = (
         <span>
-          Oddano produkt użytkownikowi <b>Anna12</b>.
+          Oddano produkt użytkownikowi <b>{request_user.username}</b>.
         </span>
       );
       break;
@@ -163,7 +194,9 @@ function ReceivedRequest({ status }) {
       </div>
       <div>
         <div className="d-flex">
-          <p>Makaron pełnoziarnisty &#183; 15.02.2024</p>
+          <p>
+            {announcement.title} &#183; {getDates(announcement)[1]}
+          </p>
           {status === "accepted" && (
             <div className="booked-icon">
               <i class="bi bi-check-circle text-success"></i>
@@ -212,6 +245,9 @@ function ReceivedRequest({ status }) {
               </Button>
             </>
           )}
+          <p className="pickup-data d-inline">
+            Data odbioru: {getDates(request)[1]} &#183; {request.hour}
+          </p>
         </div>
       </div>
     </div>
