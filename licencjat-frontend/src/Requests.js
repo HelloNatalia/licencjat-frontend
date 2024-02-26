@@ -158,6 +158,53 @@ function SentRequests() {
 }
 
 function ReceivedRequest({ status, announcement, request_user, request }) {
+  const navigation = useNavigate();
+  const handleChangeStatus = async (type) => {
+    const accessToken = getAuthTokenFromCookie();
+    const status = { status: type };
+    const res = await fetch(
+      `http://localhost:4000/request/change-status/${request.id_request}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(status),
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
+
+  const handleDelete = async () => {
+    const accessToken = getAuthTokenFromCookie();
+    const res = await fetch(
+      `http://localhost:4000/request/${request.id_request}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
+
   var message = "";
   switch (status) {
     case "sent":
@@ -213,20 +260,32 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
         <div>
           {status === "sent" && (
             <>
-              <Button className=" me-2 answer-request-btn positive-request-btn">
+              <Button
+                onClick={() => handleChangeStatus("accepted")}
+                className=" me-2 answer-request-btn positive-request-btn"
+              >
                 ZAREZERWUJ
               </Button>
-              <Button className="answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 ODRZUĆ
               </Button>
             </>
           )}
           {status === "accepted" && (
             <>
-              <Button className=" me-2 answer-request-btn positive-request-btn">
+              <Button
+                onClick={() => handleChangeStatus("received")}
+                className=" me-2 answer-request-btn positive-request-btn"
+              >
                 OZNACZ JAKO ODEBRANE
               </Button>
-              <Button className="answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 USUŃ REZERWACJĘ
               </Button>
             </>
@@ -255,6 +314,28 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
 }
 
 function SentRequest({ status, announcement, announcement_user, request }) {
+  const navigation = useNavigate();
+  const handleDelete = async () => {
+    const accessToken = getAuthTokenFromCookie();
+    const res = await fetch(
+      `http://localhost:4000/request/${request.id_request}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
   var message = "";
   switch (status) {
     case "sent":
@@ -313,7 +394,10 @@ function SentRequest({ status, announcement, announcement_user, request }) {
         <div>
           {status === "sent" && (
             <>
-              <Button className="me-2 answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="me-2 answer-request-btn negative-request-btn"
+              >
                 ANULUJ PROŚBĘ
               </Button>
             </>
@@ -321,7 +405,10 @@ function SentRequest({ status, announcement, announcement_user, request }) {
           {status === "accepted" && (
             <>
               <SeeDetails />
-              <Button className="answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 ANULUJ REZERWACJĘ
               </Button>
             </>
