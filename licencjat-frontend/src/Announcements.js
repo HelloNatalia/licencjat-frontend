@@ -170,7 +170,12 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
         </div>
         {/* Widoczne tylko na sm i md */}
         <div className="col-3 d-md-block d-lg-none">
-          <FiltersModal />
+          <FiltersModal
+            handleProductChange={handleProductChange}
+            handleCategoryChange={handleCategoryChange}
+            products={products}
+            categories={categories}
+          />
         </div>
         {/* Widoczne tylko dla lg i większych */}
         <div className="col-2 d-none d-lg-block">
@@ -295,11 +300,28 @@ function Announcement({ announcement, handleSelection }) {
   );
 }
 
-function FiltersModal() {
+function FiltersModal({
+  handleProductChange,
+  handleCategoryChange,
+  products,
+  categories,
+}) {
   const [show, setShow] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleProductSelect = (event) => {
+    setSelectedProduct(event.target.value);
+    handleProductChange(event);
+  };
+
+  const handleCategorySelect = (event) => {
+    setSelectedCategory(event.target.value);
+    handleCategoryChange(event);
+  };
 
   return (
     <>
@@ -315,18 +337,40 @@ function FiltersModal() {
           <div className="row">
             <div className="col-12">
               <Form.Label className="ms-1">Typ produktu:</Form.Label>
-              <Form.Select name="product_id" className="search-form">
-                <option className="default-product">Produkt</option>
-                <option>Makaron</option>
-                <option>Chleb</option>
+              <Form.Select
+                name="product_id"
+                className="search-form"
+                onChange={handleProductSelect}
+                value={selectedProduct}
+              >
+                <option className="default-product" value="">
+                  Produkt
+                </option>
+                {products.map((element) => {
+                  return (
+                    <option value={element.id_product}>{element.name}</option>
+                  );
+                })}
               </Form.Select>
             </div>
             <div className="col-12 mt-4">
               <Form.Label className="ms-1">Kategoria produktu:</Form.Label>
-              <Form.Select name="category_id" className="search-form">
-                <option className="default-category">Kategoria</option>
-                <option>Nabiał</option>
-                <option>Pieczywo</option>
+              <Form.Select
+                name="category_id"
+                className="search-form"
+                onChange={handleCategorySelect}
+                value={selectedCategory}
+              >
+                <option className="default-category" value="">
+                  Kategoria
+                </option>
+                {categories.map((element) => {
+                  return (
+                    <option value={element.id_product_category}>
+                      {element.name}
+                    </option>
+                  );
+                })}
               </Form.Select>
             </div>
             <div className="col-12 my-4">
