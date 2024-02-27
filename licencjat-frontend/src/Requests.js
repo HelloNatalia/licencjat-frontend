@@ -404,7 +404,11 @@ function SentRequest({ status, announcement, announcement_user, request }) {
           )}
           {status === "accepted" && (
             <>
-              <SeeDetails />
+              <SeeDetails
+                announcement={announcement}
+                announcement_user={announcement_user}
+                request={request}
+              />
               <Button
                 onClick={handleDelete}
                 className="answer-request-btn negative-request-btn"
@@ -447,11 +451,13 @@ function ReceivedMessage({ message }) {
   );
 }
 
-function SeeDetails() {
+function SeeDetails({ announcement, announcement_user, request }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const link = "https://www.google.com/maps?q=" + announcement.coordinates;
 
   return (
     <>
@@ -465,7 +471,7 @@ function SeeDetails() {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <p className="modal-title mb-0">Makaron pełnoziarnisty</p>
+          <p className="modal-title mb-0">{announcement.title}</p>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
@@ -479,7 +485,7 @@ function SeeDetails() {
                     <div className="mt-2 d-flex justify-content-center pe-4">
                       <img className="user-img" src="user.png" alt="user" />
                       <p className="ms-2 mt-3">
-                        <b>Anna12</b>
+                        <b>{announcement_user.username}</b>
                       </p>
                     </div>
                     <div className="d-flex mt-3 ms-3 pe-4 justify-content-center">
@@ -495,7 +501,7 @@ function SeeDetails() {
                     <div className="my-3 d-flex justify-content-center pe-4">
                       <i class="bi bi-telephone-fill me-2"></i>
                       <p>
-                        <b>123 456 789</b>
+                        <b>{announcement_user.phone_number}</b>
                       </p>
                     </div>
                   </div>
@@ -508,7 +514,9 @@ function SeeDetails() {
                   <div className="mb-3 outlined-box text-center">
                     <p className="mt-2">
                       Data ważności:{" "}
-                      <span className="ms-2 modal-date">15.02.2024</span>
+                      <span className="ms-2 modal-date">
+                        {announcement.date.split("T")[0]}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -522,28 +530,8 @@ function SeeDetails() {
                         alt="ikona kalendarza"
                       />
 
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
-                    </div>
-                    <div className="d-flex datetime mt-2">
-                      <img
-                        className="datetime-icon"
-                        src="calendar.png"
-                        alt="ikona kalendarza"
-                      />
-
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
-                    </div>
-                    <div className="d-flex datetime mt-2">
-                      <img
-                        className="datetime-icon"
-                        src="calendar.png"
-                        alt="ikona kalendarza"
-                      />
-
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
+                      <p className="mt-2 ms-3">{request.date.split("T")[0]}</p>
+                      <p className="hours mt-1">{request.hour}</p>
                     </div>
                   </div>
                 </div>
@@ -558,7 +546,9 @@ function SeeDetails() {
                       />
                       <p className="mt-2 ms-3">
                         Dzielnica:{" "}
-                        <span className="fw-bold ms-1">Pomorzany</span>
+                        <span className="fw-bold ms-1">
+                          {announcement.district}, {announcement.city}
+                        </span>
                       </p>
                     </div>
                     <div className="d-flex localization mt-2">
@@ -570,10 +560,13 @@ function SeeDetails() {
                       <p className="mt-2 ms-3">
                         Ulica:{" "}
                         <span className="fw-bold ms-1">
-                          Powstańców Wielkopolskich
+                          {announcement.street} {announcement.number}
                         </span>
                       </p>
                     </div>
+                    <a href={link} target="_blank">
+                      <p>Pokaż na mapie</p>
+                    </a>
                   </div>
                 </div>
               </div>
