@@ -203,7 +203,9 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
   return (
     <>
       <div className="plus-btn d-flex justify-content-center align-items-center">
-        <img src="plus-icon.png" alt="icon to add new announcement" />
+        <a href="/create-announcement">
+          <img src="plus-icon.png" alt="icon to add new announcement" />
+        </a>
       </div>
       <div className="change-view-btn d-flex justify-content-center align-items-center">
         <div
