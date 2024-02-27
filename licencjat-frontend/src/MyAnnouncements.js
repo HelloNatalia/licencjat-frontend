@@ -1,32 +1,64 @@
 import "./MyAnnouncements.css";
 import { Button, Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getDates } from "./AnnouncementsMap";
 
 export default function MyAnnouncements() {
+  const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
+  const [myAnnouncements, setMyAnnouncements] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  // http://localhost:4000/announcement/my-announcements
+
+  useEffect(function () {
+    async function fetchMyAnnouncements() {
+      const res = await fetch(
+        `http://localhost:4000/announcement/my-announcements`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      setMyAnnouncements(data);
+      setIsLoading(false);
+    }
+    fetchMyAnnouncements();
+  }, []);
+
+  if (isLoading === true) return <div>Loading ...</div>;
+
   return (
     <div className="content">
-      <Announcements />
+      <Announcements myAnnouncements={myAnnouncements} />
     </div>
   );
 }
 
-function Announcements() {
+function Announcements({ myAnnouncements }) {
   return (
     <div className="row mx-3">
       <div className="col-12 mt-4">
         <p className="page-title ms-4 mb-1">Zarządzaj swoimi ogłoszeniami</p>
       </div>
-      <div className="col-12 mt-3">
-        <Announcement />
-      </div>
-      <div className="col-12 mt-3">
-        <Announcement />
-      </div>
+      {myAnnouncements.map((element) => {
+        return (
+          <div className="col-12 mt-3">
+            <Announcement announcement={element} />
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-function Announcement() {
+function Announcement({ announcement }) {
   return (
     <div className="row mx-3">
       <div className="col-12 mt-3">
@@ -35,12 +67,14 @@ function Announcement() {
             <img src="announcement-img/1.png" aria-label="announcement" />
           </div>
           <div>
-            <p>Makaron pełnoziarnisty &#183; 15.02.2024</p>
+            <p>
+              {announcement.title} &#183; {announcement.date.split("T")[0]}
+            </p>
             <div>
               <Button className=" me-2 answer-request-btn opinion-request-btn">
                 EDYTUJ
               </Button>
-              <DeleteQuestion />
+              <DeleteQuestion id_announcement={announcement.id_announcement} />
             </div>
           </div>
         </div>
@@ -49,18 +83,36 @@ function Announcement() {
   );
 }
 
-function DeleteQuestion() {
+function DeleteQuestion({ id_announcement }) {
   const [show, setShow] = useState(false);
+  const accessToken = getAuthTokenFromCookie();
+  const navigation = useNavigate();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  // http://localhost:4000/announcement/1adfef-bb9d-48a8-a1d0-efbe54537675
+
+  const handleDeleteAnnouncement = async (id) => {
+    const res = await fetch(`http://localhost:4000/announcement/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+    }
+    window.location.reload();
+  };
 
   return (
     <>
       <Button
         className="me-2 answer-request-btn negative-request-btn"
         variant="primary"
-        onClick={handleShow}
+        onClick={() => handleDeleteAnnouncement(id_announcement)}
       >
         USUŃ
       </Button>
