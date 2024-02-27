@@ -4,6 +4,14 @@
   box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
 }
 
+.select-react-container {
+  z-index: 2;
+}
+
+.ss-13cymwt-control {
+  border-radius: 30px !important;
+}
+
 .search-form::placeholder {
   color: #b8b8b8 !important;
 }

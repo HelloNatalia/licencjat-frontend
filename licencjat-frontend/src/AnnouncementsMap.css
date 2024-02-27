@@ -2,6 +2,7 @@
   height: 100% !important;
   border-radius: 15px;
   box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.247);
+  z-index: 1;
 }
 
 .map-col {

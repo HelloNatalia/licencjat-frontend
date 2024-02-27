@@ -15,19 +15,28 @@ import { CategoryMarker } from "./icons-declaration.js";
 export default function AnnouncementsMap({
   handleSelection,
   announcements_aray,
+  mapCenter,
 }) {
   const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => {
-        console.error("Błąd geolokalizacji:", error);
-      }
-    );
-  }, []);
+    if (mapCenter !== null) {
+      console.log(mapCenter);
+      setUserLocation(mapCenter.value);
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+        },
+        (error) => {
+          console.error("Błąd geolokalizacji:", error);
+        }
+      );
+    }
+  }, [mapCenter]);
 
   return (
     <div className="row p-4">

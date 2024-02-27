@@ -5,37 +5,7 @@ import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
 import AnnouncementsMap from "./AnnouncementsMap.js";
 import { getDates } from "./AnnouncementsMap.js";
-
-// const announcements_aray = [
-//   {
-//     id_announcement: 1,
-//     title: "Pierogi ruskie",
-//     id_product_category: 1,
-//     id_product: 2,
-//     coordinates: [53.42366704388721, 14.536882650570943],
-//   },
-//   {
-//     id_announcement: 2,
-//     title: "Chleb biały",
-//     id_product_category: 2,
-//     id_product: 4,
-//     coordinates: [53.420453223292974, 14.54080017383933],
-//   },
-//   {
-//     id_announcement: 3,
-//     title: "Makaron pełnoziarnisty Bella",
-//     id_product_category: 3,
-//     id_product: 6,
-//     coordinates: [53.424341688310555, 14.512939336167545],
-//   },
-// ];
-
-const selected_announcement = {
-  id_announcement: 2,
-  title: "Chleb biały",
-  id_product_category: 2,
-  id_product: 4,
-};
+import SelectComponent from "./selectComponent.js";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
@@ -49,6 +19,9 @@ export default function Announcements() {
   const handleBack = () => setSelectedAnnouncement(null);
 
   const [mapView, setMapView] = useState(true);
+
+  const [mapCenter, setMapCenter] = useState(null);
+
   const handleMapView = () => {
     setMapView(true);
     setSelectedAnnouncement(null);
@@ -85,11 +58,13 @@ export default function Announcements() {
             setInputTitle={setInputTitle}
             setInputProductId={setInputProductId}
             setInputCategoryId={setInputCategoryId}
+            setMapCenter={setMapCenter}
           />
           {mapView === true ? (
             <AnnouncementsMap
               handleSelection={handleSelection}
               announcements_aray={announcements_array}
+              mapCenter={mapCenter}
             />
           ) : (
             <AnnouncementsList
@@ -108,7 +83,12 @@ export default function Announcements() {
   );
 }
 
-function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
+function Forms({
+  setInputTitle,
+  setInputProductId,
+  setInputCategoryId,
+  setMapCenter,
+}) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   useEffect(function () {
@@ -175,6 +155,7 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
             handleCategoryChange={handleCategoryChange}
             products={products}
             categories={categories}
+            setMapCenter={setMapCenter}
           />
         </div>
         {/* Widoczne tylko dla lg i większych */}
@@ -211,11 +192,7 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
           </Form.Select>
         </div>
         <div className="col-2 d-none d-lg-block">
-          <Form.Select name="city_id" className="search-form">
-            <option className="default-category">Miasto</option>
-            <option>Szczecin</option>
-            <option>Koszalin</option>
-          </Form.Select>
+          <SelectComponent setMapCenter={setMapCenter} />
         </div>
       </div>
     </div>
@@ -305,6 +282,7 @@ function FiltersModal({
   handleCategoryChange,
   products,
   categories,
+  setMapCenter,
 }) {
   const [show, setShow] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -375,11 +353,7 @@ function FiltersModal({
             </div>
             <div className="col-12 my-4">
               <Form.Label className="ms-1">Miasto:</Form.Label>
-              <Form.Select name="city_id" className="search-form">
-                <option className="default-category">Miasto</option>
-                <option>Szczecin</option>
-                <option>Koszalin</option>
-              </Form.Select>
+              <SelectComponent setMapCenter={setMapCenter} />
             </div>
           </div>
         </Modal.Body>
