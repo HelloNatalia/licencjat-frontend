@@ -13,14 +13,18 @@ export default function AnnouncementPage({ handleBack, id }) {
   const [showButton, setShowButton] = useState(true);
   const [createdRequest, setCreatedRequest] = useState("");
 
-  useEffect(function () {
-    async function fetchAnnouncement() {
-      const res = await fetch(`http://localhost:4000/announcement/${id}`);
-      const data = await res.json();
-      setSelectedAnnouncement(data);
-    }
-    fetchAnnouncement();
-  }, []);
+  useEffect(
+    function () {
+      async function fetchAnnouncement() {
+        const res = await fetch(`http://localhost:4000/announcement/${id}`);
+
+        const data = await res.json();
+        setSelectedAnnouncement(data);
+      }
+      fetchAnnouncement();
+    },
+    [id]
+  );
 
   useEffect(
     function () {

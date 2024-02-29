@@ -3,11 +3,12 @@ import "./CreateAnnouncement.css";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import SelectComponent from "./selectComponent";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
+import MapModel from "./MapModal";
 
 export default function CreateAnnouncement() {
   const accessToken = getAuthTokenFromCookie();
+  const [products, setProducts] = useState([]);
   const navigation = useNavigate();
 
   useEffect(function () {
@@ -24,12 +25,22 @@ export default function CreateAnnouncement() {
     checkUser();
   }, []);
 
+  useEffect(function () {
+    async function fetchProductsList() {
+      const res = await fetch(`http://localhost:4000/product/product-list`);
+      const data = await res.json();
+      console.log(data);
+      setProducts(data);
+    }
+    fetchProductsList();
+  }, []);
+
   return (
     <div className="content">
       <div className="container">
         <div className="row">
           <div className="col">
-            <CreateAnnouncementForm />
+            <CreateAnnouncementForm products={products} />
           </div>
         </div>
       </div>
@@ -37,8 +48,9 @@ export default function CreateAnnouncement() {
   );
 }
 
-function CreateAnnouncementForm() {
-  const [pickupDates, setPickupDates] = useState(null);
+function CreateAnnouncementForm({ products }) {
+  const [pickupDates, setPickupDates] = useState([]);
+  const [selectedPhotos, setSelectedPhotos] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -77,12 +89,73 @@ function CreateAnnouncementForm() {
   });
 
   const handleAddDate = () => {
-    const newDate = {
-      date: formik.values.pickup_date,
-      hour: [formik.values.pickup_hour_1, formik.values.pickup_hour_2],
-    };
-    console.log(newDate);
-    setPickupDates(...pickupDates, newDate);
+    if (
+      formik.values.pickup_date &&
+      formik.values.pickup_hour_1 &&
+      formik.values.pickup_hour_2
+    ) {
+      const formattedDate = formik.values.pickup_date
+        .split("-")
+        .reverse()
+        .join(".");
+      const newDate = {
+        date: formattedDate,
+        hours: [formik.values.pickup_hour_1, formik.values.pickup_hour_2],
+      };
+      if (pickupDates.length === 0) {
+        setPickupDates([newDate]);
+      } else {
+        setPickupDates([...pickupDates, newDate]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const formattedToJsonString = JSON.stringify(pickupDates);
+    formik.setFieldValue("available_dates", formattedToJsonString);
+  }, [pickupDates]);
+
+  const handleSelectProduct = (event) => {
+    formik.handleChange(event);
+    if (event.target.value) {
+      console.log("event: " + event.target.value);
+      const selectedProduct = products.find(
+        (element) => element.id_product === event.target.value
+      );
+      if (selectedProduct) {
+        const id_product_category =
+          selectedProduct.product_category.id_product_category;
+        formik.setFieldValue("product_category", id_product_category);
+      }
+    }
+  };
+
+  const handlePhotosChange = (event) => {
+    const files = event.target.files;
+
+    if (files.length > 2) {
+      // obsługa gdy plików jest więcej niż 2
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = file.name;
+      const fileExtension = fileName.split(".").pop().toLowerCase();
+      if (fileExtension !== "png" && fileExtension !== "jpg") {
+        // obsługa gdy zły format pliku
+        return;
+      }
+      setSelectedPhotos([...selectedPhotos, fileName]);
+    }
+  };
+
+  useEffect(() => {
+    formik.setFieldValue("photos", selectedPhotos);
+  }, [selectedPhotos]);
+
+  const handleCoordinationChange = (coordinations) => {
+    formik.setFieldValue("coordinates", coordinations);
   };
 
   return (
@@ -165,6 +238,8 @@ function CreateAnnouncementForm() {
           value={formik.values.number}
         />
 
+        <MapModel handleCoordinationChange={handleCoordinationChange} />
+
         <label className="form-label mt-3" htmlFor="photos">
           Zdjęcia*
         </label>
@@ -173,9 +248,9 @@ function CreateAnnouncementForm() {
           name="photos"
           type="file"
           className="form-control"
-          hidden
-          onChange={formik.handleChange}
-          value={formik.values.photos}
+          onChange={handlePhotosChange}
+          multiple
+          // value={formik.values.photos}
         />
 
         <label className="form-label mt-3" htmlFor="date">
@@ -210,7 +285,7 @@ function CreateAnnouncementForm() {
             <input
               id="pickup_hour_1"
               name="pickup_hour_1"
-              type="date"
+              type="time"
               className="form-control"
               required
               onChange={formik.handleChange}
@@ -221,7 +296,7 @@ function CreateAnnouncementForm() {
             <input
               id="pickup_hour_2"
               name="pickup_hour_2"
-              type="date"
+              type="time"
               className="form-control"
               required
               onChange={formik.handleChange}
@@ -243,22 +318,42 @@ function CreateAnnouncementForm() {
                   <th>Data</th>
                   <th>Godzina</th>
                 </tr>
-                <tr>
-                  {pickupDates.map((element) => {
-                    return (
-                      <>
-                        <td>{element.date}</td>
-                        <td>
-                          {element.hour[0]} - {element.hour[1]}
-                        </td>
-                      </>
-                    );
-                  })}
-                </tr>
+
+                {pickupDates.map((element) => {
+                  return (
+                    <tr>
+                      <td>{element.date}</td>
+                      <td>
+                        {element.hours[0]} - {element.hours[1]}
+                      </td>
+                    </tr>
+                  );
+                })}
               </table>
             ) : (
               ""
             )}
+          </div>
+          <div className="col-12">
+            <label className="form-label mt-3" htmlFor="product">
+              Produkt*
+            </label>
+            <Form.Select
+              id="product"
+              name="product"
+              className=""
+              onChange={handleSelectProduct}
+              value={formik.values.product}
+            >
+              <option className="default-product" value="">
+                Produkt
+              </option>
+              {products.map((element) => {
+                return (
+                  <option value={element.id_product}>{element.name}</option>
+                );
+              })}
+            </Form.Select>
           </div>
         </div>
 
@@ -283,4 +378,43 @@ async function Create(
   product,
   photos,
   date
-) {}
+) {
+  const announcementData = {
+    title,
+    description,
+    district,
+    city,
+    street,
+    number,
+    coordinates,
+    available_dates,
+    product_category,
+    product,
+    photos,
+    date,
+  };
+
+  try {
+    const accessToken = getAuthTokenFromCookie();
+    const response = await fetch("http://localhost:4000/announcement/create", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(announcementData),
+    });
+
+    if (!response.ok) {
+      // Tutaj uzyskać zwrot od api jeżeli coś nie gra
+      // if (response.status === 409) return "conflict";
+      // else throw new Error("Wystąpił błąd");
+    }
+
+    // const data = await response.json();
+    // return data;
+    return true;
+  } catch (error) {
+    console.error(error);
+  }
+}
