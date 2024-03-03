@@ -1,0 +1,16 @@
+.form-bg {
+  background-color: white;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+}
+
+.img-box {
+  background-color: rgb(247, 247, 247);
+  border-radius: 15px;
+}
+
+.show-map p {
+  text-decoration: underline;
+  cursor: pointer;
+}

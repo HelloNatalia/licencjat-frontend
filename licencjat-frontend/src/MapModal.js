@@ -23,9 +23,7 @@ export default function MapModel({ handleCoordinationChange }) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Wskaż miejsce na mapie
-      </Button>
+      <p onClick={handleShow}>Wskaż miejsce na mapie</p>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

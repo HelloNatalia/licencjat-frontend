@@ -160,207 +160,239 @@ function CreateAnnouncementForm({ products }) {
 
   return (
     <>
-      <p className="fs-4 mb-1">Tworzenie ogłoszenia</p>
-      <form onSubmit={formik.handleSubmit}>
-        <label className="form-label mt-3" htmlFor="title">
-          Tytuł*
-        </label>
-        <input
-          id="title"
-          name="title"
-          type="text"
-          className="form-control"
-          required="required"
-          onChange={formik.handleChange}
-          value={formik.values.title}
-        />
-
-        <label className="form-label mt-3" htmlFor="description">
-          Opis*
-        </label>
-        <input
-          id="description"
-          name="description"
-          type="textarea"
-          className="form-control"
-          required="required"
-          onChange={formik.handleChange}
-          value={formik.values.description}
-        />
-
-        <label className="form-label mt-3" htmlFor="district">
-          Dzielnica
-        </label>
-        <input
-          id="district"
-          name="district"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.district}
-        />
-
-        <label className="form-label mt-3" htmlFor="city">
-          Miasto*
-        </label>
-        <input
-          id="city"
-          name="city"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.city}
-        />
-
-        <label className="form-label mt-3" htmlFor="street">
-          Ulica*
-        </label>
-        <input
-          id="street"
-          name="street"
-          type="text"
-          required
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.street}
-        />
-
-        <label className="form-label mt-3" htmlFor="number">
-          Numer*
-        </label>
-        <input
-          id="number"
-          name="number"
-          type="text"
-          className="form-control"
-          required
-          onChange={formik.handleChange}
-          value={formik.values.number}
-        />
-
-        <MapModel handleCoordinationChange={handleCoordinationChange} />
-
-        <label className="form-label mt-3" htmlFor="photos">
-          Zdjęcia*
-        </label>
-        <input
-          id="photos"
-          name="photos"
-          type="file"
-          className="form-control"
-          onChange={handlePhotosChange}
-          multiple
-          // value={formik.values.photos}
-        />
-
-        <label className="form-label mt-3" htmlFor="date">
-          Data ważności produktu*
-        </label>
-        <input
-          id="date"
-          name="date"
-          type="date"
-          className="form-control"
-          required
-          onChange={formik.handleChange}
-          value={formik.values.date}
-        />
-
-        <label className="form-label mt-3" htmlFor="pickup_date">
-          Możliwa data i godzina odbioru
-        </label>
-        <div className="row">
-          <div className="col-12 col-md-6">
-            <input
-              id="pickup_date"
-              name="pickup_date"
-              type="date"
-              className="form-control"
-              required
-              onChange={formik.handleChange}
-              value={formik.values.pickup_date}
-            />
-          </div>
-          <div className="col-6 col-md-3">
-            <input
-              id="pickup_hour_1"
-              name="pickup_hour_1"
-              type="time"
-              className="form-control"
-              required
-              onChange={formik.handleChange}
-              value={formik.values.pickup_hour_1}
-            />
-          </div>
-          <div className="col-6 col-md-3">
-            <input
-              id="pickup_hour_2"
-              name="pickup_hour_2"
-              type="time"
-              className="form-control"
-              required
-              onChange={formik.handleChange}
-              value={formik.values.pickup_hour_2}
-            />
-          </div>
-          <div className="row mt-2">
+      <div className="form-bg">
+        <form onSubmit={formik.handleSubmit}>
+          <div className="row">
             <div className="col-12">
-              <Button onClick={handleAddDate}>
-                Zatwierdź możliwą datę odbioru
-              </Button>
+              <label className="form-label mt-3" htmlFor="title">
+                Tytuł*
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                className="form-control"
+                required="required"
+                onChange={formik.handleChange}
+                value={formik.values.title}
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label mt-3" htmlFor="description">
+                Opis*
+              </label>
+              <input
+                id="description"
+                name="description"
+                type="textarea"
+                className="form-control"
+                required="required"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+              />
+            </div>
+            <div className="col-12 col-lg-6">
+              <label className="form-label mt-3" htmlFor="city">
+                Miasto*
+              </label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                className="form-control"
+                onChange={formik.handleChange}
+                value={formik.values.city}
+              />
+            </div>
+            <div className="col-12 col-lg-6">
+              <label className="form-label mt-3" htmlFor="district">
+                Dzielnica
+              </label>
+              <input
+                id="district"
+                name="district"
+                type="text"
+                className="form-control"
+                onChange={formik.handleChange}
+                value={formik.values.district}
+              />
+            </div>
+            <div className="col-12 col-lg-8">
+              <label className="form-label mt-3" htmlFor="street">
+                Ulica*
+              </label>
+              <input
+                id="street"
+                name="street"
+                type="text"
+                required
+                className="form-control"
+                onChange={formik.handleChange}
+                value={formik.values.street}
+              />
+            </div>
+            <div className="col-12 col-lg-4">
+              <label className="form-label mt-3" htmlFor="number">
+                Numer*
+              </label>
+              <input
+                id="number"
+                name="number"
+                type="text"
+                className="form-control"
+                required
+                onChange={formik.handleChange}
+                value={formik.values.number}
+              />
+            </div>
+            <div className="col-12 mt-3">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id={
+                    formik.values.coordinates
+                      ? "flexCheckChecked"
+                      : "flexCheckDefault"
+                  }
+                />
+                <label class="form-check-label show-map" for="flexCheckDefault">
+                  <MapModel
+                    handleCoordinationChange={handleCoordinationChange}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="col-12 mt-3">
+              <div className="img-box p-3">
+                <label className="form-label" htmlFor="photos">
+                  Zdjęcia*
+                </label>
+                <input
+                  id="photos"
+                  name="photos"
+                  type="file"
+                  className="form-control"
+                  onChange={handlePhotosChange}
+                  multiple
+                  // value={formik.values.photos}
+                />
+              </div>
+            </div>
+
+            <div className="col-12">
+              <label className="form-label mt-3" htmlFor="date">
+                Data ważności produktu*
+              </label>
+              <input
+                id="date"
+                name="date"
+                type="date"
+                className="form-control"
+                required
+                onChange={formik.handleChange}
+                value={formik.values.date}
+              />
             </div>
           </div>
-          <div className="col-12">
-            <p>Wybrane daty odbioru</p>
-            {pickupDates !== null ? (
-              <table>
-                <tr>
-                  <th>Data</th>
-                  <th>Godzina</th>
-                </tr>
+        </form>
+      </div>
+      <p className="fs-4 mb-1">Tworzenie ogłoszenia</p>
 
-                {pickupDates.map((element) => {
-                  return (
-                    <tr>
-                      <td>{element.date}</td>
-                      <td>
-                        {element.hours[0]} - {element.hours[1]}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </table>
-            ) : (
-              ""
-            )}
-          </div>
+      <label className="form-label mt-3" htmlFor="pickup_date">
+        Możliwa data i godzina odbioru
+      </label>
+      <div className="row">
+        <div className="col-12 col-md-6">
+          <input
+            id="pickup_date"
+            name="pickup_date"
+            type="date"
+            className="form-control"
+            required
+            onChange={formik.handleChange}
+            value={formik.values.pickup_date}
+          />
+        </div>
+        <div className="col-6 col-md-3">
+          <input
+            id="pickup_hour_1"
+            name="pickup_hour_1"
+            type="time"
+            className="form-control"
+            required
+            onChange={formik.handleChange}
+            value={formik.values.pickup_hour_1}
+          />
+        </div>
+        <div className="col-6 col-md-3">
+          <input
+            id="pickup_hour_2"
+            name="pickup_hour_2"
+            type="time"
+            className="form-control"
+            required
+            onChange={formik.handleChange}
+            value={formik.values.pickup_hour_2}
+          />
+        </div>
+        <div className="row mt-2">
           <div className="col-12">
-            <label className="form-label mt-3" htmlFor="product">
-              Produkt*
-            </label>
-            <Form.Select
-              id="product"
-              name="product"
-              className=""
-              onChange={handleSelectProduct}
-              value={formik.values.product}
-            >
-              <option className="default-product" value="">
-                Produkt
-              </option>
-              {products.map((element) => {
-                return (
-                  <option value={element.id_product}>{element.name}</option>
-                );
-              })}
-            </Form.Select>
+            <Button onClick={handleAddDate}>
+              Zatwierdź możliwą datę odbioru
+            </Button>
           </div>
         </div>
+        <div className="col-12">
+          <p>Wybrane daty odbioru</p>
+          {pickupDates !== null ? (
+            <table>
+              <tr>
+                <th>Data</th>
+                <th>Godzina</th>
+              </tr>
 
-        <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
-          Utwórz ogłoszenie
-        </button>
-      </form>
+              {pickupDates.map((element) => {
+                return (
+                  <tr>
+                    <td>{element.date}</td>
+                    <td>
+                      {element.hours[0]} - {element.hours[1]}
+                    </td>
+                  </tr>
+                );
+              })}
+            </table>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="col-12">
+          <label className="form-label mt-3" htmlFor="product">
+            Produkt*
+          </label>
+          <Form.Select
+            id="product"
+            name="product"
+            className=""
+            onChange={handleSelectProduct}
+            value={formik.values.product}
+          >
+            <option className="default-product" value="">
+              Produkt
+            </option>
+            {products.map((element) => {
+              return <option value={element.id_product}>{element.name}</option>;
+            })}
+          </Form.Select>
+        </div>
+      </div>
+
+      <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
+        Utwórz ogłoszenie
+      </button>
     </>
   );
 }
