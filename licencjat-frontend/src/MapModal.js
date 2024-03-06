@@ -1,6 +1,7 @@
 import { Button } from "react-bootstrap";
 import { Modal } from "react-bootstrap";
 import { useState } from "react";
+import { useEffect } from "react";
 import L from "leaflet";
 import {
   MapContainer,
@@ -12,6 +13,7 @@ import {
 
 export default function MapModel({ handleCoordinationChange }) {
   const [show, setShow] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -21,17 +23,32 @@ export default function MapModel({ handleCoordinationChange }) {
     handleCoordinationChange(positionArray);
   };
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      },
+      (error) => {
+        console.error("Błąd geolokalizacji:", error);
+      }
+    );
+  }, []);
+
   return (
     <>
       <p onClick={handleShow}>Wskaż miejsce na mapie</p>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Wybierz miejsce na mapie</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <MapContainer
-            center={[51.505, -0.09]}
+            center={
+              userLocation
+                ? userLocation
+                : [52.22985192295657, 21.01171020569338]
+            }
             zoom={13}
             style={{ height: "400px", width: "100%" }}
           >
@@ -44,10 +61,7 @@ export default function MapModel({ handleCoordinationChange }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
+            Zamknij
           </Button>
         </Modal.Footer>
       </Modal>

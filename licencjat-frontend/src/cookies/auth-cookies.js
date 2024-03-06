@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 export function setAuthTokenCookie(token) {
   const expirationDate = new Date();
-  expirationDate.setDate(expirationDate.getDate() + 7);
+  expirationDate.setMinutes(expirationDate.getMinutes() + 60);
   Cookies.set("authToken", token, {
     expires: expirationDate,
     path: "/",

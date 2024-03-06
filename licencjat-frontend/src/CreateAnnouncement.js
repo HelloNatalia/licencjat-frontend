@@ -39,7 +39,7 @@ export default function CreateAnnouncement() {
     <div className="content">
       <div className="container">
         <div className="row">
-          <div className="col">
+          <div className="col mt-3">
             <CreateAnnouncementForm products={products} />
           </div>
         </div>
@@ -51,6 +51,7 @@ export default function CreateAnnouncement() {
 function CreateAnnouncementForm({ products }) {
   const [pickupDates, setPickupDates] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
+  const [isMarkerSelected, setIsMarkerSelected] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -110,6 +111,12 @@ function CreateAnnouncementForm({ products }) {
     }
   };
 
+  const handleDeleteDate = (index) => {
+    const updatedList = [...pickupDates];
+    updatedList.splice(index, 1);
+    setPickupDates(updatedList);
+  };
+
   useEffect(() => {
     const formattedToJsonString = JSON.stringify(pickupDates);
     formik.setFieldValue("available_dates", formattedToJsonString);
@@ -150,12 +157,19 @@ function CreateAnnouncementForm({ products }) {
     }
   };
 
+  const handleDeleteImage = (index) => {
+    const updatedList = [...selectedPhotos];
+    updatedList.splice(index, 1);
+    setSelectedPhotos(updatedList);
+  };
+
   useEffect(() => {
     formik.setFieldValue("photos", selectedPhotos);
   }, [selectedPhotos]);
 
   const handleCoordinationChange = (coordinations) => {
     formik.setFieldValue("coordinates", coordinations);
+    setIsMarkerSelected(true);
   };
 
   return (
@@ -163,6 +177,7 @@ function CreateAnnouncementForm({ products }) {
       <div className="form-bg">
         <form onSubmit={formik.handleSubmit}>
           <div className="row">
+            <p className="fs-4 mb-1">Tworzenie ogłoszenia</p>
             <div className="col-12">
               <label className="form-label mt-3" htmlFor="title">
                 Tytuł*
@@ -251,13 +266,10 @@ function CreateAnnouncementForm({ products }) {
                   class="form-check-input"
                   type="checkbox"
                   value=""
-                  id={
-                    formik.values.coordinates
-                      ? "flexCheckChecked"
-                      : "flexCheckDefault"
-                  }
+                  checked={isMarkerSelected}
+                  id="flexCheckChecked"
                 />
-                <label class="form-check-label show-map" for="flexCheckDefault">
+                <label class="form-check-label show-map" for="flexCheckChecked">
                   <MapModel
                     handleCoordinationChange={handleCoordinationChange}
                   />
@@ -279,6 +291,24 @@ function CreateAnnouncementForm({ products }) {
                   multiple
                   // value={formik.values.photos}
                 />
+                <p className="mt-3">
+                  Wybrane zdjęcia:{" "}
+                  {selectedPhotos.length > 0
+                    ? selectedPhotos.map((element, index) => {
+                        return (
+                          <p>
+                            {element}{" "}
+                            <button
+                              className="btn bg-danger"
+                              onClick={() => handleDeleteImage(index)}
+                            >
+                              -
+                            </button>
+                          </p>
+                        );
+                      })
+                    : "Brak zdjęć"}
+                </p>
               </div>
             </div>
 
@@ -296,103 +326,131 @@ function CreateAnnouncementForm({ products }) {
                 value={formik.values.date}
               />
             </div>
+
+            <div className="col-12 mt-3">
+              <div className="datetime-box p-3">
+                <div className="row">
+                  <div className="col-12">
+                    <label className="form-label mt-1" htmlFor="pickup_date">
+                      Możliwa data i godzina odbioru
+                    </label>
+                    <input
+                      id="pickup_date"
+                      name="pickup_date"
+                      type="date"
+                      className="form-control"
+                      required
+                      onChange={formik.handleChange}
+                      value={formik.values.pickup_date}
+                    />
+                  </div>
+                  <div className="col-12 col-lg-6 mt-2">
+                    <input
+                      id="pickup_hour_1"
+                      name="pickup_hour_1"
+                      type="time"
+                      className="form-control"
+                      required
+                      onChange={formik.handleChange}
+                      value={formik.values.pickup_hour_1}
+                    />
+                  </div>
+                  <div className="col-12 col-lg-6 mt-2">
+                    <input
+                      id="pickup_hour_2"
+                      name="pickup_hour_2"
+                      type="time"
+                      className="form-control"
+                      required
+                      onChange={formik.handleChange}
+                      value={formik.values.pickup_hour_2}
+                    />
+                  </div>
+                  <div className="col mt-2">
+                    <Button onClick={handleAddDate} className="signup-btn">
+                      +
+                    </Button>
+                  </div>
+                </div>
+                <div className="row mt-3">
+                  <div className="col-12">
+                    <p>
+                      <b>Wybrane daty odbioru:</b>
+                    </p>
+                  </div>
+                  <div className="col">
+                    {pickupDates !== null ? (
+                      <div class="table-responsive">
+                        <table class="table table-bordered">
+                          <tr>
+                            <th>Data</th>
+                            <th>Godzina</th>
+                          </tr>
+                          {pickupDates.map((element, index) => {
+                            return (
+                              <tr>
+                                <td>{element.date}</td>
+                                <td>
+                                  {element.hours[0]} - {element.hours[1]}
+                                </td>
+                                <td>
+                                  <button
+                                    className="btn bg-danger"
+                                    onClick={() => handleDeleteDate(index)}
+                                  >
+                                    -
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </table>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12">
+              <label className="form-label mt-3" htmlFor="product">
+                Produkt*
+              </label>
+              <Form.Select
+                id="product"
+                name="product"
+                className=""
+                onChange={handleSelectProduct}
+                value={formik.values.product}
+              >
+                <option className="default-product" value="">
+                  Produkt
+                </option>
+                {products.map((element) => {
+                  return (
+                    <option value={element.id_product}>{element.name}</option>
+                  );
+                })}
+              </Form.Select>
+            </div>
+
+            <div className="col-12">
+              <button
+                type="submit"
+                className="btn btn-primary mt-4 mb-2 signup-btn"
+              >
+                Utwórz ogłoszenie
+              </button>
+            </div>
           </div>
         </form>
       </div>
-      <p className="fs-4 mb-1">Tworzenie ogłoszenia</p>
 
-      <label className="form-label mt-3" htmlFor="pickup_date">
-        Możliwa data i godzina odbioru
-      </label>
       <div className="row">
-        <div className="col-12 col-md-6">
-          <input
-            id="pickup_date"
-            name="pickup_date"
-            type="date"
-            className="form-control"
-            required
-            onChange={formik.handleChange}
-            value={formik.values.pickup_date}
-          />
-        </div>
-        <div className="col-6 col-md-3">
-          <input
-            id="pickup_hour_1"
-            name="pickup_hour_1"
-            type="time"
-            className="form-control"
-            required
-            onChange={formik.handleChange}
-            value={formik.values.pickup_hour_1}
-          />
-        </div>
-        <div className="col-6 col-md-3">
-          <input
-            id="pickup_hour_2"
-            name="pickup_hour_2"
-            type="time"
-            className="form-control"
-            required
-            onChange={formik.handleChange}
-            value={formik.values.pickup_hour_2}
-          />
-        </div>
-        <div className="row mt-2">
-          <div className="col-12">
-            <Button onClick={handleAddDate}>
-              Zatwierdź możliwą datę odbioru
-            </Button>
-          </div>
-        </div>
-        <div className="col-12">
-          <p>Wybrane daty odbioru</p>
-          {pickupDates !== null ? (
-            <table>
-              <tr>
-                <th>Data</th>
-                <th>Godzina</th>
-              </tr>
-
-              {pickupDates.map((element) => {
-                return (
-                  <tr>
-                    <td>{element.date}</td>
-                    <td>
-                      {element.hours[0]} - {element.hours[1]}
-                    </td>
-                  </tr>
-                );
-              })}
-            </table>
-          ) : (
-            ""
-          )}
-        </div>
-        <div className="col-12">
-          <label className="form-label mt-3" htmlFor="product">
-            Produkt*
-          </label>
-          <Form.Select
-            id="product"
-            name="product"
-            className=""
-            onChange={handleSelectProduct}
-            value={formik.values.product}
-          >
-            <option className="default-product" value="">
-              Produkt
-            </option>
-            {products.map((element) => {
-              return <option value={element.id_product}>{element.name}</option>;
-            })}
-          </Form.Select>
-        </div>
+        <div className="col-12"></div>
       </div>
-
-      <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
-        Utwórz ogłoszenie
-      </button>
     </>
   );
 }

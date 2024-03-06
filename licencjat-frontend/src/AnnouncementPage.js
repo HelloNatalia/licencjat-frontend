@@ -40,12 +40,15 @@ export default function AnnouncementPage({ handleBack, id }) {
           }
         }
         const requests = await res.json();
-        const requestExists = requests.some((request) => {
-          return (
-            request.announcement.id_announcement ===
-            selected_announcement.id_announcement
-          );
-        });
+        let requestExists = null;
+        if (Array.isArray(requests)) {
+          requestExists = requests.some((request) => {
+            return (
+              request.announcement.id_announcement ===
+              selected_announcement.id_announcement
+            );
+          });
+        }
         if (requestExists) setShowButton(false);
       }
       if (selected_announcement && accessToken) checkRequest();

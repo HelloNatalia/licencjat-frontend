@@ -20,6 +20,7 @@ export default function Menu() {
           if (res.status === 401) setUserData("");
           const data = await res.json();
           setUserData(data);
+          console.log(userData);
           setIsLoading(false);
         } catch (error) {
           console.error(error);

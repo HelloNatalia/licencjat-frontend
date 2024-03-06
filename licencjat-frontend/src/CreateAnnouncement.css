@@ -5,7 +5,8 @@
   box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
 }
 
-.img-box {
+.img-box,
+.datetime-box {
   background-color: rgb(247, 247, 247);
   border-radius: 15px;
 }
