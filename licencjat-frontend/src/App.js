@@ -10,6 +10,7 @@ import Recipes from "./Recipes.js";
 import Login from "./Login.js";
 import Signup from "./Signup.js";
 import CreateAnnouncement from "./CreateAnnouncement.js";
+import EditAnnouncement from "./EditAnnouncement.js";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/create-announcement" element={<CreateAnnouncement />} />
+          <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
         </Routes>
       </div>
     </Router>

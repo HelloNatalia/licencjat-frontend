@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./CreateAnnouncement.css";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useEffect, useState } from "react";
@@ -6,10 +6,13 @@ import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import MapModel from "./MapModal";
 
-export default function CreateAnnouncement() {
+export default function EditAnnouncement() {
+  const { id } = useParams();
+  console.log("ID z url: ", id);
   const accessToken = getAuthTokenFromCookie();
   const [products, setProducts] = useState([]);
   const navigation = useNavigate();
+  const [announcementData, setAnnouncementData] = useState();
 
   useEffect(function () {
     async function checkUser() {
@@ -22,7 +25,21 @@ export default function CreateAnnouncement() {
         if (res.status === 401) navigation("/login");
       }
     }
+    async function getAnnouncement() {
+      const res = await fetch(`http://localhost:4000/announcement/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!res.ok) {
+        navigation("/announcements");
+      }
+      const data = await res.json();
+      console.log(data);
+      setAnnouncementData(data);
+    }
     checkUser();
+    getAnnouncement();
   }, []);
 
   useEffect(function () {
@@ -40,7 +57,11 @@ export default function CreateAnnouncement() {
       <div className="container">
         <div className="row">
           <div className="col mt-3">
-            <CreateAnnouncementForm products={products} />
+            <EditAnnouncementForm
+              products={products}
+              announcementData={announcementData}
+              id={id}
+            />
           </div>
         </div>
       </div>
@@ -48,7 +69,7 @@ export default function CreateAnnouncement() {
   );
 }
 
-function CreateAnnouncementForm({ products }) {
+function EditAnnouncementForm({ products, announcementData, id }) {
   const navigation = useNavigate();
   const [pickupDates, setPickupDates] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
@@ -66,14 +87,14 @@ function CreateAnnouncementForm({ products }) {
       available_dates: "",
       product_category: "",
       product: "",
-      photos: "",
       date: "",
       pickup_date: "",
       pickup_hour_1: "",
       pickup_hour_2: "",
     },
     onSubmit: async (values) => {
-      const output = await Create(
+      const output = await Edit(
+        id,
         values.title,
         values.description,
         values.district,
@@ -84,12 +105,46 @@ function CreateAnnouncementForm({ products }) {
         values.available_dates,
         values.product_category,
         values.product,
-        values.photos,
         values.date
       );
       navigation("/my-announcements");
     },
   });
+
+  useEffect(() => {
+    if (announcementData) {
+      const formattedDate = new Date(announcementData.date)
+        .toISOString()
+        .split("T")[0];
+
+      handleCoordinationChange(announcementData.coordinates);
+
+      formik.setValues({
+        title: announcementData.title,
+        description: announcementData.description,
+        district: announcementData.district,
+        city: announcementData.city,
+        street: announcementData.street,
+        number: announcementData.number,
+        coordinates: announcementData.coordinates,
+        available_dates: announcementData.available_dates,
+        product_category: announcementData.product_category.id_product_category,
+        product: announcementData.product.id_product,
+        date: formattedDate,
+        pickup_date: "",
+        pickup_hour_1: "",
+        pickup_hour_2: "",
+      });
+
+      const parsedPickupDates = JSON.parse(
+        announcementData.available_dates
+      ).map((entry) => ({
+        date: entry.date.split(".").reverse().join("-"),
+        hours: entry.hours.map((hour) => hour.replace(".", ":")),
+      }));
+      setPickupDates(parsedPickupDates);
+    }
+  }, [announcementData]);
 
   const handleAddDate = () => {
     if (
@@ -279,41 +334,6 @@ function CreateAnnouncementForm({ products }) {
               </div>
             </div>
 
-            <div className="col-12 mt-3">
-              <div className="img-box p-3">
-                <label className="form-label" htmlFor="photos">
-                  Zdjęcia*
-                </label>
-                <input
-                  id="photos"
-                  name="photos"
-                  type="file"
-                  className="form-control"
-                  onChange={handlePhotosChange}
-                  multiple
-                  // value={formik.values.photos}
-                />
-                <p className="mt-3">
-                  Wybrane zdjęcia:{" "}
-                  {selectedPhotos.length > 0
-                    ? selectedPhotos.map((element, index) => {
-                        return (
-                          <p>
-                            {element}{" "}
-                            <button
-                              className="btn bg-danger"
-                              onClick={() => handleDeleteImage(index)}
-                            >
-                              -
-                            </button>
-                          </p>
-                        );
-                      })
-                    : "Brak zdjęć"}
-                </p>
-              </div>
-            </div>
-
             <div className="col-12">
               <label className="form-label mt-3" htmlFor="date">
                 Data ważności produktu*
@@ -341,7 +361,6 @@ function CreateAnnouncementForm({ products }) {
                       name="pickup_date"
                       type="date"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_date}
                     />
@@ -352,7 +371,6 @@ function CreateAnnouncementForm({ products }) {
                       name="pickup_hour_1"
                       type="time"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_hour_1}
                     />
@@ -363,7 +381,6 @@ function CreateAnnouncementForm({ products }) {
                       name="pickup_hour_2"
                       type="time"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_hour_2}
                     />
@@ -443,7 +460,7 @@ function CreateAnnouncementForm({ products }) {
                 type="submit"
                 className="btn btn-primary mt-4 mb-2 signup-btn"
               >
-                Utwórz ogłoszenie
+                Zatwierdź zmiany
               </button>
             </div>
           </div>
@@ -457,7 +474,8 @@ function CreateAnnouncementForm({ products }) {
   );
 }
 
-async function Create(
+async function Edit(
+  id,
   title,
   description,
   district,
@@ -488,14 +506,17 @@ async function Create(
 
   try {
     const accessToken = getAuthTokenFromCookie();
-    const response = await fetch("http://localhost:4000/announcement/create", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(announcementData),
-    });
+    const response = await fetch(
+      `http://localhost:4000/announcement/edit/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(announcementData),
+      }
+    );
 
     if (!response.ok) {
       // Tutaj uzyskać zwrot od api jeżeli coś nie gra

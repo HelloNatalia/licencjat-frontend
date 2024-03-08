@@ -35,7 +35,7 @@ export default function MyAnnouncements() {
   if (isLoading === true) return <div>Loading ...</div>;
 
   return (
-    <div className="content">
+    <div className="content pb-3">
       <Announcements myAnnouncements={myAnnouncements} />
     </div>
   );
@@ -71,9 +71,12 @@ function Announcement({ announcement }) {
               {announcement.title} &#183; {announcement.date.split("T")[0]}
             </p>
             <div>
-              <Button className=" me-2 answer-request-btn opinion-request-btn">
+              <a
+                href={`edit-announcement/${announcement.id_announcement}`}
+                className="btn btn-primary me-2 answer-request-btn opinion-request-btn"
+              >
                 EDYTUJ
-              </Button>
+              </a>
               <DeleteQuestion id_announcement={announcement.id_announcement} />
             </div>
           </div>
