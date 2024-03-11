@@ -11,6 +11,7 @@ export default function Recipes() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [recipesList, setRecipesList] = useState([]);
+  const [recipeId, setRecipeId] = useState(null);
   const handleAddProduct = (event) => {
     setSelectedProductsId([...selectedProductsId, event.target.value]);
     const selectedOptionData = JSON.parse(
@@ -22,8 +23,14 @@ export default function Recipes() {
     setSelectedProducts(selectedProducts.filter((_, i) => i !== id));
     setSelectedProductsId(selectedProductsId.filter((_, i) => i !== id));
   };
-  const handleShowListView = () => setListView(true);
-  const handleHideListView = () => setListView(false);
+  const handleShowListView = () => {
+    setRecipeId(null);
+    setListView(true);
+  };
+  const handleHideListView = (id) => {
+    setRecipeId(id);
+    setListView(false);
+  };
 
   useEffect(
     function () {
@@ -96,7 +103,10 @@ export default function Recipes() {
           />
         </>
       ) : (
-        <RecipePage handleShowListView={handleShowListView} />
+        <RecipePage
+          handleShowListView={handleShowListView}
+          recipeId={recipeId}
+        />
       )}
     </div>
   );
@@ -202,7 +212,7 @@ function Recipe({ recipe, handleHideListView }) {
   return (
     <div className="col-12 col-lg-6 p-3">
       <div
-        onClick={() => handleHideListView()}
+        onClick={() => handleHideListView(recipe.id_recipe)}
         className="recipe-box d-flex align-items-center p-2"
       >
         <div className="description col-8">
@@ -222,16 +232,50 @@ function Recipe({ recipe, handleHideListView }) {
   );
 }
 
-function RecipePage({ handleShowListView }) {
+function RecipePage({ handleShowListView, recipeId }) {
+  const [recipeProductData, setRecipeProductData] = useState([]);
+  const [recipeData, setRecipeData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(
+    function () {
+      async function fetchRecipeProduct() {
+        setIsLoading(true);
+        const res = await fetch(`http://localhost:4000/recipe/${recipeId}`);
+        const data = await res.json();
+        setRecipeProductData(data);
+        setIsLoading(false);
+      }
+      async function fetchRecipeData() {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://localhost:4000/recipe/only-recipe/${recipeId}`
+        );
+        const data = await res.json();
+        setRecipeData(data);
+        setIsLoading(false);
+      }
+      fetchRecipeProduct();
+      fetchRecipeData();
+      console.log("WYBRANE ID PRZEPISU: ", recipeData);
+    },
+    [recipeId]
+  );
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <>
-      <RecipeButtons handleShowListView={handleShowListView} />
-      <RecipeContent />
+      <RecipeButtons
+        handleShowListView={handleShowListView}
+        recipeData={recipeData}
+      />
+      <RecipeContent recipeProductData={recipeProductData} />
     </>
   );
 }
 
-function RecipeButtons({ handleShowListView }) {
+function RecipeButtons({ handleShowListView, recipeData }) {
   return (
     <>
       <div className="row d-flex mt-3 ms-2">
@@ -245,7 +289,12 @@ function RecipeButtons({ handleShowListView }) {
         </div>
         <div className="col">
           <div className="d-flex">
-            <div className="btn btn-sm category-info px-3">NAZWA KATEGORII</div>
+            <div className="btn btn-sm category-info px-3">
+              {console.log(
+                "ETYKIETA KATEGORII: ",
+                recipeData.recipe_category.name
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -253,7 +302,7 @@ function RecipeButtons({ handleShowListView }) {
   );
 }
 
-function RecipeContent() {
+function RecipeContent(recipeProductData) {
   return (
     <>
       <div className="row p-4">
