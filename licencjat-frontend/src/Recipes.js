@@ -1,28 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Recipes.css";
 import { Form, Button } from "react-bootstrap";
 
-const recipes_array = [
-  { id_recipe: 1, title: "Makaron ze szpinakiem", id_recipe_category: 2 },
-  { id_recipe: 2, title: "Spaghetti", id_recipe_category: 2 },
-  { id_recipe: 3, title: "Naleśniki ze szpiankiem", id_recipe_category: 3 },
-];
-
 export default function Recipes() {
-  const [selectedProducts, setSelectedProducts] = useState([
-    "Makaron",
-    "Cebula",
-    "Mąka",
-  ]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProductsId, setSelectedProductsId] = useState([]);
   const [listView, setListView] = useState(true);
-  const handleAddProduct = (id) => {
-    setSelectedProducts([...selectedProducts, id]);
+  const [categoriesList, setCategoriesList] = useState();
+  const [productsList, setProductsList] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [recipesList, setRecipesList] = useState([]);
+  const handleAddProduct = (event) => {
+    setSelectedProductsId([...selectedProductsId, event.target.value]);
+    const selectedOptionData = JSON.parse(
+      event.target.selectedOptions[0].getAttribute("data-option")
+    );
+    setSelectedProducts([...selectedProducts, selectedOptionData.name]);
   };
   const handleRemoveProduct = (id) => {
     setSelectedProducts(selectedProducts.filter((_, i) => i !== id));
+    setSelectedProductsId(selectedProductsId.filter((_, i) => i !== id));
   };
   const handleShowListView = () => setListView(true);
   const handleHideListView = () => setListView(false);
+
+  useEffect(
+    function () {
+      async function fetchRecipesList() {
+        setIsLoading(true);
+        let body;
+        if (selectedCategory.length !== 0) {
+          body = {
+            id_recipe_category: selectedCategory,
+            products_list: selectedProductsId,
+          };
+        } else body = { products_list: selectedProductsId };
+
+        const res = await fetch(`http://localhost:4000/recipe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        setRecipesList(data);
+        setIsLoading(false);
+      }
+      fetchRecipesList();
+    },
+    [selectedCategory, selectedProductsId]
+  );
+
+  useEffect(function () {
+    async function fetchCategoriesList() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/recipe/recipes-categories`
+      );
+      const data = await res.json();
+      console.log(data);
+      setCategoriesList(data);
+      setIsLoading(false);
+    }
+    async function fetchProductsList() {
+      setIsLoading(true);
+      const res = await fetch(`http://localhost:4000/product/product-list`);
+      const data = await res.json();
+      console.log(data);
+      setProductsList(data);
+      setIsLoading(false);
+    }
+    fetchCategoriesList();
+    fetchProductsList();
+  }, []);
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="content">
       {listView ? (
@@ -31,8 +86,14 @@ export default function Recipes() {
             selectedProducts={selectedProducts}
             handleAddProduct={handleAddProduct}
             handleRemoveProduct={handleRemoveProduct}
+            categoriesList={categoriesList}
+            productsList={productsList}
+            setSelectedCategory={setSelectedCategory}
           />
-          <RecipesList handleHideListView={handleHideListView} />
+          <RecipesList
+            handleHideListView={handleHideListView}
+            recipesList={recipesList}
+          />
         </>
       ) : (
         <RecipePage handleShowListView={handleShowListView} />
@@ -45,22 +106,64 @@ function SearchForms({
   selectedProducts,
   handleAddProduct,
   handleRemoveProduct,
+  categoriesList,
+  productsList,
+  setSelectedCategory,
 }) {
+  const handleRecipeCategoryChange = (event) => {
+    if (event.target.value === "") setSelectedCategory("");
+    else {
+      setSelectedCategory(event.target.value);
+    }
+  };
+
   return (
     <div>
       <div className="row mt-3 mx-2">
         <div className="col-12 col-md-6 col-lg-5 mt-2">
-          <Form.Select name="product_id" className="search-form">
-            <option className="default-product">Wybierz produkty</option>
-            <option>Makaron</option>
-            <option>Chleb</option>
+          <Form.Select
+            name="product_id"
+            className="search-form"
+            onChange={handleAddProduct}
+          >
+            <option value="" className="default-product">
+              Wybierz produkty
+            </option>
+            {productsList && productsList.length > 0
+              ? productsList.map((element) => {
+                  return (
+                    <option
+                      value={element.id_product}
+                      data-option={JSON.stringify({
+                        id: element.id_product,
+                        name: element.name,
+                      })}
+                    >
+                      {element.name}
+                    </option>
+                  );
+                })
+              : ""}
           </Form.Select>
         </div>
         <div className="col-12 col-md-6 col-lg-4 mt-2">
-          <Form.Select name="category_id" className="search-form">
-            <option className="default-category">Kategoria</option>
-            <option>Śniadanie</option>
-            <option>Obiad</option>
+          <Form.Select
+            name="category_id"
+            className="search-form"
+            onChange={handleRecipeCategoryChange}
+          >
+            <option value="" className="default-category">
+              Kategoria
+            </option>
+            {categoriesList && categoriesList.length > 0
+              ? categoriesList.map((element) => {
+                  return (
+                    <option value={element.id_recipe_category}>
+                      {element.name}
+                    </option>
+                  );
+                })
+              : ""}
           </Form.Select>
         </div>
       </div>
@@ -85,10 +188,10 @@ function SearchForms({
   );
 }
 
-function RecipesList({ handleHideListView }) {
+function RecipesList({ handleHideListView, recipesList }) {
   return (
     <div className="row mx-3 mt-4">
-      {recipes_array.map((recipe) => (
+      {recipesList.map((recipe) => (
         <Recipe recipe={recipe} handleHideListView={handleHideListView} />
       ))}
     </div>
@@ -104,7 +207,7 @@ function Recipe({ recipe, handleHideListView }) {
       >
         <div className="description col-8">
           <p className="title">{recipe.title}</p>
-          <p className="area">Brakuje: 0</p>
+          <p className="area">Brakuje: {recipe.missing}</p>
           <p className="date">{recipe.id_recipe_category}</p>
         </div>
         <div className="img-recipe-box col-4 p-2 text-end">
