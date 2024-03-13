@@ -106,6 +106,7 @@ export default function Recipes() {
         <RecipePage
           handleShowListView={handleShowListView}
           recipeId={recipeId}
+          selectedProductsId={selectedProductsId}
         />
       )}
     </div>
@@ -232,10 +233,12 @@ function Recipe({ recipe, handleHideListView }) {
   );
 }
 
-function RecipePage({ handleShowListView, recipeId }) {
+function RecipePage({ handleShowListView, recipeId, selectedProductsId }) {
   const [recipeProductData, setRecipeProductData] = useState([]);
   const [recipeData, setRecipeData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+
+  console.log("SELECTED PRODUCTS: ", selectedProductsId);
 
   useEffect(
     function () {
@@ -270,6 +273,7 @@ function RecipePage({ handleShowListView, recipeId }) {
       <RecipeContent
         recipeProductData={recipeProductData}
         recipeData={recipeData}
+        selectedProductsId={selectedProductsId}
       />
     </>
   );
@@ -299,8 +303,16 @@ function RecipeButtons({ handleShowListView, recipeData }) {
   );
 }
 
-function RecipeContent(recipeProductData, recipeData) {
-  console.log("PRODUCT RECIPE: ", recipeProductData);
+function RecipeContent(recipeProductData, recipeData, selectedProductsId) {
+  const haveProducts = selectedProductsId;
+  const allProducts = [];
+  recipeProductData.recipeProductData.map((element) => {
+    const productId = element.product.id_product;
+    allProducts.push(productId);
+  });
+  console.log("Posiadane: ", haveProducts);
+  console.log("Wszytskie: ", allProducts);
+  // console.log("PRODUCT RECIPE: ", recipeProductData);
   return (
     <>
       <div className="row p-4">
