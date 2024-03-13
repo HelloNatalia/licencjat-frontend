@@ -6,6 +6,7 @@ import AnnouncementPage from "./AnnouncementPage.js";
 import AnnouncementsMap from "./AnnouncementsMap.js";
 import { getDates } from "./AnnouncementsMap.js";
 import SelectComponent from "./selectComponent.js";
+import { useLocation } from "react-router-dom";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
@@ -21,6 +22,15 @@ export default function Announcements() {
   const [mapView, setMapView] = useState(true);
 
   const [mapCenter, setMapCenter] = useState(null);
+
+  const location = useLocation();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const productArgument = searchParams.get("product");
+    if (productArgument && !inputProductId) {
+      setInputProductId(productArgument);
+    }
+  }, []);
 
   const handleMapView = () => {
     setMapView(true);

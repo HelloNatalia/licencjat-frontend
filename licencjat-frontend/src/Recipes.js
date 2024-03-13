@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Recipes.css";
 import { Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export default function Recipes() {
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -53,6 +54,7 @@ export default function Recipes() {
         });
         const data = await res.json();
         setRecipesList(data);
+        console.log("lista: ", recipesList);
         setIsLoading(false);
       }
       fetchRecipesList();
@@ -200,9 +202,12 @@ function SearchForms({
 }
 
 function RecipesList({ handleHideListView, recipesList }) {
+  const sortedRecipesList = [...recipesList].sort(
+    (a, b) => a.missing - b.missing
+  );
   return (
     <div className="row mx-3 mt-4">
-      {recipesList.map((recipe) => (
+      {sortedRecipesList.map((recipe) => (
         <Recipe recipe={recipe} handleHideListView={handleHideListView} />
       ))}
     </div>
@@ -237,8 +242,6 @@ function RecipePage({ handleShowListView, recipeId, selectedProductsId }) {
   const [recipeProductData, setRecipeProductData] = useState([]);
   const [recipeData, setRecipeData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log("SELECTED PRODUCTS: ", selectedProductsId);
 
   useEffect(
     function () {
@@ -303,16 +306,16 @@ function RecipeButtons({ handleShowListView, recipeData }) {
   );
 }
 
-function RecipeContent(recipeProductData, recipeData, selectedProductsId) {
-  const haveProducts = selectedProductsId;
+function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
   const allProducts = [];
-  recipeProductData.recipeProductData.map((element) => {
+  console.log("dane", recipeData);
+  recipeProductData.map((element) => {
     const productId = element.product.id_product;
     allProducts.push(productId);
   });
-  console.log("Posiadane: ", haveProducts);
+  console.log("Posiadane: ", selectedProductsId);
   console.log("Wszytskie: ", allProducts);
-  // console.log("PRODUCT RECIPE: ", recipeProductData);
+
   return (
     <>
       <div className="row p-4">
@@ -327,10 +330,10 @@ function RecipeContent(recipeProductData, recipeData, selectedProductsId) {
         </div>
         <div className="col p-2">
           <div className="white-box p-3">
-            <p className="fs-4">{recipeProductData.recipeData.title}</p>
+            <p className="fs-4">{recipeData.title}</p>
             <ul>
               <table>
-                {recipeProductData.recipeProductData.map((element) => {
+                {recipeProductData.map((element) => {
                   return (
                     <tr>
                       <th>
@@ -339,9 +342,25 @@ function RecipeContent(recipeProductData, recipeData, selectedProductsId) {
                         </li>
                       </th>
                       <th>
-                        <span className="have-info">
-                          <i class="bi bi-check2"></i> posiadasz / x w pobliżu
-                        </span>
+                        {selectedProductsId.includes(
+                          element.product.id_product
+                        ) ? (
+                          <span className="have-info">
+                            <i class="bi bi-check2"></i> posiadasz
+                          </span>
+                        ) : (
+                          <Link
+                            className="text-decoration-none"
+                            to={
+                              "/announcements?product=" +
+                              element.product.id_product
+                            }
+                          >
+                            <span className="not-have-info">
+                              <i class="bi bi-x"></i> x w pobliżu
+                            </span>
+                          </Link>
+                        )}
                       </th>
                     </tr>
                   );
@@ -351,21 +370,10 @@ function RecipeContent(recipeProductData, recipeData, selectedProductsId) {
           </div>
         </div>
       </div>
+
       <div className="row p-4 pt-1">
         <div className="col">
-          <div className="white-box p-4">
-            Lorem ipsum dolor sit amet consectetur. Odio lectus maecenas varius
-            vel at. Egestas metus at nulla massa nulla leo ultrices vulputate.
-            Ornare pellentesque sem viverra orci diam nunc sed pharetra sit.
-            Eget malesuada et facilisis sit nisl duis tortor hendrerit etiam.
-            Curabitur ullamcorper porttitor vulputate euismod maecenas. Varius
-            integer quis tellus pretium. Sit ullamcorper nunc feugiat amet id.
-            Ac semper tellus faucibus cursus et duis. Venenatis quam ultricies
-            etiam egestas elit donec. Eu pellentesque orci vitae pulvinar.
-            Varius amet a pellentesque lacus quisque sapien sit. Curabitur
-            adipiscing faucibus amet accumsan dignissim. In sociis quis maecenas
-            mollis et id morbi. Pretium mauris curabitur ornare auctor.
-          </div>
+          <div className="white-box p-4">{recipeData.text}</div>
         </div>
       </div>
     </>
