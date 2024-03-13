@@ -244,10 +244,8 @@ function RecipePage({ handleShowListView, recipeId }) {
         const res = await fetch(`http://localhost:4000/recipe/${recipeId}`);
         const data = await res.json();
         setRecipeProductData(data);
-        setIsLoading(false);
       }
       async function fetchRecipeData() {
-        setIsLoading(true);
         const res = await fetch(
           `http://localhost:4000/recipe/only-recipe/${recipeId}`
         );
@@ -257,7 +255,6 @@ function RecipePage({ handleShowListView, recipeId }) {
       }
       fetchRecipeProduct();
       fetchRecipeData();
-      console.log("WYBRANE ID PRZEPISU: ", recipeData);
     },
     [recipeId]
   );
@@ -270,7 +267,10 @@ function RecipePage({ handleShowListView, recipeId }) {
         handleShowListView={handleShowListView}
         recipeData={recipeData}
       />
-      <RecipeContent recipeProductData={recipeProductData} />
+      <RecipeContent
+        recipeProductData={recipeProductData}
+        recipeData={recipeData}
+      />
     </>
   );
 }
@@ -290,10 +290,7 @@ function RecipeButtons({ handleShowListView, recipeData }) {
         <div className="col">
           <div className="d-flex">
             <div className="btn btn-sm category-info px-3">
-              {console.log(
-                "ETYKIETA KATEGORII: ",
-                recipeData.recipe_category.name
-              )}
+              {recipeData.recipe_category.name}
             </div>
           </div>
         </div>
@@ -302,7 +299,8 @@ function RecipeButtons({ handleShowListView, recipeData }) {
   );
 }
 
-function RecipeContent(recipeProductData) {
+function RecipeContent(recipeProductData, recipeData) {
+  console.log("PRODUCT RECIPE: ", recipeProductData);
   return (
     <>
       <div className="row p-4">
@@ -317,55 +315,25 @@ function RecipeContent(recipeProductData) {
         </div>
         <div className="col p-2">
           <div className="white-box p-3">
-            <p className="fs-4">Makaron pełnoziarnisty</p>
+            <p className="fs-4">{recipeProductData.recipeData.title}</p>
             <ul>
               <table>
-                <tr>
-                  <th>
-                    <li>
-                      <a
-                        href="#"
-                        className="fs-5 text-decoration-none text-black"
-                      >
-                        Mąka - 400g
-                      </a>
-                    </li>
-                  </th>
-                  <th>
-                    <span className="not-have-info">
-                      <i class="bi bi-x"></i> 1 w pobliżu
-                    </span>
-                  </th>
-                </tr>
-                <tr>
-                  <th>
-                    <li>
-                      <p className="fs-5 mb-0">Masło - 200g</p>
-                    </li>
-                  </th>
-                  <th>
-                    <span className="have-info">
-                      <i class="bi bi-check2"></i> posiadasz
-                    </span>
-                  </th>
-                </tr>
-                <tr>
-                  <th>
-                    <li>
-                      <a
-                        href="#"
-                        className="fs-5 text-decoration-none text-black"
-                      >
-                        jajko - 400g
-                      </a>
-                    </li>
-                  </th>
-                  <th>
-                    <span className="not-have-info">
-                      <i class="bi bi-x"></i> 0 w pobliżu
-                    </span>
-                  </th>
-                </tr>
+                {recipeProductData.recipeProductData.map((element) => {
+                  return (
+                    <tr>
+                      <th>
+                        <li>
+                          <p className="fs-5 mb-0">{element.product.name}</p>
+                        </li>
+                      </th>
+                      <th>
+                        <span className="have-info">
+                          <i class="bi bi-check2"></i> posiadasz / x w pobliżu
+                        </span>
+                      </th>
+                    </tr>
+                  );
+                })}
               </table>
             </ul>
           </div>
