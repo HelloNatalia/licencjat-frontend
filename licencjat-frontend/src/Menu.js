@@ -75,11 +75,13 @@ export default function Menu() {
           <a href="#">
             <img src="user.png" className="mx-2" alt="user" />
 
-            {isLoading
-              ? "KONTO"
-              : userData !== ""
-              ? userData.username
-              : "KONTO"}
+            {isLoading ? (
+              <NavLink to="/login">KONTO</NavLink>
+            ) : userData !== "" ? (
+              <NavLink to="/my-account">{userData.username}</NavLink>
+            ) : (
+              <NavLink to="/login">KONTO</NavLink>
+            )}
           </a>
         </li>
       </ul>

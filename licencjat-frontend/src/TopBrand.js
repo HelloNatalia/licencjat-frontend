@@ -77,7 +77,7 @@ export default function TopBrand() {
               <NavDropdown.Item href="#">coś tam</NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="#">Wskazówki</Nav.Link>
-            <Nav.Link href="#">
+            <Nav.Link href="my-account">
               Konto {userData !== "" ? "(" + userData.username + ")" : ""}
             </Nav.Link>
           </Nav>

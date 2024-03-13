@@ -11,6 +11,7 @@ import Login from "./Login.js";
 import Signup from "./Signup.js";
 import CreateAnnouncement from "./CreateAnnouncement.js";
 import EditAnnouncement from "./EditAnnouncement.js";
+import MyAccount from "./MyAccount.js";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/create-announcement" element={<CreateAnnouncement />} />
           <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
+          <Route path="/my-account" element={<MyAccount />} />
         </Routes>
       </div>
     </Router>
