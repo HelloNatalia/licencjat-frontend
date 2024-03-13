@@ -123,7 +123,10 @@ function MainInfo({ selected_announcement }) {
   return (
     <div className="box main-info justify-content-center py-3">
       <p className="announcement-title">{selected_announcement.title}</p>
-      <div className="d-flex user justify-content-center align-items-center">
+      <a
+        href={`/account?id=${selected_announcement.user.id}`}
+        className="text-decoration-none text-black d-flex user justify-content-center align-items-center"
+      >
         <div className="d-flex align-items-center">
           <img src="user.png" />
           <p className="fw-bold mt-3">{selected_announcement.user.username}</p>
@@ -139,7 +142,7 @@ function MainInfo({ selected_announcement }) {
           </div>
           <p className="ms-1 stars d-none d-sm-block">(15 ocen)</p>
         </div>
-      </div>
+      </a>
     </div>
   );
 }
