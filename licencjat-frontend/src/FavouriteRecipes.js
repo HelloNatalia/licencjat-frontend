@@ -22,7 +22,6 @@ export default function FavouriteRecipes() {
       if (!res.ok) {
         if (res.status === "401") navigation("/login");
       }
-      console.log(data);
       setFavourites(data);
       setIsLoading(false);
     }

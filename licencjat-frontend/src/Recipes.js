@@ -14,6 +14,7 @@ export default function Recipes() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [recipesList, setRecipesList] = useState([]);
   const [recipeId, setRecipeId] = useState(null);
+  const [allRecipesList, setAllRecipesList] = useState([]);
   const handleAddProduct = (event) => {
     setSelectedProductsId([...selectedProductsId, event.target.value]);
     const selectedOptionData = JSON.parse(
@@ -58,9 +59,25 @@ export default function Recipes() {
         console.log("lista: ", recipesList);
         setIsLoading(false);
       }
+
       fetchRecipesList();
     },
     [selectedCategory, selectedProductsId]
+  );
+
+  useEffect(
+    function () {
+      async function fetchAllRecipesList() {
+        setIsLoading(true);
+        const res = await fetch(`http://localhost:4000/recipe/all`);
+        const data = await res.json();
+        setAllRecipesList(data);
+        setIsLoading(false);
+      }
+      if (recipesList.length === 0) fetchAllRecipesList();
+      else setAllRecipesList([]);
+    },
+    [recipesList]
   );
 
   useEffect(function () {
@@ -103,6 +120,7 @@ export default function Recipes() {
           <RecipesList
             handleHideListView={handleHideListView}
             recipesList={recipesList}
+            allRecipesList={allRecipesList}
           />
         </>
       ) : (
@@ -202,15 +220,46 @@ function SearchForms({
   );
 }
 
-function RecipesList({ handleHideListView, recipesList }) {
+function RecipesList({ handleHideListView, recipesList, allRecipesList }) {
   const sortedRecipesList = [...recipesList].sort(
     (a, b) => a.missing - b.missing
   );
+
+  const _toDelete = [];
+  const _allRecipeIds = [];
+  const newAllRecipesList = [];
+  if (allRecipesList.length !== 0) {
+    allRecipesList.map((element) => {
+      if (_allRecipeIds.includes(element.recipe.id_recipe)) {
+        _toDelete.push(element.id_recipe_product);
+      } else _allRecipeIds.push(element.recipe.id_recipe);
+    });
+    if (allRecipesList.length !== 0) {
+      allRecipesList.map((element) => {
+        if (!_toDelete.includes(element.id_recipe_product)) {
+          newAllRecipesList.push(element);
+        }
+      });
+    }
+  }
   return (
     <div className="row mx-3 mt-4">
       {sortedRecipesList.map((recipe) => (
         <Recipe recipe={recipe} handleHideListView={handleHideListView} />
       ))}
+
+      {allRecipesList.length !== 0 ? (
+        <div className="bg-light">
+          {newAllRecipesList.map((element) => (
+            <Recipe
+              recipe={element.recipe}
+              handleHideListView={handleHideListView}
+            />
+          ))}
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
