@@ -5,6 +5,7 @@ import {
   getAuthTokenFromCookie,
   removeAuthTokenCookie,
 } from "./cookies/auth-cookies";
+import EditAccountForm from "./EditAccountForm";
 
 export default function MyAccount() {
   const navigation = useNavigate();
@@ -60,7 +61,7 @@ export default function MyAccount() {
       </p>
       <p>{userData.email}</p>
       <p>{userData.phone_number}</p>
-      <btn className="btn btn-primary">Edytuj dane</btn>
+      <EditAccountForm accountData={userData} />
       <btn className="btn btn-danger" onClick={handleDeleteAccount}>
         Usuń konto
       </btn>
