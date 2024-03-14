@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import "./Recipes.css";
 import { Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function Recipes() {
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -308,13 +309,81 @@ function RecipeButtons({ handleShowListView, recipeData }) {
 
 function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
   const allProducts = [];
-  console.log("dane", recipeData);
+  const [favourite, setFavourite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const accessToken = getAuthTokenFromCookie();
+  const navigation = useNavigate();
+
+  useEffect(function () {
+    async function isFavourite() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/recipe/is-favourite/${recipeData.id_recipe}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === "401") navigation("/login");
+      }
+
+      if (data.is_favourite === true) {
+        setFavourite(true);
+      } else setFavourite(false);
+      setIsLoading(false);
+    }
+    if (accessToken) isFavourite();
+    else setIsLoading(false);
+  }, []);
+
   recipeProductData.map((element) => {
     const productId = element.product.id_product;
     allProducts.push(productId);
   });
   console.log("Posiadane: ", selectedProductsId);
   console.log("Wszytskie: ", allProducts);
+
+  const handleAddFavourite = async () => {
+    if (!accessToken) navigation("/login");
+    const requestData = { id_recipe: recipeData.id_recipe };
+    const res = await fetch(`http://localhost:4000/recipe/add-to-favourite/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(requestData),
+    });
+    if (!res.ok) {
+      if (res.status === "404") navigation("/login");
+    }
+    setFavourite(true);
+  };
+
+  const handleRemoveFavourite = async () => {
+    if (!accessToken) navigation("/login");
+    const requestData = { id_recipe: recipeData.id_recipe };
+    const res = await fetch(
+      `http://localhost:4000/recipe/delete-favourite/${recipeData.id_recipe}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      if (res.status === "404") navigation("/login");
+    }
+    setFavourite(false);
+  };
+
+  if (isLoading) return <div>Loading ...</div>;
 
   return (
     <>
@@ -373,7 +442,45 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
 
       <div className="row p-4 pt-1">
         <div className="col">
-          <div className="white-box p-4">{recipeData.text}</div>
+          <div className="white-box p-4">
+            <div className="mb-2 heart">
+              {favourite ? (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    fill="currentColor"
+                    class="bi bi-heart-fill me-2"
+                    viewBox="0 0 16 16"
+                    onClick={handleRemoveFavourite}
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                    />
+                  </svg>{" "}
+                  Dodano do ulubionych{" "}
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    fill="currentColor"
+                    class="bi bi-heart me-2"
+                    viewBox="0 0 16 16"
+                    onClick={handleAddFavourite}
+                  >
+                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                  </svg>{" "}
+                  Dodaj do ulubionych{" "}
+                </>
+              )}
+            </div>
+            {recipeData.text}
+          </div>
         </div>
       </div>
     </>
