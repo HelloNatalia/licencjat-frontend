@@ -13,6 +13,7 @@ import CreateAnnouncement from "./CreateAnnouncement.js";
 import EditAnnouncement from "./EditAnnouncement.js";
 import MyAccount from "./MyAccount.js";
 import SpecificAccount from "./SpecificAccount.js";
+import FavouriteRecipes from "./FavouriteRecipes.js";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
           <Route path="/my-account" element={<MyAccount />} />
           <Route path="/account" element={<SpecificAccount />} />
+          <Route path="/favourite-recipes" element={<FavouriteRecipes />} />
         </Routes>
       </div>
     </Router>
