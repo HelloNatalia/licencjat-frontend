@@ -14,6 +14,7 @@ import EditAnnouncement from "./EditAnnouncement.js";
 import MyAccount from "./MyAccount.js";
 import SpecificAccount from "./SpecificAccount.js";
 import FavouriteRecipes from "./FavouriteRecipes.js";
+import CreateTempRecipe from "./CreateTempRecipe.js";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/my-account" element={<MyAccount />} />
           <Route path="/account" element={<SpecificAccount />} />
           <Route path="/favourite-recipes" element={<FavouriteRecipes />} />
+          <Route path="/create-recipe" element={<CreateTempRecipe />} />
         </Routes>
       </div>
     </Router>
