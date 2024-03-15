@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { Form } from "react-bootstrap";
+import React from "react";
+import Select from "react-select";
 
 export default function CreateTempRecipe() {
   const navigation = useNavigate();
@@ -25,10 +27,11 @@ export default function CreateTempRecipe() {
 
 function CreateRecipeForm() {
   const [selectedPhotos, setSelectedPhotos] = useState([]);
-  const [categories, setCategories] = useState([
-    { id_recipe_category: "1", name: "przykład" },
-  ]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProductsIds, setSelectedProductsId] = useState([]);
+  const [selectedProductsNames, setSelectedProductsNames] = useState([]);
+  const [productsOptions, setProductsOptions] = useState();
 
   const handlePhotosChange = (event) => {
     const files = event.target.files;
@@ -56,18 +59,59 @@ function CreateRecipeForm() {
     setSelectedPhotos(updatedList);
   };
 
+  const handleAddProductId = (option) => {
+    setSelectedProductsId(...selectedProductsIds, option.value);
+    setSelectedProductsNames(...selectedProductsNames, option.label);
+  };
+
   useEffect(() => {
     formik.setFieldValue("photos", selectedPhotos);
   }, [selectedPhotos]);
 
-  const handleSelectCategory = (event) => {
-    formik.handleChange(event);
-    if (event.target.value) {
-      if (event.target.value !== "") {
-        formik.setFieldValue("id_recipe_category", event.target.value);
+  useEffect(() => {
+    formik.setFieldValue("list_id_products", selectedProductsIds);
+  }, [selectedProductsIds]);
+
+  // const handleSelectCategory = (event) => {
+  //   formik.handleChange(event);
+  //   if (event.target.value) {
+  //     if (event.target.value !== "") {
+  //       formik.setFieldValue("id_recipe_category", event.target.value);
+  //     }
+  //   }
+  // };
+
+  useEffect(function () {
+    async function fetchCategoriesList() {
+      const res = await fetch(
+        `http://localhost:4000/recipe/recipes-categories`
+      );
+      const data = await res.json();
+      const newArray = [];
+      if (data.length !== 0) {
+        data.map((element) => {
+          newArray.push({
+            value: element.id_recipe_category,
+            label: element.name,
+          });
+        });
       }
+      setCategories(newArray);
     }
-  };
+    async function fetchProductsList() {
+      const res = await fetch(`http://localhost:4000/product/product-list`);
+      const data = await res.json();
+      const newArray = [];
+      if (data.length !== 0) {
+        data.map((element) => {
+          newArray.push({ value: element.id_product, label: element.name });
+        });
+      }
+      setProductsOptions(newArray);
+    }
+    fetchCategoriesList();
+    fetchProductsList();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -155,22 +199,23 @@ function CreateRecipeForm() {
         <label className="form-label mt-3" htmlFor="id_recipe_category">
           Kategoria
         </label>
-        <Form.Select
+        <Select
           id="id_recipe_category"
           name="id_recipe_category"
           className=""
-          onChange={handleSelectCategory}
+          // onChange={handleSelectCategory}
+          onChange={formik.handleChange}
           value={formik.values.product}
-        >
-          <option className="default-product" value="">
-            Kategoria
-          </option>
-          {categories.map((element) => {
-            return (
-              <option value={element.id_recipe_category}>{element.name}</option>
-            );
-          })}
-        </Form.Select>
+          options={categories}
+        />
+
+        <Select options={productsOptions} onChange={handleAddProductId} />
+
+        {/* {selectedProductsNames.length !== 0
+          ? selectedProductsNames.map((element) => {
+              <p>{element}</p>;
+            })
+          : ""} */}
 
         <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
           Utwórz przepis
