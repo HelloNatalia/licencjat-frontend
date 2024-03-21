@@ -1,6 +1,8 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./SpecificAccount.css";
 import { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 
 export default function SpecificAccount() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +43,86 @@ export default function SpecificAccount() {
       {idArgument}
       <p>{userData.username}</p>
       <p>{userData.name}</p>
+      <ReportModal userReported={userData.id} />
     </div>
+  );
+}
+
+function ReportModal({ userReported }) {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button className="pickup-btn" variant="primary" onClick={handleShow}>
+        Zgłoś użytkownika
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Zgłoszenie użytkownika</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ReportForm handleClose={handleClose} userReported={userReported} />
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
+
+function ReportForm({ userReported }) {
+  const [reportText, setReportText] = useState();
+
+  const handleChangeText = (event) => {
+    setReportText(event.target.value);
+  };
+
+  const handleSendReport = async () => {
+    const accessToken = getAuthTokenFromCookie();
+    const reportData = {
+      user_report: userReported,
+      text: reportText,
+    };
+    try {
+      const response = await fetch("http://localhost:4000/report/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reportData),
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) return "not found";
+        else throw new Error("Wystąpił błąd");
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+
+  return (
+    <>
+      <label for="report-text" class="form-label">
+        Treść zgłoszenia:
+      </label>
+      <textarea
+        id="report-text"
+        rows="4"
+        cols="50"
+        className="form-control"
+        onChange={handleChangeText}
+        required
+      />
+      <button className="mt-3 btn btn-primary" onClick={handleSendReport}>
+        Wyślij zgłoszenie
+      </button>
+    </>
   );
 }
