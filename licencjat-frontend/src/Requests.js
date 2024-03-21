@@ -4,6 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { getDates } from "./AnnouncementsMap";
+import RatingModal from "./Rating";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
@@ -292,9 +293,10 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
           )}
           {status === "received" && (
             <>
-              <Button className=" me-2 answer-request-btn opinion-request-btn">
-                WYSTAW OPINIĘ UŻYTKOWNIKOWI
-              </Button>
+              <RatingModal
+                userRated={request_user.id}
+                requestId={request.id_request}
+              />
             </>
           )}
           {status === "reviewed" && (
@@ -419,9 +421,10 @@ function SentRequest({ status, announcement, announcement_user, request }) {
           )}
           {status === "received" && (
             <>
-              <Button className=" me-2 answer-request-btn opinion-request-btn">
-                WYSTAW OPINIĘ UŻYTKOWNIKOWI
-              </Button>
+              <RatingModal
+                userRated={announcement_user.id}
+                requestId={request.id_request}
+              />
             </>
           )}
           {status === "reviewed" && (
