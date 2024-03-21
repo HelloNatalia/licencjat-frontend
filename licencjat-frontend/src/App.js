@@ -15,6 +15,7 @@ import MyAccount from "./MyAccount.js";
 import SpecificAccount from "./SpecificAccount.js";
 import FavouriteRecipes from "./FavouriteRecipes.js";
 import CreateTempRecipe from "./CreateTempRecipe.js";
+import MyTemporaryRecipes from "./MyTemporaryRecipes.js";
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
           <Route path="/account" element={<SpecificAccount />} />
           <Route path="/favourite-recipes" element={<FavouriteRecipes />} />
           <Route path="/create-recipe" element={<CreateTempRecipe />} />
+          <Route
+            path="/my-temporary-recipes"
+            element={<MyTemporaryRecipes />}
+          />
         </Routes>
       </div>
     </Router>

@@ -74,7 +74,9 @@ export default function TopBrand() {
               <NavDropdown.Item href="/create-recipe">
                 Dodaj przepis
               </NavDropdown.Item>
-              <NavDropdown.Item href="#">Twoje przepisy</NavDropdown.Item>
+              <NavDropdown.Item href="/my-temporary-recipes">
+                Twoje przepisy wysłane do akceptacji
+              </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/favourite-recipes">
                 Ulubione
