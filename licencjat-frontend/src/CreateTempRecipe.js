@@ -13,8 +13,8 @@ export default function CreateTempRecipe() {
   const accessToken = getAuthTokenFromCookie();
 
   useEffect(() => {
-    if (accessToken !== null) {
-      navigation("/recipes");
+    if (accessToken === null) {
+      navigation("/login");
     }
   }, [accessToken, navigation]);
 
@@ -32,6 +32,8 @@ function CreateRecipeForm() {
   const [selectedProductsIds, setSelectedProductsId] = useState([]);
   const [selectedProductsNames, setSelectedProductsNames] = useState([]);
   const [productsOptions, setProductsOptions] = useState();
+  const [selectedCategory, setSelectedCategory] = useState();
+  const navigation = useNavigate();
 
   const handlePhotosChange = (event) => {
     const files = event.target.files;
@@ -60,8 +62,14 @@ function CreateRecipeForm() {
   };
 
   const handleAddProductId = (option) => {
-    setSelectedProductsId(...selectedProductsIds, option.value);
-    setSelectedProductsNames(...selectedProductsNames, option.label);
+    setSelectedProductsId([...selectedProductsIds, option.value]);
+    setSelectedProductsNames([...selectedProductsNames, option.label]);
+    console.log("lista id: ", selectedProductsIds);
+    console.log("Lista nazw: ", selectedProductsNames);
+  };
+
+  const handleSelectCategory = (option) => {
+    setSelectedCategory(option.value);
   };
 
   useEffect(() => {
@@ -72,14 +80,9 @@ function CreateRecipeForm() {
     formik.setFieldValue("list_id_products", selectedProductsIds);
   }, [selectedProductsIds]);
 
-  // const handleSelectCategory = (event) => {
-  //   formik.handleChange(event);
-  //   if (event.target.value) {
-  //     if (event.target.value !== "") {
-  //       formik.setFieldValue("id_recipe_category", event.target.value);
-  //     }
-  //   }
-  // };
+  useEffect(() => {
+    formik.setFieldValue("id_recipe_category", selectedCategory);
+  }, [selectedCategory]);
 
   useEffect(function () {
     async function fetchCategoriesList() {
@@ -122,13 +125,14 @@ function CreateRecipeForm() {
       list_id_products: "",
     },
     onSubmit: async (values) => {
-      const output = await SignupApi(
+      const output = await CreateRecipe(
         values.title,
         values.text,
         values.photos,
         values.id_recipe_category,
         values.list_id_products
       );
+      if (output) navigation("/recipes");
     },
   });
   //   if (isLoading) return <div className="content">Loading ...</div>;
@@ -200,22 +204,19 @@ function CreateRecipeForm() {
           Kategoria
         </label>
         <Select
-          id="id_recipe_category"
-          name="id_recipe_category"
-          className=""
-          // onChange={handleSelectCategory}
-          onChange={formik.handleChange}
-          value={formik.values.product}
           options={categories}
+          id="id_recipe_category"
+          onChange={handleSelectCategory}
         />
 
         <Select options={productsOptions} onChange={handleAddProductId} />
 
-        {/* {selectedProductsNames.length !== 0
-          ? selectedProductsNames.map((element) => {
-              <p>{element}</p>;
+        {Array.isArray(selectedProductsNames) &&
+        selectedProductsNames.length > 0
+          ? selectedProductsNames.map((element, index) => {
+              return <p key={index}>{element}</p>;
             })
-          : ""} */}
+          : ""}
 
         <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
           Utwórz przepis
@@ -225,34 +226,44 @@ function CreateRecipeForm() {
   );
 }
 
-async function SignupApi(
+async function CreateRecipe(
   title,
   text,
   photos,
   id_recipe_category,
   list_id_products
 ) {
-  const signupData = {};
+  const recipeData = {
+    title,
+    text,
+    photos,
+    id_recipe_category,
+    list_id_products,
+  };
 
-  //   try {
-  //     const response = await fetch("http://localhost:4000/auth/signup", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(signupData),
-  //     });
+  const accessToken = getAuthTokenFromCookie();
 
-  //     if (!response.ok) {
-  //       // Tutaj uzyskać zwrot od api jeżeli coś nie gra
-  //       if (response.status === 409) return "conflict";
-  //       else throw new Error("Wystąpił błąd");
-  //     }
+  try {
+    const response = await fetch(
+      "http://localhost:4000/recipe/create-temporary-recipe",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipeData),
+      }
+    );
 
-  //     // const data = await response.json();
-  //     // return data;
-  //     return true;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
+    if (!response.ok) {
+      // Tutaj uzyskać zwrot od api jeżeli coś nie gra
+      if (response.status === 404) return "not found";
+      else throw new Error("Wystąpił błąd");
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
