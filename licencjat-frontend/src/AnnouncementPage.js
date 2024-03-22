@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { getDates } from "./AnnouncementsMap";
 import RequestModal from "./RequestForm";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import RatingStars from "./RatingStars";
 
 export default function AnnouncementPage({ handleBack, id }) {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);
@@ -132,16 +133,7 @@ function MainInfo({ selected_announcement }) {
           <p className="fw-bold mt-3">{selected_announcement.user.username}</p>
         </div>
 
-        <div className="d-flex mt-3 ms-3">
-          <div className="mb-3">
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-          </div>
-          <p className="ms-1 stars d-none d-sm-block">(15 ocen)</p>
-        </div>
+        <RatingStars userId={selected_announcement.user.id} />
       </a>
     </div>
   );

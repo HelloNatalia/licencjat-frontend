@@ -160,9 +160,38 @@ function SentRequests() {
 
 function ReceivedRequest({ status, announcement, request_user, request }) {
   const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const [canRate, setCanRate] = useState(true);
+
+  useEffect(function () {
+    async function checkIfCanRate() {
+      const postData = { user_to_rate: request_user.id };
+      const res = await fetch(
+        `http://localhost:4000/rating/check-if-can-rate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      console.log("Zwrócono: ", data);
+      setCanRate(data.can_rate);
+      setIsLoading(false);
+    }
+    checkIfCanRate();
+  }, []);
+
   const handleChangeStatus = async (type) => {
-    const accessToken = getAuthTokenFromCookie();
     const status = { status: type };
+
     const res = await fetch(
       `http://localhost:4000/request/change-status/${request.id_request}`,
       {
@@ -235,6 +264,8 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
       break;
   }
 
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
@@ -291,12 +322,19 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
               </Button>
             </>
           )}
-          {status === "received" && (
+          {status === "received" && canRate === true && (
             <>
               <RatingModal
                 userRated={request_user.id}
                 requestId={request.id_request}
               />
+            </>
+          )}
+          {status === "received" && canRate === false && (
+            <>
+              <Button className=" me-2 answer-request-btn reviewed-request-btn">
+                WYSTAWIONO OPINIĘ
+              </Button>
             </>
           )}
           {status === "reviewed" && (
@@ -317,8 +355,37 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
 
 function SentRequest({ status, announcement, announcement_user, request }) {
   const navigation = useNavigate();
+
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const [canRate, setCanRate] = useState(true);
+
+  useEffect(function () {
+    async function checkIfCanRate() {
+      const postData = { user_to_rate: announcement_user.id };
+      const res = await fetch(
+        `http://localhost:4000/rating/check-if-can-rate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      console.log("Zwrócono: ", data);
+      setCanRate(data.can_rate);
+      setIsLoading(false);
+    }
+    checkIfCanRate();
+  }, []);
+
   const handleDelete = async () => {
-    const accessToken = getAuthTokenFromCookie();
     const res = await fetch(
       `http://localhost:4000/request/${request.id_request}`,
       {
@@ -368,6 +435,8 @@ function SentRequest({ status, announcement, announcement_user, request }) {
   }
 
   const date = getDates(announcement)[1];
+
+  if (isLoading) return <div>Loading ...</div>;
 
   return (
     <div className={"request-box d-flex"}>
@@ -419,12 +488,19 @@ function SentRequest({ status, announcement, announcement_user, request }) {
               </Button>
             </>
           )}
-          {status === "received" && (
+          {status === "received" && canRate === true && (
             <>
               <RatingModal
                 userRated={announcement_user.id}
                 requestId={request.id_request}
               />
+            </>
+          )}
+          {status === "received" && canRate === false && (
+            <>
+              <Button className=" me-2 answer-request-btn reviewed-request-btn">
+                WYSTAWIONO OPINIĘ
+              </Button>
             </>
           )}
           {status === "reviewed" && (

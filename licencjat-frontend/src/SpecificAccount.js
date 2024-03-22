@@ -44,6 +44,7 @@ export default function SpecificAccount() {
       <p>{userData.username}</p>
       <p>{userData.name}</p>
       <ReportModal userReported={userData.id} />
+      <Ratings userId={userData.id} />
     </div>
   );
 }
@@ -124,5 +125,37 @@ function ReportForm({ userReported }) {
         Wyślij zgłoszenie
       </button>
     </>
+  );
+}
+
+function Ratings({ userId }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [ratings, setRatings] = useState([]);
+
+  useEffect(function () {
+    async function fetchUserRatings() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/rating/user-ratings/${userId}`
+      );
+      const data = await res.json();
+      setRatings(data);
+      setIsLoading(false);
+    }
+    fetchUserRatings();
+  }, []);
+
+  return (
+    <div className="bg-light">
+      <p>Opinie</p>
+      {ratings.map((element) => {
+        return (
+          <div>
+            <p>{element.score}</p>
+            <p>{element.text}</p>
+          </div>
+        );
+      })}
+    </div>
   );
 }
