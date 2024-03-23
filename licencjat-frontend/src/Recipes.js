@@ -436,8 +436,31 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
     setFavourite(false);
   };
 
+  useEffect(function () {
+    async function createProductsList() {
+      setIsLoading(true);
+      const newArray = [];
+      for (const element of recipeProductData) {
+        let text;
+        if (!selectedProductsId.includes(element.product.id_product)) {
+          text = await getProductsNearbyText(element.product.id_product);
+        } else {
+          text = "posiadasz";
+        }
+        newArray.push({
+          name: element.product.name,
+          id: element.product.id_product,
+          text: text,
+        });
+      }
+      setProductsNearby(newArray);
+      setIsLoading(false);
+    }
+
+    createProductsList();
+  }, []);
+
   const getProductsNearbyText = async (id) => {
-    console.log("Wyszukuje w pobliżu...");
     const getNearby = async (city, id) => {
       const resCount = await fetch(
         `http://localhost:4000/announcement/get-products-nearby?id=${id}&city=${city}`
@@ -448,6 +471,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
       }
 
       const dataCount = await resCount.json();
+      console.log(`${dataCount} w mieście ${city}`);
       return `${dataCount} w mieście ${city}`;
     };
 
@@ -465,12 +489,14 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
       );
 
       if (!res.ok) {
-        throw new Error("Błąd w pobraniu danych");
+        throw new Error(
+          "Nie posiadasz (Błąd w pobraniu danych w celu wyświetlenia ilości produktów w okolicy)"
+        );
       }
 
       const data = await res.json();
       cityName = data.city;
-      console.log("miasto zal użytkownika: ", cityName);
+      return getNearby(cityName, id);
     } catch (error) {
       // jeżeli nie udało się pobrać miasta użytkownika
       loggedIn = false;
@@ -484,114 +510,28 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
         const longitude = position.coords.longitude;
 
         const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+        console.log("DANE LOKALIZACJI: ", latitude, longitude);
+
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const timeout = 3000;
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+        }, timeout);
 
         try {
-          const response = await fetch(apiUrl);
+          const response = await fetch(apiUrl, { signal });
           const data = await response.json();
           cityName = data.address.city;
         } catch (error) {
-          return "Błąd";
+          return "Nie posiadasz (Błąd podczas pobrania ilości dostępnych w twoim meiście produktów)";
         }
       } else {
-        return "błąd z pobiedaniem lokalizacji";
+        return "Nie posiadasz (Błąd z pobiedaniem lokalizacji w celu wyświetlenia ilości produktów w pobliżu)";
       }
     }
     return getNearby(cityName, id);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const newArray = [];
-      recipeProductData.map(async (element) => {
-        if (selectedProductsId.includes(element.product.id_product)) {
-          newArray.push({
-            name: element.product.name,
-            id: element.product.id_product,
-            text: "posiadasz",
-          });
-        } else {
-          const text = await getProductsNearbyText(element.product.id_product);
-          newArray.push({
-            name: element.product.name,
-            id: element.product.id_product,
-            text: text,
-          });
-        }
-      });
-      setProductsNearby(newArray);
-    };
-
-    fetchData();
-  }, [recipeProductData]);
-
-  // const [isFound, setIsFound] = useState(false);
-  // const checkNearby = async (id) => {
-  //   setIsFound(false);
-  //   let LoggedIn = false;
-  //   const res = await fetch(`http://localhost:4000/address/get-user-address`, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   });
-  //   if (!res.ok) {
-  //     if (res.status === 401) LoggedIn = false;
-  //     else if (res.status === "404") LoggedIn = false;
-  //   } else {
-  //     LoggedIn = true;
-  //   }
-  //   let cityName = "";
-  //   if (LoggedIn) {
-  //     const data = await res.json();
-  //     cityName = data;
-  //     setIsFound(true);
-  //   } else {
-  //     // wyszukanie nazwy miasta wg znalezionej lokalizacji
-
-  //     // Wyszukanie lokalizacji:
-  //     if (navigator.geolocation) {
-  //       navigator.geolocation.getCurrentPosition(async function (position) {
-  //         const latitude = position.coords.latitude;
-  //         const longitude = position.coords.longitude;
-
-  //         const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-
-  //         fetch(apiUrl)
-  //           .then((response) => response.json())
-  //           .then((data) => {
-  //             cityName = data.address.city;
-  //             setIsFound(true);
-  //           })
-  //           .catch((error) => {
-  //             setIsFound(true);
-  //             return [0, "Błąd w pobraniu danych"];
-  //           });
-  //       });
-  //     } else {
-  //       setIsFound(true);
-  //       return [0, "Błąd w pobraniu danych"];
-  //     }
-  //   }
-
-  //   // Szukanie w announcement w miescie city z product id = id
-  //   console.log("ZNALEZIONE MIASTO!: ", cityName);
-  //   if (isFound === true) {
-  //     const resCount = await fetch(
-  //       `http://localhost:4000/announcement/get-products-nearby?id=${id}&city=${city}`
-  //     );
-  //     console.log(
-  //       `http://localhost:4000/announcement/get-products-nearby?id=${id}&city=${city}`
-  //     );
-  //     if (!resCount.ok) {
-  //       if (res.status === "404") {
-  //         return [0, "Błąd w pobraniu danych"];
-  //       }
-
-  //       const dataCount = await resCount.json();
-  //       console.log("W pobliżu:::::: ", dataCount);
-  //       return [dataCount, `w mieście ${city}`];
-  //     }
-  //   }
-  // };
 
   if (isLoading) return <div>Loading ...</div>;
 
@@ -612,7 +552,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
             <p className="fs-4">{recipeData.title}</p>
             <ul>
               <table>
-                {productsNearby.map(async (element) => {
+                {productsNearby.map((element) => {
                   return (
                     <tr>
                       <th>
@@ -636,16 +576,6 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
                               </span>
                             </Link>
                           </>
-                          //   className="text-decoration-none"
-                          //   to={
-                          //     "/announcements?product=" +
-                          //     element.product.id_product
-                          //   }
-                          // >
-                          //   <span className="not-have-info">
-                          //     <i class="bi bi-x"></i> x w pobliżu
-                          //   </span>
-                          // </Link>
                         )}
                       </th>
                     </tr>
