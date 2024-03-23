@@ -58,11 +58,11 @@ export default function AnnouncementsMap({
           />
           {announcements_aray.map((element) => {
             const coordinatesArray = element.coordinates.split(",");
-            console.log("STare: " + coordinatesArray);
-            console.log("NOWE: " + element.coordinates);
             return (
               <Marker
-                icon={CategoryMarker(element.id_product_category)}
+                icon={CategoryMarker(
+                  element.product_category.id_product_category
+                )}
                 position={coordinatesArray}
                 eventHandlers={{
                   click: (e) => {
