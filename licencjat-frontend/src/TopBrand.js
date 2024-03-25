@@ -83,6 +83,11 @@ export default function TopBrand() {
               </NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="#">Wskazówki</Nav.Link>
+            {userData !== "" && userData.roles.includes("admin") ? (
+              <Nav.Link href="/admin">Panel zarządzania</Nav.Link>
+            ) : (
+              ""
+            )}
             <Nav.Link href="my-account">
               Konto {userData !== "" ? "(" + userData.username + ")" : ""}
             </Nav.Link>

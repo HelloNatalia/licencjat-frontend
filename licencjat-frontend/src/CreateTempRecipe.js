@@ -62,14 +62,23 @@ function CreateRecipeForm() {
   };
 
   const handleAddProductId = (option) => {
-    setSelectedProductsId([...selectedProductsIds, option.value]);
-    setSelectedProductsNames([...selectedProductsNames, option.label]);
-    console.log("lista id: ", selectedProductsIds);
-    console.log("Lista nazw: ", selectedProductsNames);
+    if (!selectedProductsIds.includes(option.value)) {
+      setSelectedProductsId([...selectedProductsIds, option.value]);
+      setSelectedProductsNames([...selectedProductsNames, option.label]);
+    }
   };
 
   const handleSelectCategory = (option) => {
     setSelectedCategory(option.value);
+  };
+
+  const handleDeleteProduct = (index) => {
+    const updateListId = [...selectedProductsIds];
+    const updateListName = [...selectedProductsNames];
+    updateListId.splice(index, 1);
+    updateListName.splice(index, 1);
+    setSelectedProductsId(updateListId);
+    setSelectedProductsNames(updateListName);
   };
 
   useEffect(() => {
@@ -138,91 +147,123 @@ function CreateRecipeForm() {
   //   if (isLoading) return <div className="content">Loading ...</div>;
 
   return (
-    <>
-      <p className="fs-4 mb-1">Tworzenie przepisu</p>
-      <form onSubmit={formik.handleSubmit}>
-        <label className="form-label mt-3" htmlFor="title">
-          Tytuł
-        </label>
-        <input
-          id="title"
-          name="title"
-          type="text"
-          className="form-control"
-          required="required"
-          onChange={formik.handleChange}
-          value={formik.values.title}
-        />
-
-        <label className="form-label mt-3" htmlFor="text">
-          Przepis
-        </label>
-        <input
-          id="text"
-          name="text"
-          type="text"
-          className="form-control"
-          required="required"
-          onChange={formik.handleChange}
-          value={formik.values.text}
-        />
-
-        <div className="img-box p-3">
-          <label className="form-label" htmlFor="photos">
-            Zdjęcia*
+    <div className="p-3">
+      <div className="container form-box p-2 px-3">
+        <p className="fs-4 mb-1">Tworzenie przepisu</p>
+        <form onSubmit={formik.handleSubmit}>
+          <label className="form-label mt-3" htmlFor="title">
+            Tytuł
           </label>
           <input
-            id="photos"
-            name="photos"
-            type="file"
+            id="title"
+            name="title"
+            type="text"
             className="form-control"
-            onChange={handlePhotosChange}
-            multiple
-            // value={formik.values.photos}
+            required="required"
+            onChange={formik.handleChange}
+            value={formik.values.title}
           />
-          <p className="mt-3">
-            Wybrane zdjęcia:{" "}
-            {selectedPhotos.length > 0
-              ? selectedPhotos.map((element, index) => {
-                  return (
-                    <p>
-                      {element}{" "}
-                      <button
-                        className="btn bg-danger"
-                        onClick={() => handleDeleteImage(index)}
-                      >
-                        -
-                      </button>
-                    </p>
-                  );
-                })
-              : "Brak zdjęć"}
-          </p>
-        </div>
 
-        <label className="form-label mt-3" htmlFor="id_recipe_category">
-          Kategoria
-        </label>
-        <Select
-          options={categories}
-          id="id_recipe_category"
-          onChange={handleSelectCategory}
-        />
+          <label className="form-label mt-3" htmlFor="text">
+            Przepis
+          </label>
+          <textarea
+            id="text"
+            name="text"
+            type="text"
+            rows="5"
+            className="form-control"
+            required="required"
+            onChange={formik.handleChange}
+            value={formik.values.text}
+          />
 
-        <Select options={productsOptions} onChange={handleAddProductId} />
+          <div className="img-box p-3 mt-4">
+            <label className="form-label" htmlFor="photos">
+              Zdjęcia*
+            </label>
+            <input
+              id="photos"
+              name="photos"
+              type="file"
+              className="form-control"
+              onChange={handlePhotosChange}
+              multiple
+              // value={formik.values.photos}
+            />
+            <p className="mt-3">
+              Wybrane zdjęcia:{" "}
+              {selectedPhotos.length > 0
+                ? selectedPhotos.map((element, index) => {
+                    return (
+                      <p>
+                        {element}{" "}
+                        <button
+                          className="btn bg-danger"
+                          onClick={() => handleDeleteImage(index)}
+                        >
+                          -
+                        </button>
+                      </p>
+                    );
+                  })
+                : "Brak zdjęć"}
+            </p>
+          </div>
 
-        {Array.isArray(selectedProductsNames) &&
-        selectedProductsNames.length > 0
-          ? selectedProductsNames.map((element, index) => {
-              return <p key={index}>{element}</p>;
-            })
-          : ""}
+          <label className="form-label mt-3" htmlFor="id_recipe_category">
+            Kategoria
+          </label>
+          <Select
+            options={categories}
+            id="id_recipe_category"
+            onChange={handleSelectCategory}
+            placeholder="Wybierz ..."
+          />
 
-        <button type="submit" className="btn btn-primary mt-4 mb-2 signup-btn">
-          Utwórz przepis
-        </button>
-      </form>
-    </>
+          <div className="products-box p-3 mt-4">
+            <label className="form-label mt-1" htmlFor="id_products">
+              Produkty
+            </label>
+            <Select
+              options={productsOptions}
+              onChange={handleAddProductId}
+              id="id_products"
+              placeholder="Wybierz ..."
+            />
+            <table className="product-table mt-2">
+              {Array.isArray(selectedProductsNames) &&
+              selectedProductsNames.length > 0
+                ? selectedProductsNames.map((element, index) => {
+                    return (
+                      <tr className="">
+                        <td className="px-2 py-1" key={index}>
+                          {element}
+                        </td>
+                        <td className="px-2 py-1">
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteProduct(index)}
+                          >
+                            -
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                : ""}
+            </table>
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary mt-4 mb-2 signup-btn"
+          >
+            Utwórz przepis
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 

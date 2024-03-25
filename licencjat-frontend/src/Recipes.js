@@ -248,18 +248,14 @@ function RecipesList({ handleHideListView, recipesList, allRecipesList }) {
         <Recipe recipe={recipe} handleHideListView={handleHideListView} />
       ))}
 
-      {allRecipesList.length !== 0 ? (
-        <div className="bg-light">
-          {newAllRecipesList.map((element) => (
+      {allRecipesList.length !== 0
+        ? newAllRecipesList.map((element) => (
             <Recipe
               recipe={element.recipe}
               handleHideListView={handleHideListView}
             />
-          ))}
-        </div>
-      ) : (
-        ""
-      )}
+          ))
+        : ""}
     </div>
   );
 }
@@ -273,7 +269,17 @@ function Recipe({ recipe, handleHideListView }) {
       >
         <div className="description col-8">
           <p className="title">{recipe.title}</p>
-          <p className="area">Brakuje: {recipe.missing}</p>
+          {recipe.missing ? (
+            <p className="area">
+              Brakuje: <span className="text-secondary"> {recipe.missing}</span>
+            </p>
+          ) : (
+            <p className="area">
+              Brakuje:{" "}
+              <span className="text-secondary"> Nie wybrano produktów</span>
+            </p>
+          )}
+
           <p className="date">{recipe.id_recipe_category}</p>
         </div>
         <div className="img-recipe-box col-4 p-2 text-end">

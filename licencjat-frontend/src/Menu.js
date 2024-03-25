@@ -7,6 +7,7 @@ export default function Menu() {
   const accessToken = getAuthTokenFromCookie();
   const [userData, setUserData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showRecipes, setShowRecipes] = useState(false);
 
   useEffect(
     function () {
@@ -62,10 +63,43 @@ export default function Menu() {
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
-          <NavLink to="/recipes" activeClassName="active">
-            PRZEPISY
+          <NavLink
+            to="/recipes"
+            activeClassName="active"
+            onClick={() => setShowRecipes(!showRecipes)}
+          >
+            {!showRecipes ? (
+              <i class="bi bi-caret-down-fill"></i>
+            ) : (
+              <i class="bi bi-caret-up-fill"></i>
+            )}
+            &nbsp;PRZEPISY
           </NavLink>
+
+          {/* Dodaj, twoje przepisy, ulubione */}
         </li>
+        {showRecipes ? (
+          <>
+            <li>
+              <NavLink to="/create-recipe" activeClassName="active">
+                DODAJ
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/my-temporary-recipes" activeClassName="active">
+                MOJE PRZEPISY
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/favourite-recipes" activeClassName="active">
+                ULUBIONE
+              </NavLink>
+            </li>
+            <hr className="mx-3 mb-1 sidebar-bottom sidebar-divider" />
+          </>
+        ) : (
+          ""
+        )}
         <li>
           <a href="#">WSKAZÓWKI</a>
         </li>
