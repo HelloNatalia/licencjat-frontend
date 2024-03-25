@@ -63,15 +63,17 @@ export default function Menu() {
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <li>
-          <NavLink
-            to="/recipes"
-            activeClassName="active"
-            onClick={() => setShowRecipes(!showRecipes)}
-          >
+          <NavLink to="/recipes" activeClassName="active">
             {!showRecipes ? (
-              <i class="bi bi-caret-down-fill"></i>
+              <i
+                class="bi bi-caret-down-fill"
+                onClick={() => setShowRecipes(!showRecipes)}
+              ></i>
             ) : (
-              <i class="bi bi-caret-up-fill"></i>
+              <i
+                class="bi bi-caret-up-fill"
+                onClick={() => setShowRecipes(!showRecipes)}
+              ></i>
             )}
             &nbsp;PRZEPISY
           </NavLink>
@@ -95,7 +97,7 @@ export default function Menu() {
                 ULUBIONE
               </NavLink>
             </li>
-            <hr className="mx-3 mb-1 sidebar-bottom sidebar-divider" />
+            <hr className="mx-3 my-1 sidebar-divider" />
           </>
         ) : (
           ""

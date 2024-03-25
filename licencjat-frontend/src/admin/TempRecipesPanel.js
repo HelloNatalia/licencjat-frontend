@@ -42,9 +42,15 @@ function TempRecipes() {
 
   return (
     <>
-      {recipes.map((element) => {
-        return <Recipe id={element.id_temporary_recipe} recipeData={element} />;
-      })}
+      {recipes.length === 0 ? (
+        <p>Brak nowych przepisów</p>
+      ) : (
+        recipes.map((element) => {
+          return (
+            <Recipe id={element.id_temporary_recipe} recipeData={element} />
+          );
+        })
+      )}
     </>
   );
 }
