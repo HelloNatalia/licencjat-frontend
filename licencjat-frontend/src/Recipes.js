@@ -155,7 +155,7 @@ function SearchForms({
         <div className="col-12 col-md-6 col-lg-5 mt-2">
           <Form.Select
             name="product_id"
-            className="search-form"
+            className="search-form ms-2"
             onChange={handleAddProduct}
           >
             <option value="" className="default-product">

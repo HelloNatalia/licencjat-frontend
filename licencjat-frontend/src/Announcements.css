@@ -1,11 +1,17 @@
 .search-form {
-  border-radius: 20px !important;
+  border-radius: 5px !important;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+  border: 0.5px solid rgb(226, 226, 226) !important;
+  height: 40px;
+}
+
+.form-map-filter .css-13cymwt-control {
+  border-style: none !important;
 }
 
 .select-react-container {
-  z-index: 2;
+  /* z-index: 2; */
 }
 
 .ss-13cymwt-control {

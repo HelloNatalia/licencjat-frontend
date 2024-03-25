@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import parseXML from "./XMLparse";
 
-const SelectComponent = ({ setMapCenter }) => {
+const SelectComponent = ({ setMapCenter, setInputCityName }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [options, setOptions] = useState([
     { value: "x", label: "Twoja lokalizacja" },
@@ -14,8 +14,10 @@ const SelectComponent = ({ setMapCenter }) => {
     setSelectedOption(option);
     if (option.value === "x") {
       setMapCenter(null);
+      setInputCityName("");
     } else {
       setMapCenter(option);
+      setInputCityName(option.label);
     }
   };
 
@@ -66,6 +68,7 @@ const SelectComponent = ({ setMapCenter }) => {
         isLoading={isLoading}
         loadingMessage={() => "Wczytywanie..."}
         className="search-form select-react-container"
+        placeholder="Miasto"
       />
     </div>
   );
