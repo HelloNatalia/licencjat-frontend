@@ -69,6 +69,15 @@ export default function Menu() {
         <li>
           <a href="#">WSKAZÓWKI</a>
         </li>
+        <li>
+          {!isLoading &&
+            userData !== "" &&
+            userData.roles.includes("admin") && (
+              <NavLink to="/admin" activeClassName="active">
+                PANEL ZARZĄDZANIA
+              </NavLink>
+            )}
+        </li>
         <hr className="mx-3 my-1 sidebar-divider" />
         <hr className="mx-3 mb-1 sidebar-bottom sidebar-divider" />
         <li className=" mb-2">

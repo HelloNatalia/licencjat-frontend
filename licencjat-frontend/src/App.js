@@ -16,6 +16,11 @@ import SpecificAccount from "./SpecificAccount.js";
 import FavouriteRecipes from "./FavouriteRecipes.js";
 import CreateTempRecipe from "./CreateTempRecipe.js";
 import MyTemporaryRecipes from "./MyTemporaryRecipes.js";
+import Admin from "./admin/Admin.js";
+import RecipesPanel from "./admin/RecipesPanel.js";
+import TempRecipesPanel from "./admin/TempRecipesPanel.js";
+import CreateRecipe from "./admin/CreateRecipe.js";
+import EditRecipe from "./admin/EditRecipe.js";
 
 function App() {
   return (
@@ -41,6 +46,11 @@ function App() {
           <Route path="/account" element={<SpecificAccount />} />
           <Route path="/favourite-recipes" element={<FavouriteRecipes />} />
           <Route path="/create-recipe" element={<CreateTempRecipe />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/recipes-panel" element={<RecipesPanel />} />
+          <Route path="/temp-recipes-panel" element={<TempRecipesPanel />} />
+          <Route path="/add-recipe" element={<CreateRecipe />} />
+          <Route path="/edit-recipe/:id" element={<EditRecipe />} />
           <Route
             path="/my-temporary-recipes"
             element={<MyTemporaryRecipes />}
