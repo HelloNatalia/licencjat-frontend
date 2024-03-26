@@ -84,7 +84,7 @@ function ReceivedRequests() {
 
   return (
     <div className="row mx-3">
-      <div className="col-12 mt-3">
+      {/* <div className="col-12 mt-3">
         <ReceivedMessage
           message={
             <span>
@@ -93,7 +93,7 @@ function ReceivedRequests() {
             </span>
           }
         />
-      </div>
+      </div> */}
 
       {receivedRequests.map((element) => {
         const announcement = element.announcement;

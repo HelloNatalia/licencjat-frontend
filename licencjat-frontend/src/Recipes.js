@@ -3,6 +3,7 @@ import "./Recipes.css";
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import Select from "react-select";
 
 export default function Recipes() {
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -15,12 +16,11 @@ export default function Recipes() {
   const [recipesList, setRecipesList] = useState([]);
   const [recipeId, setRecipeId] = useState(null);
   const [allRecipesList, setAllRecipesList] = useState([]);
-  const handleAddProduct = (event) => {
-    setSelectedProductsId([...selectedProductsId, event.target.value]);
-    const selectedOptionData = JSON.parse(
-      event.target.selectedOptions[0].getAttribute("data-option")
-    );
-    setSelectedProducts([...selectedProducts, selectedOptionData.name]);
+  const handleAddProduct = (option) => {
+    if (!selectedProductsId.includes(option.value)) {
+      setSelectedProductsId([...selectedProductsId, option.value]);
+      setSelectedProducts([...selectedProducts, option.label]);
+    }
   };
   const handleRemoveProduct = (id) => {
     setSelectedProducts(selectedProducts.filter((_, i) => i !== id));
@@ -40,11 +40,12 @@ export default function Recipes() {
       async function fetchRecipesList() {
         setIsLoading(true);
         let body;
-        if (selectedCategory.length !== 0) {
+        if (selectedCategory && selectedCategory.length !== 0) {
           body = {
             id_recipe_category: selectedCategory,
             products_list: selectedProductsId,
           };
+          console.log("BODY: ", body);
         } else body = { products_list: selectedProductsId };
 
         const res = await fetch(`http://localhost:4000/recipe`, {
@@ -64,17 +65,19 @@ export default function Recipes() {
     },
     [selectedCategory, selectedProductsId]
   );
-
   useEffect(
     function () {
       async function fetchAllRecipesList() {
         setIsLoading(true);
-        const res = await fetch(`http://localhost:4000/recipe/all`);
+        const res = await fetch(
+          `http://localhost:4000/recipe/all?id_recipe_category=${selectedCategory}`
+        );
         const data = await res.json();
         setAllRecipesList(data);
         setIsLoading(false);
       }
-      if (recipesList.length === 0) fetchAllRecipesList();
+      if (recipesList.length === 0 && selectedProductsId.length === 0)
+        fetchAllRecipesList();
       else setAllRecipesList([]);
     },
     [recipesList]
@@ -95,8 +98,12 @@ export default function Recipes() {
       setIsLoading(true);
       const res = await fetch(`http://localhost:4000/product/product-list`);
       const data = await res.json();
-      console.log(data);
-      setProductsList(data);
+      // console.log(data);
+      const newArray = [];
+      data.map((element) => {
+        newArray.push({ value: element.id_product, label: element.name });
+      });
+      setProductsList(newArray);
       setIsLoading(false);
     }
     fetchCategoriesList();
@@ -121,6 +128,7 @@ export default function Recipes() {
             handleHideListView={handleHideListView}
             recipesList={recipesList}
             allRecipesList={allRecipesList}
+            selectedProducts={selectedProducts}
           />
         </>
       ) : (
@@ -142,41 +150,28 @@ function SearchForms({
   productsList,
   setSelectedCategory,
 }) {
-  const handleRecipeCategoryChange = (event) => {
-    if (event.target.value === "") setSelectedCategory("");
+  const handleRecipeCategoryChange = (option) => {
+    if (option.target.value === "") setSelectedCategory("");
     else {
-      setSelectedCategory(event.target.value);
+      setSelectedCategory(option.target.value);
     }
+  };
+
+  const handleRefreshPage = () => {
+    window.location.reload();
   };
 
   return (
     <div>
       <div className="row mt-3 mx-2">
         <div className="col-12 col-md-6 col-lg-5 mt-2">
-          <Form.Select
-            name="product_id"
-            className="search-form ms-2"
+          <Select
+            options={productsList}
             onChange={handleAddProduct}
-          >
-            <option value="" className="default-product">
-              Wybierz produkty
-            </option>
-            {productsList && productsList.length > 0
-              ? productsList.map((element) => {
-                  return (
-                    <option
-                      value={element.id_product}
-                      data-option={JSON.stringify({
-                        id: element.id_product,
-                        name: element.name,
-                      })}
-                    >
-                      {element.name}
-                    </option>
-                  );
-                })
-              : ""}
-          </Form.Select>
+            className="select-react-container"
+            id="id_products"
+            placeholder="Produkt"
+          />
         </div>
         <div className="col-12 col-md-6 col-lg-4 mt-2">
           <Form.Select
@@ -197,6 +192,11 @@ function SearchForms({
                 })
               : ""}
           </Form.Select>
+        </div>
+        <div className="col">
+          <button className="btn btn-danger mt-2" onClick={handleRefreshPage}>
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
       </div>
       {selectedProducts.length !== 0 && (
@@ -220,7 +220,12 @@ function SearchForms({
   );
 }
 
-function RecipesList({ handleHideListView, recipesList, allRecipesList }) {
+function RecipesList({
+  handleHideListView,
+  recipesList,
+  allRecipesList,
+  selectedProducts,
+}) {
   const sortedRecipesList = [...recipesList].sort(
     (a, b) => a.missing - b.missing
   );
@@ -228,7 +233,7 @@ function RecipesList({ handleHideListView, recipesList, allRecipesList }) {
   const _toDelete = [];
   const _allRecipeIds = [];
   const newAllRecipesList = [];
-  if (allRecipesList.length !== 0) {
+  if (allRecipesList && allRecipesList.length !== 0) {
     allRecipesList.map((element) => {
       if (_allRecipeIds.includes(element.recipe.id_recipe)) {
         _toDelete.push(element.id_recipe_product);
@@ -244,11 +249,12 @@ function RecipesList({ handleHideListView, recipesList, allRecipesList }) {
   }
   return (
     <div className="row mx-3 mt-4">
-      {sortedRecipesList.map((recipe) => (
-        <Recipe recipe={recipe} handleHideListView={handleHideListView} />
-      ))}
+      {sortedRecipesList &&
+        sortedRecipesList.map((recipe) => (
+          <Recipe recipe={recipe} handleHideListView={handleHideListView} />
+        ))}
 
-      {allRecipesList.length !== 0
+      {allRecipesList && allRecipesList.length !== 0
         ? newAllRecipesList.map((element) => (
             <Recipe
               recipe={element.recipe}
@@ -269,7 +275,7 @@ function Recipe({ recipe, handleHideListView }) {
       >
         <div className="description col-8">
           <p className="title">{recipe.title}</p>
-          {recipe.missing ? (
+          {recipe.missing !== undefined ? (
             <p className="area">
               Brakuje: <span className="text-secondary"> {recipe.missing}</span>
             </p>
@@ -467,17 +473,20 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
   }, []);
 
   const getProductsNearbyText = async (id) => {
+    setIsLoading(true);
     const getNearby = async (city, id) => {
       const resCount = await fetch(
         `http://localhost:4000/announcement/get-products-nearby?id=${id}&city=${city}`
       );
 
       if (!resCount.ok) {
+        setIsLoading(false);
         return "Błąd w pobraniu danych";
       }
 
       const dataCount = await resCount.json();
       console.log(`${dataCount} w mieście ${city}`);
+      setIsLoading(false);
       return `${dataCount} w mieście ${city}`;
     };
 
@@ -530,16 +539,18 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
           const data = await response.json();
           cityName = data.address.city;
         } catch (error) {
+          setIsLoading(false);
           return "Nie posiadasz (Błąd podczas pobrania ilości dostępnych w twoim meiście produktów)";
         }
       } else {
+        setIsLoading(false);
         return "Nie posiadasz (Błąd z pobiedaniem lokalizacji w celu wyświetlenia ilości produktów w pobliżu)";
       }
     }
     return getNearby(cityName, id);
   };
 
-  if (isLoading) return <div>Loading ...</div>;
+  // if (isLoading) return <div>Loading ...</div>;
 
   return (
     <>
@@ -558,35 +569,50 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
             <p className="fs-4">{recipeData.title}</p>
             <ul>
               <table>
-                {productsNearby.map((element) => {
-                  return (
-                    <tr>
-                      <th>
-                        <li>
-                          <p className="fs-5 mb-0">{element.name}</p>
-                        </li>
-                      </th>
-                      <th>
-                        {selectedProductsId.includes(element.id) ? (
-                          <span className="have-info">
-                            <i class="bi bi-check2"></i> posiadasz
-                          </span>
-                        ) : (
-                          <>
-                            <Link
-                              className="text-decoration-none"
-                              to={`/announcements?product=${element.id}`}
-                            >
-                              <span className="not-have-info">
-                                <i className="bi bi-x"></i> {element.text}
+                {!isLoading
+                  ? productsNearby.map((element) => {
+                      return (
+                        <tr>
+                          <th>
+                            <li>
+                              <p className="fs-5 mb-0">{element.name}</p>
+                            </li>
+                          </th>
+                          <th>
+                            {selectedProductsId.includes(element.id) ? (
+                              <span className="have-info">
+                                <i class="bi bi-check2"></i> posiadasz
                               </span>
-                            </Link>
-                          </>
-                        )}
-                      </th>
-                    </tr>
-                  );
-                })}
+                            ) : (
+                              <>
+                                <Link
+                                  className="text-decoration-none"
+                                  to={`/announcements?product=${element.id}`}
+                                >
+                                  <span className="not-have-info">
+                                    <i className="bi bi-x"></i> {element.text}
+                                  </span>
+                                </Link>
+                              </>
+                            )}
+                          </th>
+                        </tr>
+                      );
+                    })
+                  : recipeProductData.map((element) => {
+                      return (
+                        <tr>
+                          <th>
+                            <li>
+                              <p className="fs-5 mb-0">
+                                {element.product.name}
+                              </p>
+                            </li>
+                          </th>
+                          <th></th>
+                        </tr>
+                      );
+                    })}
               </table>
             </ul>
           </div>

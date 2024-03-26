@@ -62,19 +62,19 @@ export default function Menu() {
           </NavLink>
         </li>
         <hr className="mx-3 my-1 sidebar-divider" />
-        <li>
+        <li className="pointer">
+          {!showRecipes ? (
+            <i
+              class="bi bi-caret-down-fill"
+              onClick={() => setShowRecipes(!showRecipes)}
+            ></i>
+          ) : (
+            <i
+              class="bi bi-caret-up-fill"
+              onClick={() => setShowRecipes(!showRecipes)}
+            ></i>
+          )}
           <NavLink to="/recipes" activeClassName="active">
-            {!showRecipes ? (
-              <i
-                class="bi bi-caret-down-fill"
-                onClick={() => setShowRecipes(!showRecipes)}
-              ></i>
-            ) : (
-              <i
-                class="bi bi-caret-up-fill"
-                onClick={() => setShowRecipes(!showRecipes)}
-              ></i>
-            )}
             &nbsp;PRZEPISY
           </NavLink>
 
