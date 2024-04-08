@@ -31,7 +31,7 @@ export default function Admin() {
             <div onClick={() => handleRedirect("#")} className="module-box p-4">
               <div className="module-content justify-content-center text-center">
                 <img src="report.png" className="module-img" />
-                <a href="#" className="ms-2">
+                <a href="/reports" className="ms-2">
                   Panel zgłoszeń
                 </a>
               </div>
@@ -43,7 +43,7 @@ export default function Admin() {
               <div className="module-content justify-content-center text-center">
                 <img src="administration.png" className="module-img" />
                 <a href="#" className="ms-2">
-                  Panel Zarządzania
+                  Panel zarządzania
                 </a>
               </div>
             </div>

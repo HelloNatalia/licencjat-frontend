@@ -162,13 +162,14 @@ function CreateRecipeForm({ id }) {
       list_id_products: "",
     },
     onSubmit: async (values) => {
-      const output = await CreateRecipeAdmin(
+      const output = await EditRecipeAdmin(
+        recipeData.id_recipe,
         values.title,
         values.text,
         values.id_recipe_category,
         values.list_id_products
       );
-      if (output) navigation("/recipes");
+      if (output) navigation("/recipes-panel");
     },
   });
 
@@ -178,8 +179,8 @@ function CreateRecipeForm({ id }) {
       formik.setValues({
         title: recipeData.title,
         text: recipeData.text,
-        id_recipe_category: "",
-        list_id_products: "",
+        id_recipe_category: recipeData.id_recipe_category,
+        list_id_products: selectedProductsIds,
       });
     }
   }, [recipeData]);
@@ -188,7 +189,7 @@ function CreateRecipeForm({ id }) {
 
   return (
     <>
-      <p className="fs-4 mb-1">Tworzenie przepisu</p>
+      <p className="fs-4 mb-1">Edycja przepisu</p>
       <form onSubmit={formik.handleSubmit}>
         <label className="form-label mt-3" htmlFor="title">
           Tytuł
@@ -206,7 +207,7 @@ function CreateRecipeForm({ id }) {
         <label className="form-label mt-3" htmlFor="text">
           Przepis
         </label>
-        <input
+        <textarea
           id="text"
           name="text"
           type="text"
@@ -243,13 +244,14 @@ function CreateRecipeForm({ id }) {
   );
 }
 
-async function CreateRecipeAdmin(
+async function EditRecipeAdmin(
+  id,
   title,
   text,
-  photos,
   id_recipe_category,
   list_id_products
 ) {
+  const photos = "";
   const recipeData = {
     title,
     text,
@@ -261,14 +263,17 @@ async function CreateRecipeAdmin(
   const accessToken = getAuthTokenFromCookie();
 
   try {
-    const response = await fetch("http://localhost:4000/recipe/edit-recipe", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(recipeData),
-    });
+    const response = await fetch(
+      `http://localhost:4000/recipe/edit-recipe/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipeData),
+      }
+    );
 
     if (!response.ok) {
       // Tutaj uzyskać zwrot od api jeżeli coś nie gra

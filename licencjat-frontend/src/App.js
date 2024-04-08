@@ -21,6 +21,7 @@ import RecipesPanel from "./admin/RecipesPanel.js";
 import TempRecipesPanel from "./admin/TempRecipesPanel.js";
 import CreateRecipe from "./admin/CreateRecipe.js";
 import EditRecipe from "./admin/EditRecipe.js";
+import Reports from "./admin/reports/Reports.js";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
             path="/my-temporary-recipes"
             element={<MyTemporaryRecipes />}
           />
+          <Route path="/reports" element={<Reports />} />
         </Routes>
       </div>
     </Router>
