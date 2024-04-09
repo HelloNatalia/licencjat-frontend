@@ -9,6 +9,7 @@ import "leaflet/dist/leaflet.css";
 // https://github.com/PaulLeCam/react-leaflet/issues/1052
 import "./AnnouncementsMap.css";
 import { useState, useEffect } from "react";
+import { fetchPhoto } from "./FetchPhoto.js";
 
 import { CategoryMarker } from "./icons-declaration.js";
 
@@ -100,6 +101,14 @@ function LargeTooltip({ element }) {
   const output = getDates(element);
   const dayDifference = output[0];
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = element.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="d-none d-lg-block">
       <div className="d-flex">
@@ -120,7 +129,7 @@ function LargeTooltip({ element }) {
         </div>
         <img
           className="ms-4 map-tooltip-product-img"
-          src="announcement-img/rect.png"
+          src={photoUrl}
           alt="produkt"
         />
       </div>
@@ -132,6 +141,14 @@ function SmallTooltip({ element }) {
   const output = getDates(element);
   const dayDifference = output[0];
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = element.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="d-md-block d-lg-none">
       <div className="text-center">
@@ -153,7 +170,7 @@ function SmallTooltip({ element }) {
       <div className="text-center mt-3">
         <img
           className="map-tooltip-product-img d-block"
-          src="announcement-img/rect.png"
+          src={photoUrl}
           alt="produkt"
         />
       </div>

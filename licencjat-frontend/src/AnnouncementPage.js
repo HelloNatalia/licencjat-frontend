@@ -6,6 +6,7 @@ import { getDates } from "./AnnouncementsMap";
 import RequestModal from "./RequestForm";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import RatingStars from "./RatingStars";
+import { fetchPhotos } from "./FetchPhoto";
 
 export default function AnnouncementPage({ handleBack, id }) {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);
@@ -67,7 +68,7 @@ export default function AnnouncementPage({ handleBack, id }) {
       />
       <div className="row px-4 pt-1 pb-4">
         <div className="col-12 col-md-6 mt-3">
-          <Images />
+          <Images selected_announcement={selected_announcement} />
         </div>
         <div className="col-12 col-md-6 mt-3">
           <MainInfo selected_announcement={selected_announcement} />
@@ -112,10 +113,23 @@ function Buttons({ handleBack, selected_announcement }) {
   );
 }
 
-function Images() {
+function Images({ selected_announcement }) {
+  const [photoUrl, setPhotoUrl] = useState([]);
+  let photoNamesArray = selected_announcement.photos.slice(1, -1).split('","');
+
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    if (Array.isArray(photoNamesArray)) {
+      fetchPhotos(photoNamesArray, setPhotoUrl);
+    }
+  }, []);
   return (
     <div className="img-box box">
-      <img src="announcement-img/1.png" />
+      {photoUrl && Array.isArray(photoUrl) && photoUrl.length > 0
+        ? photoUrl
+            .slice(0, 2)
+            .map((url, index) => <img key={index} src={url} />)
+        : null}
     </div>
   );
 }

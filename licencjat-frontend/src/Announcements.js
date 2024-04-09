@@ -8,6 +8,7 @@ import { getDates } from "./AnnouncementsMap.js";
 import SelectComponent from "./selectComponent.js";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
+import { fetchPhoto } from "./FetchPhoto.js";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
@@ -291,6 +292,14 @@ function AnnouncementsList({ handleSelection, announcements_aray }) {
 function Announcement({ announcement, handleSelection }) {
   const output = getDates(announcement);
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div
       onClick={() => handleSelection(announcement.id_announcement)}
@@ -305,7 +314,7 @@ function Announcement({ announcement, handleSelection }) {
         <p className="date">Data ważności: {productDate}</p>
       </div>
       <div className="col-3 d-inline-block p-2">
-        <img src="announcement-img/1.png" className="img-fluid" alt="product" />
+        <img src={photoUrl} className="img-fluid" alt="product" />
       </div>
     </div>
   );

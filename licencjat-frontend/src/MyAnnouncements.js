@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { getDates } from "./AnnouncementsMap";
+import { fetchPhoto } from "./FetchPhoto.js";
 
 export default function MyAnnouncements() {
   const navigation = useNavigate();
@@ -62,12 +63,19 @@ function Announcements({ myAnnouncements }) {
 }
 
 function Announcement({ announcement }) {
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="row mx-3">
       <div className="col-12 mt-3">
         <div className="announcement-box d-flex">
           <div className="request-img d-none d-md-block me-3">
-            <img src="announcement-img/1.png" aria-label="announcement" />
+            <img src={photoUrl} aria-label="announcement" />
           </div>
           <div>
             <p>
