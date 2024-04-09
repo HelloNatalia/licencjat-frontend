@@ -33,6 +33,7 @@ function CreateRecipeForm() {
   const [selectedProductsNames, setSelectedProductsNames] = useState([]);
   const [productsOptions, setProductsOptions] = useState();
   const [selectedCategory, setSelectedCategory] = useState();
+  const [photoFiles, setPhotoFiles] = useState([]);
   const navigation = useNavigate();
 
   const handlePhotosChange = (event) => {
@@ -43,6 +44,7 @@ function CreateRecipeForm() {
       return;
     }
 
+    const updatedPhotoFiles = [...photoFiles];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fileName = file.name;
@@ -51,14 +53,25 @@ function CreateRecipeForm() {
         // obsługa gdy zły format pliku
         return;
       }
-      setSelectedPhotos([...selectedPhotos, fileName]);
+      const uniqueFileName = `${Date.now()}-${Math.round(
+        Math.random() * 1e9
+      )}.${fileExtension}`;
+      const modifiedFile = new File([file], uniqueFileName, {
+        type: file.type,
+      });
+      updatedPhotoFiles.push(modifiedFile);
+      setSelectedPhotos([...selectedPhotos, uniqueFileName]);
     }
+    setPhotoFiles(updatedPhotoFiles);
   };
 
   const handleDeleteImage = (index) => {
     const updatedList = [...selectedPhotos];
+    const updatedFiles = [...photoFiles];
     updatedList.splice(index, 1);
+    updatedFiles.splice(index, 1);
     setSelectedPhotos(updatedList);
+    setPhotoFiles(updatedFiles);
   };
 
   const handleAddProductId = (option) => {
@@ -141,7 +154,7 @@ function CreateRecipeForm() {
         values.id_recipe_category,
         values.list_id_products
       );
-      if (output) navigation("/recipes");
+      if (output && uploadPhotos(photoFiles)) navigation("/recipes");
     },
   });
   //   if (isLoading) return <div className="content">Loading ...</div>;
@@ -302,6 +315,34 @@ async function CreateRecipe(
       if (response.status === 404) return "not found";
       else throw new Error("Wystąpił błąd");
     }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+async function uploadPhotos(photos) {
+  const formData = new FormData();
+
+  for (let i = 0; i < photos.length; i++) {
+    formData.append("photos", photos[i]);
+  }
+
+  try {
+    const accessToken = getAuthTokenFromCookie();
+    const response = await fetch("http://localhost:4000/file/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error("Błąd podczas przesyłania zdjęć:", response.statusText);
+      return false;
+    }
+
     return true;
   } catch (error) {
     console.error(error);

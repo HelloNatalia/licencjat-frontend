@@ -4,6 +4,7 @@ import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import Select from "react-select";
+import { fetchPhoto } from "./FetchPhoto";
 
 export default function Recipes() {
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -267,6 +268,13 @@ function RecipesList({
 }
 
 function Recipe({ recipe, handleHideListView }) {
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = recipe.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="col-12 col-lg-6 p-3">
       <div
@@ -289,11 +297,7 @@ function Recipe({ recipe, handleHideListView }) {
           <p className="date">{recipe.id_recipe_category}</p>
         </div>
         <div className="img-recipe-box col-4 p-2 text-end">
-          <img
-            src="announcement-img/1.png"
-            className="img-fluid"
-            alt="product"
-          />
+          <img src={photoUrl} className="img-fluid" alt="product" />
         </div>
       </div>
     </div>
@@ -378,6 +382,13 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
   const [nearInfo, setNearInfo] = useState("");
   const [productsNearby, setProductsNearby] = useState([]);
   const navigation = useNavigate();
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = recipeData.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
 
   useEffect(function () {
     async function isFavourite() {
@@ -557,11 +568,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
       <div className="row p-4">
         <div className="col-12 col-lg-4 p-2">
           <div className="white-box text-center">
-            <img
-              src="announcement-img/1.png"
-              className="recipe-img"
-              alt="product"
-            />
+            <img src={photoUrl} className="recipe-img" alt="product" />
           </div>
         </div>
         <div className="col p-2">
