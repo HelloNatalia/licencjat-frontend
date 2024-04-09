@@ -142,6 +142,37 @@ function MainInfo({ selected_announcement }) {
 function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
   const output = getDates(selected_announcement);
   const productDate = output[1];
+  const [myAnnouncement, setMyAnnouncement] = useState(false);
+
+  // check-if-your-announcement/:id
+  const accessToken = getAuthTokenFromCookie();
+  console.log("SPRAWDZAM: ");
+  useEffect(function () {
+    async function checkIfYourAnnouncement() {
+      const res = await fetch(
+        `http://localhost:4000/announcement/check-if-your-announcement/${selected_announcement.id_announcement}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        setMyAnnouncement(false);
+        console.log("NIE MOJE");
+      }
+
+      const data = await res.json();
+      if (data == false) {
+        setMyAnnouncement(false);
+        console.log("NIE MOJE");
+      } else if (data == true) {
+        setMyAnnouncement(true);
+        console.log("MOJE");
+      }
+    }
+    checkIfYourAnnouncement();
+  }, []);
 
   return (
     <>
@@ -164,7 +195,11 @@ function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
         <div className="row mt-5 mb-5">
           <div className="col text-center">
             <a href="#">
-              {showButton ? (
+              {myAnnouncement ? (
+                <Button className="btn btn-primary pickup-btn disabled">
+                  TO TWOJE OGŁOSZENIE
+                </Button>
+              ) : showButton ? (
                 <RequestModal
                   announcement={selected_announcement}
                   setCreatedRequest={setCreatedRequest}
@@ -174,6 +209,16 @@ function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
                   PROŚBA ZOSTAŁA WYSŁANA
                 </Button>
               )}
+              {/* {showButton ? (
+                <RequestModal
+                  announcement={selected_announcement}
+                  setCreatedRequest={setCreatedRequest}
+                />
+              ) : (
+                <Button className="btn btn-primary pickup-btn disabled">
+                  PROŚBA ZOSTAŁA WYSŁANA
+                </Button>
+              )} */}
             </a>
           </div>
         </div>
