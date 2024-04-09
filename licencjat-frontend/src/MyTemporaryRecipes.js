@@ -39,11 +39,13 @@ export default function MyTemporaryRecipes() {
       <div className="p-3">
         <p className="m-3 fs-3">Moje propozycje przepisów</p>
         <div className="row">
-          {Array.isArray(recipes) && recipes.length > 0
-            ? recipes.map((element) => {
-                return <MyRecipe recipe={element} />;
-              })
-            : "Pusto"}
+          {Array.isArray(recipes) && recipes.length > 0 ? (
+            recipes.map((element) => {
+              return <MyRecipe recipe={element} />;
+            })
+          ) : (
+            <p className="ms-3">Pusto</p>
+          )}
         </div>
       </div>
     </div>
