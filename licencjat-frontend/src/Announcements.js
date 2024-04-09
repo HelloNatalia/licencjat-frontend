@@ -53,7 +53,12 @@ export default function Announcements() {
           `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}`
         );
         const data = await res.json();
-        setAnnouncementArray(data);
+        const today = new Date();
+        const filteredData = data.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= today;
+        });
+        setAnnouncementArray(filteredData);
       }
       fetchAnnouncements();
     },
