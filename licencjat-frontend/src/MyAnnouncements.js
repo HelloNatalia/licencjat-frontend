@@ -26,7 +26,10 @@ export default function MyAnnouncements() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
-      setMyAnnouncements(data);
+      const filteredData = data.filter((record) => {
+        return record.status == "available";
+      });
+      setMyAnnouncements(filteredData);
       setIsLoading(false);
     }
     fetchMyAnnouncements();
