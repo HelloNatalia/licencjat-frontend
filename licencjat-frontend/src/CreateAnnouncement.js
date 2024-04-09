@@ -53,6 +53,7 @@ function CreateAnnouncementForm({ products }) {
   const [pickupDates, setPickupDates] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [isMarkerSelected, setIsMarkerSelected] = useState(false);
+  const [photoFiles, setPhotoFiles] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -87,7 +88,7 @@ function CreateAnnouncementForm({ products }) {
         values.photos,
         values.date
       );
-      navigation("/my-announcements");
+      if (uploadPhotos(photoFiles)) navigation("/my-announcements");
     },
   });
 
@@ -147,6 +148,7 @@ function CreateAnnouncementForm({ products }) {
       return;
     }
 
+    const updatedPhotoFiles = [...photoFiles];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fileName = file.name;
@@ -155,8 +157,16 @@ function CreateAnnouncementForm({ products }) {
         // obsługa gdy zły format pliku
         return;
       }
-      setSelectedPhotos([...selectedPhotos, fileName]);
+      const uniqueFileName = `${Date.now()}-${Math.round(
+        Math.random() * 1e9
+      )}.${fileExtension}`;
+      const modifiedFile = new File([file], uniqueFileName, {
+        type: file.type,
+      });
+      updatedPhotoFiles.push(modifiedFile);
+      setSelectedPhotos([...selectedPhotos, uniqueFileName]);
     }
+    setPhotoFiles(updatedPhotoFiles);
   };
 
   const handleDeleteImage = (index) => {
@@ -506,5 +516,34 @@ async function Create(
     return true;
   } catch (error) {
     console.error(error);
+  }
+}
+
+async function uploadPhotos(photos) {
+  const formData = new FormData();
+
+  for (let i = 0; i < photos.length; i++) {
+    formData.append("photos", photos[i]);
+  }
+
+  try {
+    const accessToken = getAuthTokenFromCookie();
+    const response = await fetch("http://localhost:4000/file/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error("Błąd podczas przesyłania zdjęć:", response.statusText);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
