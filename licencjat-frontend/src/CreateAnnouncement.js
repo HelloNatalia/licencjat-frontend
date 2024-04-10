@@ -171,8 +171,11 @@ function CreateAnnouncementForm({ products }) {
 
   const handleDeleteImage = (index) => {
     const updatedList = [...selectedPhotos];
+    const updatedFiles = [...photoFiles];
     updatedList.splice(index, 1);
+    updatedFiles.splice(index, 1);
     setSelectedPhotos(updatedList);
+    setPhotoFiles(updatedFiles);
   };
 
   useEffect(() => {

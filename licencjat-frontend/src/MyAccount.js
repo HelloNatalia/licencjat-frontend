@@ -6,6 +6,7 @@ import {
   removeAuthTokenCookie,
 } from "./cookies/auth-cookies";
 import EditAccountForm from "./EditAccountForm";
+import MyAddresses from "./my-account/address/MyAddresses";
 
 export default function MyAccount() {
   const navigation = useNavigate();
@@ -65,6 +66,7 @@ export default function MyAccount() {
       <btn className="btn btn-danger" onClick={handleDeleteAccount}>
         Usuń konto
       </btn>
+      <MyAddresses />
     </div>
   );
 }
