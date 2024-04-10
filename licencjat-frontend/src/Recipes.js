@@ -567,7 +567,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
     <>
       <div className="row p-4">
         <div className="col-12 col-lg-4 p-2">
-          <div className="white-box text-center">
+          <div className="white-box text-center p-3">
             <img src={photoUrl} className="recipe-img" alt="product" />
           </div>
         </div>
@@ -576,7 +576,70 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
             <p className="fs-4">{recipeData.title}</p>
             <ul>
               <table>
-                {!isLoading
+                {/* {productsNearby.map((element) => {
+                  return (
+                    <tr>
+                      <th>
+                        <li>
+                          <p className="fs-5 mb-0">{element.name}</p>
+                        </li>
+                      </th>
+                      <th>
+                        {isLoading &&
+                        selectedProductsId.includes(element.id) ? (
+                          <span className="have-info">
+                            <i class="bi bi-check2"></i> posiadasz
+                          </span>
+                        ) : isLoading ? (
+                          <span className="not-have-info">
+                            <i class="bi bi-check2"></i> nieposiadasz
+                          </span>
+                        ) : (
+                          <>
+                            <Link
+                              className="text-decoration-none"
+                              to={`/announcements?product=${element.id}`}
+                            >
+                              <span className="not-have-info">
+                                <i className="bi bi-x"></i> {element.text}
+                              </span>
+                            </Link>
+                          </>
+                        )}
+                      </th>
+                    </tr>
+                  );
+                })} */}
+                {!productsNearby || productsNearby.length == 0
+                  ? recipeProductData.map((element) => {
+                      return (
+                        <tr>
+                          <th>
+                            <li>
+                              <p className="fs-5 mb-0">
+                                {element.product.name}
+                              </p>
+                            </li>
+                          </th>
+                          <th>
+                            {selectedProductsId.includes(
+                              element.product.id_product
+                            ) ? (
+                              <span className="have-info">
+                                <i class="bi bi-check2"></i> posiadasz
+                              </span>
+                            ) : (
+                              <>
+                                <span className="not-have-info">
+                                  <i class="bi bi-x"></i> nie posiadasz
+                                </span>
+                              </>
+                            )}
+                          </th>
+                        </tr>
+                      );
+                    })
+                  : !isLoading
                   ? productsNearby.map((element) => {
                       return (
                         <tr>

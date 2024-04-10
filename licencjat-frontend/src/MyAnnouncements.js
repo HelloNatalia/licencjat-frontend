@@ -27,12 +27,17 @@ export default function MyAnnouncements() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
-      const filteredData = data.filter((record) => {
-        return record.status == "available";
-      });
+      let filteredData = [];
+      if (data && Array.isArray(data)) {
+        filteredData = data.filter((record) => {
+          return record.status == "available";
+        });
+      }
+
       setMyAnnouncements(filteredData);
       setIsLoading(false);
     }
+    if (!accessToken) navigation("/login");
     fetchMyAnnouncements();
   }, []);
 
