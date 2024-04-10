@@ -109,7 +109,6 @@ export default function Menu() {
           {!isLoading &&
             userData &&
             userData !== "" &&
-            Array.isArray(userData) &&
             userData.roles.includes("admin") && (
               <NavLink to="/admin" activeClassName="active">
                 PANEL ZARZĄDZANIA
