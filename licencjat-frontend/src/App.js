@@ -25,6 +25,10 @@ import Reports from "./admin/reports/Reports.js";
 import Products from "./admin/creating/products/Products.js";
 import CreateProduct from "./admin/creating/products/CreateProduct.js";
 import CreateRecords from "./admin/creating/CreateRecords.js";
+import ProductsCategories from "./admin/creating/products-categories/ProductsCategories.js";
+import CreateProductCategory from "./admin/creating/products-categories/CreateProductCategory.js";
+import RecipesCategories from "./admin/creating/recipes-categories/RecipesCategories.js";
+import CreateRecipeCategory from "./admin/creating/recipes-categories/CreateRecipeCategory.js";
 
 function App() {
   return (
@@ -63,6 +67,16 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/create-product" element={<CreateProduct />} />
           <Route path="/create-records" element={<CreateRecords />} />
+          <Route path="/products-categories" element={<ProductsCategories />} />
+          <Route
+            path="/create-product-category"
+            element={<CreateProductCategory />}
+          />
+          <Route path="/recipes-categories" element={<RecipesCategories />} />
+          <Route
+            path="/create-recipe-category"
+            element={<CreateRecipeCategory />}
+          />
         </Routes>
       </div>
     </Router>
