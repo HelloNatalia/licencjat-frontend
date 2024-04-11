@@ -35,6 +35,8 @@ function CreateRecipeForm() {
   const [selectedCategory, setSelectedCategory] = useState();
   const [photoFiles, setPhotoFiles] = useState([]);
   const navigation = useNavigate();
+  const [selectedProductOption, setSelectedProductOption] = useState();
+  const [listAmount, setListAmount] = useState([]);
 
   const handlePhotosChange = (event) => {
     const files = event.target.files;
@@ -74,11 +76,23 @@ function CreateRecipeForm() {
     setPhotoFiles(updatedFiles);
   };
 
-  const handleAddProductId = (option) => {
+  const handleAddProductAndAmount = (option, amount) => {
+    if (!option || !amount) return;
     if (!selectedProductsIds.includes(option.value)) {
       setSelectedProductsId([...selectedProductsIds, option.value]);
       setSelectedProductsNames([...selectedProductsNames, option.label]);
+      // Dodanie amount
+      const amountObj = { id: option.value, amount: amount };
+      setListAmount([...listAmount, amountObj]);
     }
+  };
+
+  const handleAddProductId = (option) => {
+    // if (!selectedProductsIds.includes(option.value)) {
+    //   setSelectedProductsId([...selectedProductsIds, option.value]);
+    //   setSelectedProductsNames([...selectedProductsNames, option.label]);
+    // }
+    if (option) setSelectedProductOption(option);
   };
 
   const handleSelectCategory = (option) => {
@@ -95,11 +109,17 @@ function CreateRecipeForm() {
   };
 
   useEffect(() => {
+    formik.setFieldValue("list_amount", listAmount);
+    console.log("amounts: ", formik.values.list_amount);
+  }, [listAmount]);
+
+  useEffect(() => {
     formik.setFieldValue("photos", selectedPhotos);
   }, [selectedPhotos]);
 
   useEffect(() => {
     formik.setFieldValue("list_id_products", selectedProductsIds);
+    console.log("Pr ids: ", formik.values.list_id_products);
   }, [selectedProductsIds]);
 
   useEffect(() => {
@@ -145,6 +165,8 @@ function CreateRecipeForm() {
       photos: "",
       id_recipe_category: "",
       list_id_products: "",
+      list_amount: "",
+      amount: "",
     },
     onSubmit: async (values) => {
       const output = await CreateRecipe(
@@ -152,7 +174,8 @@ function CreateRecipeForm() {
         values.text,
         values.photos,
         values.id_recipe_category,
-        values.list_id_products
+        values.list_id_products,
+        values.list_amount
       );
       if (output && uploadPhotos(photoFiles)) navigation("/recipes");
     },
@@ -238,20 +261,55 @@ function CreateRecipeForm() {
             <label className="form-label mt-1" htmlFor="id_products">
               Produkty
             </label>
-            <Select
-              options={productsOptions}
-              onChange={handleAddProductId}
-              id="id_products"
-              placeholder="Wybierz ..."
-            />
+            <div className="row m-0 p-0">
+              <div className="col-12 col-md-6 m-0">
+                <Select
+                  options={productsOptions}
+                  onChange={handleAddProductId}
+                  id="id_products"
+                  placeholder="Wybierz ..."
+                />
+              </div>
+              <div className="col-4 m-0">
+                <input
+                  id="amount"
+                  name="amount"
+                  type="text"
+                  className="form-control"
+                  required="required"
+                  onChange={formik.handleChange}
+                  value={formik.values.amount}
+                  placeholder="ilość (np. 1/2 szklanki)"
+                />
+              </div>
+              <div className="col-2 m-0">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAddProductAndAmount(
+                      selectedProductOption,
+                      formik.values.amount
+                    )
+                  }
+                  className="btn btn-success"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             <table className="product-table mt-2">
               {Array.isArray(selectedProductsNames) &&
               selectedProductsNames.length > 0
                 ? selectedProductsNames.map((element, index) => {
+                    let amount = listAmount.find(
+                      (amount_el) => amount_el.id === selectedProductsIds[index]
+                    );
+                    if (!amount) amount = { amount: "nie przypisano" };
                     return (
                       <tr className="">
                         <td className="px-2 py-1" key={index}>
-                          {element}
+                          {element} - {amount.amount}
                         </td>
                         <td className="px-2 py-1">
                           <button
@@ -285,7 +343,8 @@ async function CreateRecipe(
   text,
   photos,
   id_recipe_category,
-  list_id_products
+  list_id_products,
+  list_amount
 ) {
   const recipeData = {
     title,
@@ -293,6 +352,7 @@ async function CreateRecipe(
     photos,
     id_recipe_category,
     list_id_products,
+    list_amount,
   };
 
   const accessToken = getAuthTokenFromCookie();

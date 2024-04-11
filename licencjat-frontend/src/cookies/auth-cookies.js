@@ -16,7 +16,6 @@ export function getAuthTokenFromCookie() {
   if (cookieValue) cookieExpires = cookieValue.expires;
 
   if (cookieValue && (!cookieExpires || new Date(cookieExpires) > new Date())) {
-    console.log(cookieExpires);
     return cookieValue;
   } else {
     return null;

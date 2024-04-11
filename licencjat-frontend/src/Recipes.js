@@ -473,6 +473,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
         newArray.push({
           name: element.product.name,
           id: element.product.id_product,
+          amount: element.amount,
           text: text,
         });
       }
@@ -587,6 +588,11 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
                               </p>
                             </li>
                           </th>
+                          <th className="ps-3">
+                            <span className="product-amount">
+                              {element.amount}
+                            </span>
+                          </th>
                           <th>
                             {selectedProductsId.includes(
                               element.product.id_product
@@ -613,6 +619,11 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
                             <li>
                               <p className="fs-5 mb-0">{element.name}</p>
                             </li>
+                          </th>
+                          <th className="ps-3">
+                            <span className="product-amount">
+                              {element.amount}
+                            </span>
                           </th>
                           <th>
                             {selectedProductsId.includes(element.id) ? (
