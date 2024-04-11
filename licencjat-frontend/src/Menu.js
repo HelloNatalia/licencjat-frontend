@@ -8,7 +8,7 @@ export default function Menu() {
   const [userData, setUserData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showRecipes, setShowRecipes] = useState(false);
-
+  console.log("COOKIE: ", getAuthTokenFromCookie());
   useEffect(
     function () {
       async function fetchUserData() {
@@ -18,7 +18,7 @@ export default function Menu() {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          if (res.status === 401) setUserData("");
+          if (res.status === "401") setUserData("");
           const data = await res.json();
           setUserData(data);
           console.log(userData);
@@ -109,6 +109,7 @@ export default function Menu() {
           {!isLoading &&
             userData &&
             userData !== "" &&
+            userData.roles &&
             userData.roles.includes("admin") && (
               <NavLink to="/admin" activeClassName="active">
                 PANEL ZARZĄDZANIA

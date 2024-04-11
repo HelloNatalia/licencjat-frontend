@@ -10,9 +10,18 @@ export function setAuthTokenCookie(token) {
 }
 
 export function getAuthTokenFromCookie() {
-  const cookieValue = Cookies.get("authToken");
+  // const cookieValue = Cookies.get("authToken");
+  const cookieValue = Cookies.get("authToken", { raw: true });
+  let cookieExpires = null;
+  if (cookieValue) cookieExpires = cookieValue.expires;
 
-  return cookieValue || null;
+  if (cookieValue && (!cookieExpires || new Date(cookieExpires) > new Date())) {
+    console.log(cookieExpires);
+    return cookieValue;
+  } else {
+    return null;
+  }
+  // return cookieValue || null;
 }
 
 export function removeAuthTokenCookie() {
