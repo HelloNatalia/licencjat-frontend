@@ -50,10 +50,13 @@ export default function CreateAnnouncement() {
 
 function CreateAnnouncementForm({ products }) {
   const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
   const [pickupDates, setPickupDates] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [isMarkerSelected, setIsMarkerSelected] = useState(false);
   const [photoFiles, setPhotoFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [addresses, setAddresses] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -140,6 +143,30 @@ function CreateAnnouncementForm({ products }) {
     }
   };
 
+  useEffect(function () {
+    async function fetchAddresses() {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/address/get-user-addresses`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        if (res.status == 401) navigation("/");
+        else if (res.status == 404) setAddresses([]);
+      } else {
+        const data = await res.json();
+        setAddresses(data);
+      }
+      setIsLoading(false);
+    }
+    fetchAddresses();
+  }, []);
+
   const handlePhotosChange = (event) => {
     const files = event.target.files;
 
@@ -187,6 +214,14 @@ function CreateAnnouncementForm({ products }) {
     setIsMarkerSelected(true);
   };
 
+  const handleInsertAddress = (address) => {
+    formik.setFieldValue("city", address.city);
+    formik.setFieldValue("district", address.district);
+    formik.setFieldValue("street", address.street);
+    formik.setFieldValue("number", address.number);
+    if (address.coordinates) handleCoordinationChange(address.coordinates);
+  };
+
   return (
     <>
       <div className="form-bg">
@@ -221,6 +256,33 @@ function CreateAnnouncementForm({ products }) {
                 value={formik.values.description}
               />
             </div>
+            {!isLoading ? (
+              <div>
+                {addresses.length > 0 ? (
+                  <div>
+                    {addresses.map((address) => {
+                      return (
+                        <div onClick={() => handleInsertAddress(address)}>
+                          <p>
+                            {address.street} {address.number}
+                          </p>
+                          <p>
+                            {address.district}
+                            {address.district ? ", " : ""}
+                            {address.city}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            ) : (
+              ""
+            )}
+
             <div className="col-12 col-lg-6">
               <label className="form-label mt-3" htmlFor="city">
                 Miasto*
