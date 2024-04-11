@@ -37,6 +37,7 @@ function CreateRecipeForm() {
   const navigation = useNavigate();
   const [selectedProductOption, setSelectedProductOption] = useState();
   const [listAmount, setListAmount] = useState([]);
+  const [requiredMessage, setRequiredMessage] = useState(false);
 
   const handlePhotosChange = (event) => {
     const files = event.target.files;
@@ -88,10 +89,6 @@ function CreateRecipeForm() {
   };
 
   const handleAddProductId = (option) => {
-    // if (!selectedProductsIds.includes(option.value)) {
-    //   setSelectedProductsId([...selectedProductsIds, option.value]);
-    //   setSelectedProductsNames([...selectedProductsNames, option.label]);
-    // }
     if (option) setSelectedProductOption(option);
   };
 
@@ -110,7 +107,6 @@ function CreateRecipeForm() {
 
   useEffect(() => {
     formik.setFieldValue("list_amount", listAmount);
-    console.log("amounts: ", formik.values.list_amount);
   }, [listAmount]);
 
   useEffect(() => {
@@ -119,7 +115,6 @@ function CreateRecipeForm() {
 
   useEffect(() => {
     formik.setFieldValue("list_id_products", selectedProductsIds);
-    console.log("Pr ids: ", formik.values.list_id_products);
   }, [selectedProductsIds]);
 
   useEffect(() => {
@@ -169,26 +164,42 @@ function CreateRecipeForm() {
       amount: "",
     },
     onSubmit: async (values) => {
-      const output = await CreateRecipe(
-        values.title,
-        values.text,
-        values.photos,
-        values.id_recipe_category,
-        values.list_id_products,
-        values.list_amount
-      );
-      if (output && uploadPhotos(photoFiles)) navigation("/recipes");
+      if (
+        values.photos.length < 1 ||
+        !values.id_recipe_category ||
+        values.list_id_products.length < 1 ||
+        values.list_amount.length < 1
+      ) {
+        setRequiredMessage(true);
+      } else {
+        const output = await CreateRecipe(
+          values.title,
+          values.text,
+          values.photos,
+          values.id_recipe_category,
+          values.list_id_products,
+          values.list_amount
+        );
+        if (output && uploadPhotos(photoFiles)) navigation("/recipes");
+      }
     },
   });
   //   if (isLoading) return <div className="content">Loading ...</div>;
 
   return (
     <div className="p-3">
+      {requiredMessage ? (
+        <div class="alert alert-danger" role="alert">
+          Nie wpisano wszystkich wymaganych
+        </div>
+      ) : (
+        ""
+      )}
       <div className="container form-box p-2 px-3">
         <p className="fs-4 mb-1">Tworzenie przepisu</p>
         <form onSubmit={formik.handleSubmit}>
           <label className="form-label mt-3" htmlFor="title">
-            Tytuł
+            Tytuł*
           </label>
           <input
             id="title"
@@ -201,7 +212,7 @@ function CreateRecipeForm() {
           />
 
           <label className="form-label mt-3" htmlFor="text">
-            Przepis
+            Przepis*
           </label>
           <textarea
             id="text"
@@ -248,7 +259,7 @@ function CreateRecipeForm() {
           </div>
 
           <label className="form-label mt-3" htmlFor="id_recipe_category">
-            Kategoria
+            Kategoria*
           </label>
           <Select
             options={categories}
@@ -259,7 +270,7 @@ function CreateRecipeForm() {
 
           <div className="products-box p-3 mt-4">
             <label className="form-label mt-1" htmlFor="id_products">
-              Produkty
+              Produkty*
             </label>
             <div className="row m-0 p-0">
               <div className="col-12 col-md-6 m-0">

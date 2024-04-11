@@ -57,6 +57,7 @@ function CreateAnnouncementForm({ products }) {
   const [photoFiles, setPhotoFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [addresses, setAddresses] = useState([]);
+  const [requiredMessage, setRequiredMessage] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -77,21 +78,32 @@ function CreateAnnouncementForm({ products }) {
       pickup_hour_2: "",
     },
     onSubmit: async (values) => {
-      const output = await Create(
-        values.title,
-        values.description,
-        values.district,
-        values.city,
-        values.street,
-        values.number,
-        values.coordinates,
-        values.available_dates,
-        values.product_category,
-        values.product,
-        values.photos,
-        values.date
-      );
-      if (uploadPhotos(photoFiles)) navigation("/my-announcements");
+      if (
+        !values.coordinates ||
+        values.available_dates.length < 1 ||
+        !values.product_category ||
+        !values.product ||
+        values.photos.length < 1 ||
+        !values.date
+      ) {
+        setRequiredMessage(true);
+      } else {
+        const output = await Create(
+          values.title,
+          values.description,
+          values.district,
+          values.city,
+          values.street,
+          values.number,
+          values.coordinates,
+          values.available_dates,
+          values.product_category,
+          values.product,
+          values.photos,
+          values.date
+        );
+        if (uploadPhotos(photoFiles)) navigation("/my-announcements");
+      }
     },
   });
 
@@ -224,6 +236,13 @@ function CreateAnnouncementForm({ products }) {
 
   return (
     <>
+      {requiredMessage ? (
+        <div class="alert alert-danger" role="alert">
+          Nie wpisano wszystkich wymaganych
+        </div>
+      ) : (
+        ""
+      )}
       <div className="form-bg">
         <form onSubmit={formik.handleSubmit}>
           <div className="row">
@@ -293,6 +312,7 @@ function CreateAnnouncementForm({ products }) {
                 type="text"
                 className="form-control"
                 onChange={formik.handleChange}
+                required
                 value={formik.values.city}
               />
             </div>
@@ -409,7 +429,7 @@ function CreateAnnouncementForm({ products }) {
                 <div className="row">
                   <div className="col-12">
                     <label className="form-label mt-1" htmlFor="pickup_date">
-                      Możliwa data i godzina odbioru
+                      Możliwa data i godzina odbioru*
                     </label>
                     <input
                       id="pickup_date"

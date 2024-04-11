@@ -20,9 +20,17 @@ export default function TopBrand() {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          if (res.status === 401) setUserData("");
-          const data = await res.json();
-          setUserData(data);
+          if (res.status === 401) {
+            setUserData("");
+            if (accessToken) {
+              removeAuthTokenCookie();
+              window.location.reload();
+            }
+          } else {
+            const data = await res.json();
+            setUserData(data);
+          }
+
           setIsLoading(false);
         } catch (error) {
           console.error(error);

@@ -29,6 +29,7 @@ export default function Signup() {
 
 function LoginForm() {
   const [loginMessage, setLoginMessage] = useState("");
+  const navigation = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -51,7 +52,10 @@ function LoginForm() {
 
       if (output === "conflict") {
         setLoginMessage("Nazwa użytkownika jest już zajęta");
-      } else setLoginMessage("");
+      } else {
+        setLoginMessage("");
+        navigation("/login");
+      }
     },
   });
 

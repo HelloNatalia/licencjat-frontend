@@ -1,14 +1,16 @@
 import "./Menu.css";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import {
+  getAuthTokenFromCookie,
+  removeAuthTokenCookie,
+} from "./cookies/auth-cookies";
 
 export default function Menu() {
   const accessToken = getAuthTokenFromCookie();
   const [userData, setUserData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showRecipes, setShowRecipes] = useState(false);
-  console.log("COOKIE: ", getAuthTokenFromCookie());
   useEffect(
     function () {
       async function fetchUserData() {
@@ -18,10 +20,16 @@ export default function Menu() {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          if (res.status === "401") setUserData("");
-          const data = await res.json();
-          setUserData(data);
-          console.log(userData);
+          if (res.status === 401) {
+            setUserData("");
+            if (accessToken) {
+              removeAuthTokenCookie();
+              window.location.reload();
+            }
+          } else {
+            const data = await res.json();
+            setUserData(data);
+          }
           setIsLoading(false);
         } catch (error) {
           console.error(error);
