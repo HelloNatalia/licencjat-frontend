@@ -1,0 +1,16 @@
+.form-box {
+  background-color: white;
+  border-radius: 15px;
+}
+
+.products-box {
+  background-color: rgb(247, 247, 247);
+  border-radius: 15px;
+}
+
+.product-table tr td {
+}
+
+/* body {
+  overflow: auto;
+} */

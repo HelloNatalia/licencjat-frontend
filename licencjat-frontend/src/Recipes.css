@@ -22,6 +22,7 @@
   box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
   cursor: pointer;
   transition: background-color 0.3s;
+  height: 170px;
 }
 
 .recipe-box:hover {
@@ -42,7 +43,7 @@
 }
 
 .img-recipe-box img {
-  width: 140px;
+  height: 135px;
 }
 
 .white-box {
@@ -53,8 +54,7 @@
 }
 
 .recipe-img {
-  height: 100%;
-  max-height: 400px;
+  max-width: 300px;
 }
 
 .have-info {
@@ -66,4 +66,20 @@
   margin-left: 20px;
   color: rgb(201, 8, 8);
   text-decoration: underline;
+}
+
+.heart {
+  cursor: pointer;
+}
+
+.product-amount {
+  padding: 5px;
+  background-color: rgb(183, 245, 183, 0.5);
+  border-radius: 10px;
+}
+
+td,
+th {
+  padding-top: 5px; /* Dostosuj wartość według preferencji */
+  padding-bottom: 5px; /* Dostosuj wartość według preferencji */
 }

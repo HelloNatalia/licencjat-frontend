@@ -1,7 +1,59 @@
 import { Navbar, Container, Button, NavDropdown, Nav } from "react-bootstrap";
 import "./TopBrand.css";
+import { useEffect, useState } from "react";
+import {
+  getAuthTokenFromCookie,
+  removeAuthTokenCookie,
+} from "./cookies/auth-cookies";
 
 export default function TopBrand() {
+  const [userData, setUserData] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(getAuthTokenFromCookie());
+
+  useEffect(
+    function () {
+      async function fetchUserData() {
+        try {
+          const res = await fetch("http://localhost:4000/auth/user-data", {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          if (res.status === 401) {
+            setUserData("");
+            if (accessToken) {
+              removeAuthTokenCookie();
+              window.location.reload();
+            }
+          } else {
+            const data = await res.json();
+            setUserData(data);
+          }
+
+          setIsLoading(false);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      if (accessToken) {
+        fetchUserData();
+      } else {
+        setIsLoading(false);
+      }
+    },
+    [accessToken]
+  );
+
+  const handleLogout = () => {
+    setAccessToken(null);
+    setUserData("");
+  };
+
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+
   return (
     <Navbar
       id="top-brand"
@@ -27,24 +79,61 @@ export default function TopBrand() {
             <Nav.Link href="/my-announcements">Moje ogłoszenia</Nav.Link>
             <NavDropdown title="Przepisy" id="collapsible-nav-dropdown">
               <NavDropdown.Item href="/recipes">Przepisy</NavDropdown.Item>
-              <NavDropdown.Item href="#">Dodaj przepis</NavDropdown.Item>
-              <NavDropdown.Item href="#">Twoje przepisy</NavDropdown.Item>
+              <NavDropdown.Item href="/create-recipe">
+                Dodaj przepis
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/my-temporary-recipes">
+                Twoje przepisy wysłane do akceptacji
+              </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#">coś tam</NavDropdown.Item>
+              <NavDropdown.Item href="/favourite-recipes">
+                Ulubione
+              </NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="#">Wskazówki</Nav.Link>
-            <Nav.Link href="#">Konto</Nav.Link>
+            {userData &&
+            userData !== "" &&
+            Array.isArray(userData) &&
+            userData.roles.includes("admin") ? (
+              <Nav.Link href="/admin">Panel zarządzania</Nav.Link>
+            ) : (
+              ""
+            )}
+            <Nav.Link href="my-account">
+              Konto {userData !== "" ? "(" + userData.username + ")" : ""}
+            </Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link href="#">
-              <Button className="btn-signup">Załóż konto</Button>
-            </Nav.Link>
-            <Nav.Link href="#">
-              <Button className="btn-signin">Zaloguj</Button>
-            </Nav.Link>
+            {userData === "" ? (
+              <>
+                <Nav.Link href="/signup">
+                  <Button className="btn-signup">Załóż konto</Button>
+                </Nav.Link>
+                <Nav.Link href="/login">
+                  <Button className="btn-signin">Zaloguj</Button>
+                </Nav.Link>
+              </>
+            ) : (
+              <Nav.Link>
+                <LogoutButton onClick={handleLogout} />
+              </Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
+  );
+}
+
+function LogoutButton() {
+  const logout = () => {
+    removeAuthTokenCookie();
+    window.location.reload();
+  };
+
+  return (
+    <Button onClick={logout} className="btn-signup">
+      Wyloguj
+    </Button>
   );
 }

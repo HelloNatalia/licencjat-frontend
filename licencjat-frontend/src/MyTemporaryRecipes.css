@@ -1,0 +1,24 @@
+.my-recipe-status {
+  padding: 6px;
+  padding-bottom: 9px;
+  border-radius: 7px;
+}
+
+.status-created {
+  background-color: rgb(249, 215, 82);
+}
+
+.status-accepted {
+  background-color: rgb(112, 232, 94);
+}
+
+.recipe-image {
+  width: 200px;
+  height: auto;
+}
+
+.recipe-text-box {
+  background-color: rgb(246, 246, 246);
+  border-radius: 15px;
+  border: 2px solid rgb(235, 235, 235);
+}

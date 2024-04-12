@@ -9,25 +9,35 @@ import "leaflet/dist/leaflet.css";
 // https://github.com/PaulLeCam/react-leaflet/issues/1052
 import "./AnnouncementsMap.css";
 import { useState, useEffect } from "react";
+import { fetchPhoto } from "./FetchPhoto.js";
 
 import { CategoryMarker } from "./icons-declaration.js";
 
 export default function AnnouncementsMap({
   handleSelection,
   announcements_aray,
+  mapCenter,
 }) {
   const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => {
-        console.error("Błąd geolokalizacji:", error);
-      }
-    );
-  }, []);
+    if (mapCenter !== null) {
+      console.log(mapCenter);
+      setUserLocation(mapCenter.value);
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+        },
+        (error) => {
+          console.error("Błąd geolokalizacji:", error);
+        }
+      );
+    }
+  }, [mapCenter]);
 
   return (
     <div className="row p-4">
@@ -49,10 +59,11 @@ export default function AnnouncementsMap({
           />
           {announcements_aray.map((element) => {
             const coordinatesArray = element.coordinates.split(",");
-            console.log(coordinatesArray);
             return (
               <Marker
-                icon={CategoryMarker(element.id_product_category)}
+                icon={CategoryMarker(
+                  element.product_category.id_product_category
+                )}
                 position={coordinatesArray}
                 eventHandlers={{
                   click: (e) => {
@@ -90,6 +101,14 @@ function LargeTooltip({ element }) {
   const output = getDates(element);
   const dayDifference = output[0];
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = element.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="d-none d-lg-block">
       <div className="d-flex">
@@ -110,7 +129,7 @@ function LargeTooltip({ element }) {
         </div>
         <img
           className="ms-4 map-tooltip-product-img"
-          src="announcement-img/rect.png"
+          src={photoUrl}
           alt="produkt"
         />
       </div>
@@ -122,6 +141,14 @@ function SmallTooltip({ element }) {
   const output = getDates(element);
   const dayDifference = output[0];
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = element.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div className="d-md-block d-lg-none">
       <div className="text-center">
@@ -143,7 +170,7 @@ function SmallTooltip({ element }) {
       <div className="text-center mt-3">
         <img
           className="map-tooltip-product-img d-block"
-          src="announcement-img/rect.png"
+          src={photoUrl}
           alt="produkt"
         />
       </div>

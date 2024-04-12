@@ -5,42 +5,16 @@ import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
 import AnnouncementsMap from "./AnnouncementsMap.js";
 import { getDates } from "./AnnouncementsMap.js";
-
-// const announcements_aray = [
-//   {
-//     id_announcement: 1,
-//     title: "Pierogi ruskie",
-//     id_product_category: 1,
-//     id_product: 2,
-//     coordinates: [53.42366704388721, 14.536882650570943],
-//   },
-//   {
-//     id_announcement: 2,
-//     title: "Chleb biały",
-//     id_product_category: 2,
-//     id_product: 4,
-//     coordinates: [53.420453223292974, 14.54080017383933],
-//   },
-//   {
-//     id_announcement: 3,
-//     title: "Makaron pełnoziarnisty Bella",
-//     id_product_category: 3,
-//     id_product: 6,
-//     coordinates: [53.424341688310555, 14.512939336167545],
-//   },
-// ];
-
-const selected_announcement = {
-  id_announcement: 2,
-  title: "Chleb biały",
-  id_product_category: 2,
-  id_product: 4,
-};
+import SelectComponent from "./selectComponent.js";
+import { useLocation } from "react-router-dom";
+import Select from "react-select";
+import { fetchPhoto } from "./FetchPhoto.js";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
   const [inputProductId, setInputProductId] = useState("");
   const [inputCategoryId, setInputCategoryId] = useState("");
+  const [inputCityName, setInputCityName] = useState("");
 
   const [announcements_array, setAnnouncementArray] = useState([]);
 
@@ -49,6 +23,18 @@ export default function Announcements() {
   const handleBack = () => setSelectedAnnouncement(null);
 
   const [mapView, setMapView] = useState(true);
+
+  const [mapCenter, setMapCenter] = useState(null);
+
+  const location = useLocation();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const productArgument = searchParams.get("product");
+    if (productArgument && !inputProductId) {
+      setInputProductId(productArgument);
+    }
+  }, []);
+
   const handleMapView = () => {
     setMapView(true);
     setSelectedAnnouncement(null);
@@ -62,21 +48,26 @@ export default function Announcements() {
     function () {
       async function fetchAnnouncements() {
         const res = await fetch(
-          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}`
+          `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}&city_name=${inputCityName}`
         );
         console.log(
           `http://localhost:4000/announcement?search=${inputTitle}&product_id=${inputProductId}&product_category_id=${inputCategoryId}`
         );
         const data = await res.json();
-        setAnnouncementArray(data);
+        const today = new Date();
+        const filteredData = data.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= today;
+        });
+        setAnnouncementArray(filteredData);
       }
       fetchAnnouncements();
     },
-    [inputTitle, inputProductId, inputCategoryId]
+    [inputTitle, inputProductId, inputCategoryId, inputCityName]
   );
 
   return (
-    <div className="content">
+    <div className="content no-scroll">
       {selectedAnnouncement !== null ? (
         <AnnouncementPage handleBack={handleBack} id={selectedAnnouncement} />
       ) : (
@@ -85,11 +76,14 @@ export default function Announcements() {
             setInputTitle={setInputTitle}
             setInputProductId={setInputProductId}
             setInputCategoryId={setInputCategoryId}
+            setInputCityName={setInputCityName}
+            setMapCenter={setMapCenter}
           />
           {mapView === true ? (
             <AnnouncementsMap
               handleSelection={handleSelection}
               announcements_aray={announcements_array}
+              mapCenter={mapCenter}
             />
           ) : (
             <AnnouncementsList
@@ -108,7 +102,13 @@ export default function Announcements() {
   );
 }
 
-function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
+function Forms({
+  setInputTitle,
+  setInputProductId,
+  setInputCategoryId,
+  setMapCenter,
+  setInputCityName,
+}) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   useEffect(function () {
@@ -116,7 +116,11 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
       const res = await fetch(`http://localhost:4000/product/product-list`);
       const data = await res.json();
       console.log(data);
-      setProducts(data);
+      const newArray = [{ value: "", label: "Produkt" }];
+      data.map((element) => {
+        newArray.push({ value: element.id_product, label: element.name });
+      });
+      setProducts(newArray);
     }
     fetchProductsList();
   }, []);
@@ -128,7 +132,14 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
       );
       const data = await res.json();
       console.log(data);
-      setCategories(data);
+      const newArray = [{ value: "", label: "Kategoria" }];
+      data.map((element) => {
+        newArray.push({
+          value: element.id_product_category,
+          label: element.name,
+        });
+      });
+      setCategories(newArray);
     }
     fetchProductsList();
   }, []);
@@ -140,18 +151,25 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
     }
   };
 
-  const handleProductChange = (event) => {
-    if (event.target.value === "") setInputProductId("");
+  const handleProductChange = (option) => {
+    if (option.value === "") setInputProductId("");
     else {
-      setInputProductId(event.target.value);
+      setInputProductId(option.value);
     }
   };
 
-  const handleCategoryChange = (event) => {
-    if (event.target.value === "") setInputCategoryId("");
+  const handleCategoryChange = (option) => {
+    if (option.value === "") setInputCategoryId("");
     else {
-      setInputCategoryId(event.target.value);
+      setInputCategoryId(option.value);
     }
+  };
+
+  const handleDeleteFilters = () => {
+    setInputProductId("");
+    setInputCategoryId("");
+    setInputTitle("");
+    window.location.reload();
   };
 
   if (!products) return <div>Loading ... </div>;
@@ -170,47 +188,44 @@ function Forms({ setInputTitle, setInputProductId, setInputCategoryId }) {
         </div>
         {/* Widoczne tylko na sm i md */}
         <div className="col-3 d-md-block d-lg-none">
-          <FiltersModal />
+          <FiltersModal
+            handleProductChange={handleProductChange}
+            handleCategoryChange={handleCategoryChange}
+            products={products}
+            categories={categories}
+            setMapCenter={setMapCenter}
+            handleDeleteFilters={handleDeleteFilters}
+          />
         </div>
         {/* Widoczne tylko dla lg i większych */}
-        <div className="col-2 d-none d-lg-block">
-          <Form.Select
-            name="product_id"
-            className="search-form"
+        <div className="col-2 d-none d-lg-block form-map-filter">
+          <Select
+            options={products}
             onChange={handleProductChange}
-          >
-            <option className="default-product" value="">
-              Produkt
-            </option>
-            {products.map((element) => {
-              return <option value={element.id_product}>{element.name}</option>;
-            })}
-          </Form.Select>
+            className="select-react-container"
+            id="id_products"
+            placeholder="Produkt"
+          />
         </div>
         <div className="col-2 d-none d-lg-block">
-          <Form.Select
-            name="category_id"
-            className="search-form"
+          <Select
+            options={categories}
             onChange={handleCategoryChange}
-          >
-            <option className="default-category" value="">
-              Kategoria
-            </option>
-            {categories.map((element) => {
-              return (
-                <option value={element.id_product_category}>
-                  {element.name}
-                </option>
-              );
-            })}
-          </Form.Select>
+            className="select-react-container"
+            id="id_categories"
+            placeholder="Kategoria"
+          />
         </div>
         <div className="col-2 d-none d-lg-block">
-          <Form.Select name="city_id" className="search-form">
-            <option className="default-category">Miasto</option>
-            <option>Szczecin</option>
-            <option>Koszalin</option>
-          </Form.Select>
+          <SelectComponent
+            setMapCenter={setMapCenter}
+            setInputCityName={setInputCityName}
+          />
+        </div>
+        <div className="col d-none d-lg-block">
+          <button className="btn btn-danger" onClick={handleDeleteFilters}>
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -221,7 +236,9 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
   return (
     <>
       <div className="plus-btn d-flex justify-content-center align-items-center">
-        <img src="plus-icon.png" alt="icon to add new announcement" />
+        <a href="/create-announcement">
+          <img src="plus-icon.png" alt="icon to add new announcement" />
+        </a>
       </div>
       <div className="change-view-btn d-flex justify-content-center align-items-center">
         <div
@@ -275,6 +292,14 @@ function AnnouncementsList({ handleSelection, announcements_aray }) {
 function Announcement({ announcement, handleSelection }) {
   const output = getDates(announcement);
   const productDate = output[1];
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   return (
     <div
       onClick={() => handleSelection(announcement.id_announcement)}
@@ -289,17 +314,36 @@ function Announcement({ announcement, handleSelection }) {
         <p className="date">Data ważności: {productDate}</p>
       </div>
       <div className="col-3 d-inline-block p-2">
-        <img src="announcement-img/1.png" className="img-fluid" alt="product" />
+        <img src={photoUrl} className="img-fluid" alt="product" />
       </div>
     </div>
   );
 }
 
-function FiltersModal() {
+function FiltersModal({
+  handleProductChange,
+  handleCategoryChange,
+  products,
+  categories,
+  setMapCenter,
+  handleDeleteFilters,
+}) {
   const [show, setShow] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleProductSelect = (event) => {
+    setSelectedProduct(event.target.value);
+    handleProductChange(event);
+  };
+
+  const handleCategorySelect = (event) => {
+    setSelectedCategory(event.target.value);
+    handleCategoryChange(event);
+  };
 
   return (
     <>
@@ -315,31 +359,34 @@ function FiltersModal() {
           <div className="row">
             <div className="col-12">
               <Form.Label className="ms-1">Typ produktu:</Form.Label>
-              <Form.Select name="product_id" className="search-form">
-                <option className="default-product">Produkt</option>
-                <option>Makaron</option>
-                <option>Chleb</option>
-              </Form.Select>
+              <Select
+                options={products}
+                onChange={handleProductChange}
+                className="select-react-container"
+                id="id_products"
+                placeholder="Produkt ..."
+              />
             </div>
             <div className="col-12 mt-4">
               <Form.Label className="ms-1">Kategoria produktu:</Form.Label>
-              <Form.Select name="category_id" className="search-form">
-                <option className="default-category">Kategoria</option>
-                <option>Nabiał</option>
-                <option>Pieczywo</option>
-              </Form.Select>
+              <Select
+                options={categories}
+                onChange={handleCategoryChange}
+                className="select-react-container"
+                id="id_categories"
+                placeholder="Kategoria ..."
+              />
             </div>
             <div className="col-12 my-4">
               <Form.Label className="ms-1">Miasto:</Form.Label>
-              <Form.Select name="city_id" className="search-form">
-                <option className="default-category">Miasto</option>
-                <option>Szczecin</option>
-                <option>Koszalin</option>
-              </Form.Select>
+              <SelectComponent setMapCenter={setMapCenter} />
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
+          <button className="btn btn-danger" onClick={handleDeleteFilters}>
+            <i class="bi bi-trash"></i>
+          </button>
           <Button className="form-btn" onClick={handleClose}>
             Zastosuj
           </Button>

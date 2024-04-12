@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Requests.css";
 import { Button, Modal } from "react-bootstrap";
+import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { useNavigate } from "react-router-dom";
+import { getDates } from "./AnnouncementsMap";
+import RatingModal from "./Rating";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
@@ -51,9 +55,36 @@ function RequestsButton({ selectedRequestsType, handleRequestsTypeChange }) {
 }
 
 function ReceivedRequests() {
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigate();
+
+  useEffect(function () {
+    async function fetchReceivedRequests() {
+      const res = await fetch(
+        `http://localhost:4000/request/received-requests`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      setReceivedRequests(data);
+      setIsLoading(false);
+    }
+    fetchReceivedRequests();
+  }, []);
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="row mx-3">
-      <div className="col-12 mt-3">
+      {/* <div className="col-12 mt-3">
         <ReceivedMessage
           message={
             <span>
@@ -62,64 +93,170 @@ function ReceivedRequests() {
             </span>
           }
         />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"sent"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"accepted"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"collected"} />
-      </div>
-      <div className="col-12 mt-3">
-        <ReceivedRequest status={"reviewed"} />
-      </div>
+      </div> */}
+
+      {receivedRequests.map((element) => {
+        const announcement = element.announcement;
+        const request_user = element.id_user_request;
+        return (
+          <div className="col-12 mt-3">
+            <ReceivedRequest
+              status={element.status}
+              announcement={announcement}
+              request_user={request_user}
+              request={element}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 function SentRequests() {
+  const [sentRequests, setSentRequests] = useState([]);
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigate();
+
+  useEffect(function () {
+    async function fetchSentRequests() {
+      const res = await fetch(`http://localhost:4000/request/sent-requests`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      setSentRequests(data);
+      setIsLoading(false);
+    }
+    fetchSentRequests();
+  }, []);
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="row mx-3">
-      <div className="col-12 mt-3">
-        <SentRequest status={"sent"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"accepted"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"collected"} />
-      </div>
-      <div className="col-12 mt-3">
-        <SentRequest status={"reviewed"} />
-      </div>
+      {sentRequests.map((element) => {
+        const announcement = element.announcement;
+        const announcement_user = element.id_user_announcement;
+        return (
+          <div className="col-12 mt-3">
+            <SentRequest
+              status={element.status}
+              announcement={announcement}
+              announcement_user={announcement_user}
+              request={element}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-function ReceivedRequest({ status }) {
+function ReceivedRequest({ status, announcement, request_user, request }) {
+  const navigation = useNavigate();
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const [canRate, setCanRate] = useState(true);
+
+  useEffect(function () {
+    async function checkIfCanRate() {
+      const postData = { user_to_rate: request_user.id };
+      const res = await fetch(
+        `http://localhost:4000/rating/check-if-can-rate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      console.log("Zwrócono: ", data);
+      setCanRate(data.can_rate);
+      setIsLoading(false);
+    }
+    checkIfCanRate();
+  }, []);
+
+  const handleChangeStatus = async (type) => {
+    const status = { status: type };
+
+    const res = await fetch(
+      `http://localhost:4000/request/change-status/${request.id_request}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(status),
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
+
+  const handleDelete = async () => {
+    const accessToken = getAuthTokenFromCookie();
+    const res = await fetch(
+      `http://localhost:4000/request/${request.id_request}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
+
   var message = "";
   switch (status) {
     case "sent":
       message = (
         <span>
-          Użytkownik <b>Anna12</b> chce zarezerwować Twój produkt.
+          Użytkownik <b>{request_user.username}</b> chce zarezerwować Twój
+          produkt.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          Twój produkt jest zarezerwowany dla <b>Anna12</b>.
+          Twój produkt jest zarezerwowany dla <b>{request_user.username}</b>.
         </span>
       );
       break;
-    case "collected":
+    case "received":
     case "reviewed":
       message = (
         <span>
-          Oddano produkt użytkownikowi <b>Anna12</b>.
+          Oddano produkt użytkownikowi <b>{request_user.username}</b>.
         </span>
       );
       break;
@@ -127,20 +264,31 @@ function ReceivedRequest({ status }) {
       break;
   }
 
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" alt="announcement" />
+        <a href={`/announcement-page?id=${announcement.id_announcement}`}>
+          <img src="announcement-img/1.png" alt="announcement" />
+        </a>
       </div>
       <div>
         <div className="d-flex">
-          <p>Makaron pełnoziarnisty &#183; 15.02.2024</p>
+          <a
+            className="text-decoration-none text-black"
+            href={`/announcement-page?id=${announcement.id_announcement}`}
+          >
+            <p>
+              {announcement.title} &#183; {getDates(announcement)[1]}
+            </p>
+          </a>
           {status === "accepted" && (
             <div className="booked-icon">
               <i class="bi bi-check-circle text-success"></i>
             </div>
           )}
-          {(status === "collected" || status === "reviewed") && (
+          {(status === "received" || status === "reviewed") && (
             <div className="booked-icon">
               <i class="bi bi-check-circle-fill text-success"></i>
             </div>
@@ -151,28 +299,48 @@ function ReceivedRequest({ status }) {
         <div>
           {status === "sent" && (
             <>
-              <Button className=" me-2 answer-request-btn positive-request-btn">
+              <Button
+                onClick={() => handleChangeStatus("accepted")}
+                className=" me-2 answer-request-btn positive-request-btn"
+              >
                 ZAREZERWUJ
               </Button>
-              <Button className="answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 ODRZUĆ
               </Button>
             </>
           )}
           {status === "accepted" && (
             <>
-              <Button className=" me-2 answer-request-btn positive-request-btn">
+              <Button
+                onClick={() => handleChangeStatus("received")}
+                className=" me-2 answer-request-btn positive-request-btn"
+              >
                 OZNACZ JAKO ODEBRANE
               </Button>
-              <Button className="answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 USUŃ REZERWACJĘ
               </Button>
             </>
           )}
-          {status === "collected" && (
+          {status === "received" && canRate === true && (
             <>
-              <Button className=" me-2 answer-request-btn opinion-request-btn">
-                WYSTAW OPINIĘ UŻYTKOWNIKOWI
+              <RatingModal
+                userRated={request_user.id}
+                requestId={request.id_request}
+              />
+            </>
+          )}
+          {status === "received" && canRate === false && (
+            <>
+              <Button className=" me-2 answer-request-btn reviewed-request-btn">
+                WYSTAWIONO OPINIĘ
               </Button>
             </>
           )}
@@ -183,34 +351,89 @@ function ReceivedRequest({ status }) {
               </Button>
             </>
           )}
+          <p className="pickup-data d-inline">
+            Data odbioru: {getDates(request)[1]} &#183; {request.hour}
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-function SentRequest({ status }) {
+function SentRequest({ status, announcement, announcement_user, request }) {
+  const navigation = useNavigate();
+
+  const accessToken = getAuthTokenFromCookie();
+  const [isLoading, setIsLoading] = useState(true);
+  const [canRate, setCanRate] = useState(true);
+
+  useEffect(function () {
+    async function checkIfCanRate() {
+      const postData = { user_to_rate: announcement_user.id };
+      const res = await fetch(
+        `http://localhost:4000/rating/check-if-can-rate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) navigation("/login");
+      }
+      const data = await res.json();
+      console.log("Zwrócono: ", data);
+      setCanRate(data.can_rate);
+      setIsLoading(false);
+    }
+    checkIfCanRate();
+  }, []);
+
+  const handleDelete = async () => {
+    const res = await fetch(
+      `http://localhost:4000/request/${request.id_request}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.status);
+    if (!res.ok) {
+      if (res.status === 401) navigation("/login");
+      else {
+        throw new Error("Something went wrong");
+      }
+    }
+    window.location.reload();
+  };
   var message = "";
   switch (status) {
     case "sent":
       message = (
         <span>
-          Prośba została wysłana do użytkownika <b>Anna12</b>.
+          Prośba została wysłana do użytkownika{" "}
+          <b>{announcement_user.username}</b>.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          <b>Anna12</b> zaakceptował/a Twoją prośbę.
+          <b>{announcement_user.username}</b> zaakceptował/a Twoją prośbę.
         </span>
       );
       break;
-    case "collected":
+    case "received":
     case "reviewed":
       message = (
         <span>
-          Odebrano produkt od użytkownika <b>Anna12</b>.
+          Odebrano produkt od użytkownika <b>{announcement_user.username}</b>.
         </span>
       );
       break;
@@ -218,20 +441,34 @@ function SentRequest({ status }) {
       break;
   }
 
+  const date = getDates(announcement)[1];
+
+  if (isLoading) return <div>Loading ...</div>;
+
   return (
     <div className={"request-box d-flex"}>
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" alt="announcement" />
+        <a href={`/announcement-page?id=${announcement.id_announcement}`}>
+          <img src="announcement-img/1.png" alt="announcement" />
+        </a>
       </div>
       <div>
         <div className="title-line d-flex">
-          <p>Makaron pełnoziarnisty &#183; 15.02.2024</p>
+          <a
+            className="text-decoration-none text-black"
+            href={`/announcement-page?id=${announcement.id_announcement}`}
+          >
+            <p>
+              {announcement.title} &#183; {date}
+            </p>
+          </a>
+
           {status === "accepted" && (
             <div className="booked-icon">
               <i class="bi-check-circle text-success"></i>
             </div>
           )}
-          {(status === "collected" || status === "reviewed") && (
+          {(status === "received" || status === "reviewed") && (
             <div className="booked-icon">
               <i class="bi bi-check-circle-fill text-success"></i>
             </div>
@@ -242,23 +479,41 @@ function SentRequest({ status }) {
         <div>
           {status === "sent" && (
             <>
-              <Button className="me-2 answer-request-btn negative-request-btn">
+              <Button
+                onClick={handleDelete}
+                className="me-2 answer-request-btn negative-request-btn"
+              >
                 ANULUJ PROŚBĘ
               </Button>
             </>
           )}
           {status === "accepted" && (
             <>
-              <SeeDetails />
-              <Button className="answer-request-btn negative-request-btn">
+              <SeeDetails
+                announcement={announcement}
+                announcement_user={announcement_user}
+                request={request}
+              />
+              <Button
+                onClick={handleDelete}
+                className="answer-request-btn negative-request-btn"
+              >
                 ANULUJ REZERWACJĘ
               </Button>
             </>
           )}
-          {status === "collected" && (
+          {status === "received" && canRate === true && (
             <>
-              <Button className=" me-2 answer-request-btn opinion-request-btn">
-                WYSTAW OPINIĘ UŻYTKOWNIKOWI
+              <RatingModal
+                userRated={announcement_user.id}
+                requestId={request.id_request}
+              />
+            </>
+          )}
+          {status === "received" && canRate === false && (
+            <>
+              <Button className=" me-2 answer-request-btn reviewed-request-btn">
+                WYSTAWIONO OPINIĘ
               </Button>
             </>
           )}
@@ -269,6 +524,9 @@ function SentRequest({ status }) {
               </Button>
             </>
           )}
+          <p className="pickup-data d-inline">
+            Data odbioru: {getDates(request)[1]} &#183; {request.hour}
+          </p>
         </div>
       </div>
     </div>
@@ -286,11 +544,13 @@ function ReceivedMessage({ message }) {
   );
 }
 
-function SeeDetails() {
+function SeeDetails({ announcement, announcement_user, request }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const link = "https://www.google.com/maps?q=" + announcement.coordinates;
 
   return (
     <>
@@ -304,7 +564,7 @@ function SeeDetails() {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <p className="modal-title mb-0">Makaron pełnoziarnisty</p>
+          <p className="modal-title mb-0">{announcement.title}</p>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
@@ -318,7 +578,7 @@ function SeeDetails() {
                     <div className="mt-2 d-flex justify-content-center pe-4">
                       <img className="user-img" src="user.png" alt="user" />
                       <p className="ms-2 mt-3">
-                        <b>Anna12</b>
+                        <b>{announcement_user.username}</b>
                       </p>
                     </div>
                     <div className="d-flex mt-3 ms-3 pe-4 justify-content-center">
@@ -334,7 +594,7 @@ function SeeDetails() {
                     <div className="my-3 d-flex justify-content-center pe-4">
                       <i class="bi bi-telephone-fill me-2"></i>
                       <p>
-                        <b>123 456 789</b>
+                        <b>{announcement_user.phone_number}</b>
                       </p>
                     </div>
                   </div>
@@ -347,7 +607,9 @@ function SeeDetails() {
                   <div className="mb-3 outlined-box text-center">
                     <p className="mt-2">
                       Data ważności:{" "}
-                      <span className="ms-2 modal-date">15.02.2024</span>
+                      <span className="ms-2 modal-date">
+                        {announcement.date.split("T")[0]}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -361,28 +623,8 @@ function SeeDetails() {
                         alt="ikona kalendarza"
                       />
 
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
-                    </div>
-                    <div className="d-flex datetime mt-2">
-                      <img
-                        className="datetime-icon"
-                        src="calendar.png"
-                        alt="ikona kalendarza"
-                      />
-
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
-                    </div>
-                    <div className="d-flex datetime mt-2">
-                      <img
-                        className="datetime-icon"
-                        src="calendar.png"
-                        alt="ikona kalendarza"
-                      />
-
-                      <p className="mt-2 ms-3">10.12 Niedziela</p>
-                      <p className="hours mt-1">11:00 - 12:00</p>
+                      <p className="mt-2 ms-3">{request.date.split("T")[0]}</p>
+                      <p className="hours mt-1">{request.hour}</p>
                     </div>
                   </div>
                 </div>
@@ -397,7 +639,9 @@ function SeeDetails() {
                       />
                       <p className="mt-2 ms-3">
                         Dzielnica:{" "}
-                        <span className="fw-bold ms-1">Pomorzany</span>
+                        <span className="fw-bold ms-1">
+                          {announcement.district}, {announcement.city}
+                        </span>
                       </p>
                     </div>
                     <div className="d-flex localization mt-2">
@@ -409,10 +653,13 @@ function SeeDetails() {
                       <p className="mt-2 ms-3">
                         Ulica:{" "}
                         <span className="fw-bold ms-1">
-                          Powstańców Wielkopolskich
+                          {announcement.street} {announcement.number}
                         </span>
                       </p>
                     </div>
+                    <a href={link} target="_blank">
+                      <p>Pokaż na mapie</p>
+                    </a>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,26 @@
+.module-box {
+  background-color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+  width: 100%;
+}
+
+.module-box:hover {
+  background-color: rgb(239, 239, 239);
+  transition: 0.3s;
+}
+
+.module-img {
+  height: 85px;
+  display: inline-block;
+}
+
+.module-content {
+  display: block;
+}
+
+.module-content a {
+  text-decoration: none;
+  color: black;
+}
