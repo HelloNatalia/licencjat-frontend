@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useEffect, useState } from "react";
+import "./Report.css";
 
 export default function Reports() {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,28 +59,131 @@ export default function Reports() {
 
   return (
     <div className="content">
-      {reports.length > 0
-        ? reports.map((element) => {
-            return (
-              <div>
-                <p>{element.text}</p>
-                <p>{element.status}</p>
-                <button
-                  onClick={() => handleDeleteReport(element.id_report)}
-                  className="btn btn-danger"
+      <div className="container mb-3">
+        <p className="fs-4 m-3">Zgłoszenia użytkowników</p>
+        <div className="new-reports-div">
+          <p className="fs-5">Nowe:</p>
+          {reports.length > 0 ? (
+            reports.map((element) => {
+              if (element.status === "created") {
+                return (
+                  <NewReport
+                    report={element}
+                    handleDeleteReport={handleDeleteReport}
+                    handleAcceptReport={handleAcceptReport}
+                  />
+                );
+              }
+            })
+          ) : (
+            <p>Nie ma nowych zgłoszeń</p>
+          )}
+        </div>
+        <div className="accepted-reports mt-5">
+          <p className="fs-5">Zaakceptowane (zablokowani użytkownicy):</p>
+          {reports.length > 0 ? (
+            reports.map((element) => {
+              if (element.status === "accepted") {
+                return (
+                  <AcceptedReport
+                    report={element}
+                    handleDeleteReport={handleDeleteReport}
+                  />
+                );
+              }
+            })
+          ) : (
+            <p>Nie zaakceptowano jeszcze żadnego zgłoszenia</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewReport({ report, handleDeleteReport, handleAcceptReport }) {
+  return (
+    <div className="row my-3">
+      <div className="col">
+        <div className="report-box">
+          <div className="row p-3">
+            <div className="col-12 col-md-6">
+              <p>
+                <span className="text-grey">Zgłoszona osoba: </span>{" "}
+                <a
+                  className="text-decoration-none text-black fw-bold"
+                  href={`/account?id=${report.user_reported.id}`}
                 >
-                  Odrzuć
-                </button>
-                <button
-                  onClick={() => handleAcceptReport(element.id_report)}
-                  className="btn btn-warning"
-                >
-                  Blokuj
-                </button>
+                  {report.user_reported.username}
+                </a>
+              </p>
+              <p>
+                <span className="text-grey">Treść zgłoszenia: </span>{" "}
+                {report.text}
+              </p>
+            </div>
+            <div className="col-12 col-md-6 p-3">
+              <div className="d-flex">
+                <span className="report-admin-buttons me-3 mt-1">
+                  <button
+                    onClick={() => handleDeleteReport(report.id_report)}
+                    className="btn btn-warning me-3 text-white"
+                  >
+                    Odrzuć
+                  </button>
+
+                  <button
+                    onClick={() => handleAcceptReport(report.id_report)}
+                    className="btn btn-danger "
+                  >
+                    Blokuj
+                  </button>
+                </span>
               </div>
-            );
-          })
-        : "Nie mażadnych zgłoszeń"}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AcceptedReport({ report, handleDeleteReport }) {
+  return (
+    <div className="row">
+      <div className="col">
+        <div className="report-box">
+          <div className="row p-3">
+            <div className="col-12 col-md-6">
+              <p>
+                <span className="text-grey">Zgłoszona osoba: </span>{" "}
+                <a
+                  className="text-decoration-none text-black fw-bold"
+                  href={`/account?id=${report.user_reported.id}`}
+                >
+                  {report.user_reported.username}
+                </a>
+              </p>
+              <p>
+                <span className="text-grey">Treść zgłoszenia: </span>{" "}
+                {report.text}
+              </p>
+            </div>
+            <div className="col-12 col-md-6 p-3">
+              <div className="d-flex">
+                <span className="report-admin-buttons me-3 mt-1">
+                  <button
+                    onClick={() => handleDeleteReport(report.id_report)}
+                    className="btn btn-warning me-3 text-white"
+                  >
+                    Odrzuć
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
