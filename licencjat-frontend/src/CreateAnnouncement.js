@@ -37,7 +37,7 @@ export default function CreateAnnouncement() {
 
   return (
     <div className="content">
-      <div className="container">
+      <div className="container mb-4">
         <div className="row">
           <div className="col mt-3">
             <CreateAnnouncementForm products={products} />
@@ -277,21 +277,34 @@ function CreateAnnouncementForm({ products }) {
                 value={formik.values.description}
               />
             </div>
+
             {!isLoading ? (
               <div>
                 {addresses.length > 0 ? (
-                  <div>
+                  <div className="row px-3 mt-3">
                     {addresses.map((address) => {
                       return (
-                        <div onClick={() => handleInsertAddress(address)}>
-                          <p>
-                            {address.street} {address.number}
-                          </p>
-                          <p>
-                            {address.district}
-                            {address.district ? ", " : ""}
-                            {address.city}
-                          </p>
+                        <div className="col-12 col-md-6 col-lg-3 my-2">
+                          <div
+                            onClick={() => handleInsertAddress(address)}
+                            className="address-box-announcement p-2 text-center"
+                          >
+                            <p>
+                              {address.street} {address.number}
+                            </p>
+                            <p>
+                              {address.postal_code} {address.city}
+                            </p>
+                            <p>
+                              {address.district ? (
+                                `(${address.district})`
+                              ) : (
+                                <span className="text-transparent">
+                                  dzielnica
+                                </span>
+                              )}
+                            </p>
+                          </div>
                         </div>
                       );
                     })}

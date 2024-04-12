@@ -54,7 +54,7 @@ export default function EditAnnouncement() {
 
   return (
     <div className="content">
-      <div className="container">
+      <div className="container mb-4">
         <div className="row">
           <div className="col mt-3">
             <EditAnnouncementForm
