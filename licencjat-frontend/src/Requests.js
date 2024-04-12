@@ -240,15 +240,32 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
     case "sent":
       message = (
         <span>
-          Użytkownik <b>{request_user.username}</b> chce zarezerwować Twój
-          produkt.
+          Użytkownik{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>{" "}
+          chce zarezerwować Twój produkt.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          Twój produkt jest zarezerwowany dla <b>{request_user.username}</b>.
+          Twój produkt jest zarezerwowany dla{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
@@ -256,7 +273,16 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
     case "reviewed":
       message = (
         <span>
-          Oddano produkt użytkownikowi <b>{request_user.username}</b>.
+          Oddano produkt użytkownikowi{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
@@ -418,14 +444,30 @@ function SentRequest({ status, announcement, announcement_user, request }) {
       message = (
         <span>
           Prośba została wysłana do użytkownika{" "}
-          <b>{announcement_user.username}</b>.
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          <b>{announcement_user.username}</b> zaakceptował/a Twoją prośbę.
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>{" "}
+          zaakceptował/a Twoją prośbę.
         </span>
       );
       break;
@@ -433,7 +475,16 @@ function SentRequest({ status, announcement, announcement_user, request }) {
     case "reviewed":
       message = (
         <span>
-          Odebrano produkt od użytkownika <b>{announcement_user.username}</b>.
+          Odebrano produkt od użytkownika{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
