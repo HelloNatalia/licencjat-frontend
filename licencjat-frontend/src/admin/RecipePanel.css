@@ -36,3 +36,15 @@
   color: rgb(255, 255, 255) !important;
   border: 2px solid rgb(217, 55, 34) !important;
 }
+
+.btn-admin-recipe-accept {
+  background-color: white !important;
+  color: rgb(64, 209, 32) !important;
+  border: 2px solid rgb(64, 209, 32) !important;
+}
+
+.btn-admin-recipe-accept:hover {
+  background-color: rgb(64, 209, 32) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid rgb(64, 209, 32) !important;
+}
