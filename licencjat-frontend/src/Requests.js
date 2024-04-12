@@ -269,13 +269,20 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" alt="announcement" />
+        <a href={`/announcement-page?id=${announcement.id_announcement}`}>
+          <img src="announcement-img/1.png" alt="announcement" />
+        </a>
       </div>
       <div>
         <div className="d-flex">
-          <p>
-            {announcement.title} &#183; {getDates(announcement)[1]}
-          </p>
+          <a
+            className="text-decoration-none text-black"
+            href={`/announcement-page?id=${announcement.id_announcement}`}
+          >
+            <p>
+              {announcement.title} &#183; {getDates(announcement)[1]}
+            </p>
+          </a>
           {status === "accepted" && (
             <div className="booked-icon">
               <i class="bi bi-check-circle text-success"></i>
@@ -441,13 +448,20 @@ function SentRequest({ status, announcement, announcement_user, request }) {
   return (
     <div className={"request-box d-flex"}>
       <div className="request-img d-none d-md-block me-3">
-        <img src="announcement-img/1.png" alt="announcement" />
+        <a href={`/announcement-page?id=${announcement.id_announcement}`}>
+          <img src="announcement-img/1.png" alt="announcement" />
+        </a>
       </div>
       <div>
         <div className="title-line d-flex">
-          <p>
-            {announcement.title} &#183; {date}
-          </p>
+          <a
+            className="text-decoration-none text-black"
+            href={`/announcement-page?id=${announcement.id_announcement}`}
+          >
+            <p>
+              {announcement.title} &#183; {date}
+            </p>
+          </a>
 
           {status === "accepted" && (
             <div className="booked-icon">

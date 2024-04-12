@@ -113,7 +113,7 @@ function Buttons({ handleBack, selected_announcement }) {
   );
 }
 
-function Images({ selected_announcement }) {
+export function Images({ selected_announcement }) {
   const [photoUrl, setPhotoUrl] = useState([]);
   let photoNamesArray = selected_announcement.photos.slice(1, -1).split('","');
 
@@ -134,7 +134,7 @@ function Images({ selected_announcement }) {
   );
 }
 
-function MainInfo({ selected_announcement }) {
+export function MainInfo({ selected_announcement }) {
   return (
     <div className="box main-info justify-content-center py-3">
       <p className="announcement-title">{selected_announcement.title}</p>
@@ -153,7 +153,11 @@ function MainInfo({ selected_announcement }) {
   );
 }
 
-function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
+export function ProductInfo({
+  selected_announcement,
+  showButton,
+  setCreatedRequest,
+}) {
   const output = getDates(selected_announcement);
   const productDate = output[1];
   const [myAnnouncement, setMyAnnouncement] = useState(false);
@@ -241,7 +245,7 @@ function ProductInfo({ selected_announcement, showButton, setCreatedRequest }) {
   );
 }
 
-function PickupInfo({ selected_announcement }) {
+export function PickupInfo({ selected_announcement }) {
   const datesAndHours = JSON.parse(selected_announcement.available_dates);
   console.log(datesAndHours);
 

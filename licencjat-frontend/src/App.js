@@ -29,6 +29,8 @@ import ProductsCategories from "./admin/creating/products-categories/ProductsCat
 import CreateProductCategory from "./admin/creating/products-categories/CreateProductCategory.js";
 import RecipesCategories from "./admin/creating/recipes-categories/RecipesCategories.js";
 import CreateRecipeCategory from "./admin/creating/recipes-categories/CreateRecipeCategory.js";
+import BlockedAccount from "./errors/BlockedAccount.js";
+import SingleAnnouncementPage from "./Announcements/SingleAnnouncementPage.js";
 
 function App() {
   return (
@@ -76,6 +78,11 @@ function App() {
           <Route
             path="/create-recipe-category"
             element={<CreateRecipeCategory />}
+          />
+          <Route path="/blocked" element={<BlockedAccount />} />
+          <Route
+            path="/announcement-page"
+            element={<SingleAnnouncementPage />}
           />
         </Routes>
       </div>

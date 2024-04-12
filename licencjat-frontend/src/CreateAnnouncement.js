@@ -102,7 +102,9 @@ function CreateAnnouncementForm({ products }) {
           values.photos,
           values.date
         );
-        if (uploadPhotos(photoFiles)) navigation("/my-announcements");
+        if (output && output != "403" && uploadPhotos(photoFiles))
+          navigation("/my-announcements");
+        if (output && output == "403") navigation("/blocked");
       }
     },
   });
@@ -596,6 +598,7 @@ async function Create(
       // Tutaj uzyskać zwrot od api jeżeli coś nie gra
       // if (response.status === 409) return "conflict";
       // else throw new Error("Wystąpił błąd");
+      if (response.status == "403") return "403";
     }
 
     return true;

@@ -75,6 +75,7 @@ function ReportModal({ userReported }) {
 
 function ReportForm({ userReported }) {
   const [reportText, setReportText] = useState();
+  const navigation = useNavigate();
 
   const handleChangeText = (event) => {
     setReportText(event.target.value);
@@ -98,6 +99,7 @@ function ReportForm({ userReported }) {
 
       if (!response.ok) {
         if (response.status === 404) return "not found";
+        if (response.status === 401) navigation("/login");
         else throw new Error("Wystąpił błąd");
       }
 

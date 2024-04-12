@@ -53,6 +53,8 @@ function RequestForm({ announcement, handleClose, setCreatedRequest }) {
       );
       if (output === -1) {
         navigation("/login");
+      } else if (output === -2) {
+        navigation("/blocked");
       } else {
         setCreatedRequest(id_announcement);
         handleClose();
@@ -143,6 +145,7 @@ async function sendRequest(id_announcement, id, date, time) {
 
     if (!response.ok) {
       if (response.status === 401) return -1;
+      if (response.status === 403) return -2;
       else throw new Error("Wystąpił błąd");
     }
   } catch (error) {

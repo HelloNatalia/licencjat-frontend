@@ -80,12 +80,19 @@ function Announcement({ announcement }) {
       <div className="col-12 mt-3">
         <div className="announcement-box d-flex">
           <div className="request-img d-none d-md-block me-3">
-            <img src={photoUrl} aria-label="announcement" />
+            <a href={`/announcement-page?id=${announcement.id_announcement}`}>
+              <img src={photoUrl} aria-label="announcement" />
+            </a>
           </div>
           <div>
-            <p>
-              {announcement.title} &#183; {announcement.date.split("T")[0]}
-            </p>
+            <a
+              className="text-decoration-none text-black"
+              href={`/announcement-page?id=${announcement.id_announcement}`}
+            >
+              <p>
+                {announcement.title} &#183; {announcement.date.split("T")[0]}
+              </p>
+            </a>
             <div>
               <a
                 href={`edit-announcement/${announcement.id_announcement}`}
