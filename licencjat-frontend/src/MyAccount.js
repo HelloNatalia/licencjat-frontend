@@ -7,6 +7,7 @@ import {
 } from "./cookies/auth-cookies";
 import EditAccountForm from "./EditAccountForm";
 import MyAddresses from "./my-account/address/MyAddresses";
+import { Ratings } from "./SpecificAccount";
 
 export default function MyAccount() {
   const navigation = useNavigate();
@@ -68,6 +69,18 @@ export default function MyAccount() {
         </div>
         <div className="row my-3">
           <MyAddresses />
+        </div>
+        <div className="row my-3">
+          <div className="col">
+            <div className="row">
+              <div className="col">
+                <div className="info-box p-3">
+                  <p className="fs-4">Opinie</p>
+                  <Ratings userId={userData.id} />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

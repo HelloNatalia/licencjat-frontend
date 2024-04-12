@@ -47,7 +47,7 @@ export default function MyAddresses() {
             </span>
           </p>
         </div>
-        <div className="row">
+        <div className="row px-3">
           {addresses && Array.isArray(addresses) ? (
             addresses.map((address) => {
               return <Address address={address} />;

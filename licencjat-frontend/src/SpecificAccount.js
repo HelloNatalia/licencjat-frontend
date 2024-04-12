@@ -158,14 +158,17 @@ function ReportForm({ userReported }) {
         onChange={handleChangeText}
         required
       />
-      <button className="mt-3 btn btn-primary" onClick={handleSendReport}>
+      <button
+        className="mt-3 btn btn-success green-button"
+        onClick={handleSendReport}
+      >
         Wyślij zgłoszenie
       </button>
     </>
   );
 }
 
-function Ratings({ userId }) {
+export function Ratings({ userId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [ratings, setRatings] = useState([]);
 
