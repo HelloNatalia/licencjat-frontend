@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function RatingStars({ userId }) {
@@ -43,5 +43,21 @@ export default function RatingStars({ userId }) {
         {ratingData.rate} ({ratingData.total})
       </p>
     </div>
+  );
+}
+
+export function GenerateRatingStars({ rating }) {
+  const roundedScore = Math.floor(rating);
+  const starsArray = [];
+  for (let i = 1; i < 6; i++) {
+    if (roundedScore >= i) starsArray.push(<i class="bi bi-star-fill"></i>);
+    else starsArray.push(<i class="bi bi-star"></i>);
+  }
+  return (
+    <>
+      {starsArray.map((el) => {
+        return el;
+      })}
+    </>
   );
 }

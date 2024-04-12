@@ -1,0 +1,28 @@
+.rating-box {
+  background-color: rgb(246, 246, 246);
+  border-radius: 10px;
+  border: 2px solid rgb(237, 237, 237);
+}
+
+.text-stars {
+  color: #489645;
+}
+
+.report-user-button-div {
+  margin-left: auto;
+  width: 150px;
+  margin-top: 10px;
+}
+
+.report-user-button-div-sm {
+  width: 150px;
+  margin-top: 10px;
+}
+
+.report-user-button-div button {
+  border: 2px solid #489645 !important;
+}
+
+.report-user-button-div-sm button {
+  border: 2px solid #489645 !important;
+}

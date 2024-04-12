@@ -141,7 +141,7 @@ function EditForm({ accountData, handleClose }) {
         />
 
         <label className="form-label mt-3" htmlFor="password_hash">
-          Hasło*
+          Hasło* (weryfikacja tożsamości)
         </label>
         <input
           id="password_hash"

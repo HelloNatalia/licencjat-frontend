@@ -3,6 +3,8 @@ import "./SpecificAccount.css";
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { GenerateRatingStars } from "./RatingStars";
+import RatingStars from "./RatingStars";
 
 export default function SpecificAccount() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,11 +42,44 @@ export default function SpecificAccount() {
 
   return (
     <div className="content">
-      {idArgument}
-      <p>{userData.username}</p>
-      <p>{userData.name}</p>
-      <ReportModal userReported={userData.id} />
-      <Ratings userId={userData.id} />
+      <div className="container">
+        <div className="row mt-3 mb-2">
+          <div className="col">
+            <div className="info-box">
+              <div className="row p-3">
+                <div className="col">
+                  <div className="report-user-button-div-sm d-md-none">
+                    <ReportModal userReported={userData.id} />
+                  </div>
+                  <div className="d-flex">
+                    <p className="fw-bold fs-3 mt-2">{userData.username} </p>
+                    <RatingStars userId={userData.id} />
+                    <div className="report-user-button-div d-none d-md-block">
+                      <ReportModal userReported={userData.id} />
+                    </div>
+                  </div>
+
+                  <p>
+                    <span className="text-grey">Imię:</span> {userData.name}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="row my-3">
+          <div className="col">
+            <div className="info-box">
+              <div className="row p-3">
+                <div className="col">
+                  <p className="fs-5">Opinie</p>
+                </div>
+              </div>
+              <Ratings userId={userData.id} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -58,7 +93,7 @@ function ReportModal({ userReported }) {
   return (
     <>
       <Button className="pickup-btn" variant="primary" onClick={handleShow}>
-        Zgłoś użytkownika
+        <i class="bi bi-flag-fill"></i>
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -147,14 +182,24 @@ function Ratings({ userId }) {
     fetchUserRatings();
   }, []);
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
-    <div className="bg-light">
-      <p>Opinie</p>
+    <div className="row p-3 pt-0">
       {ratings.map((element) => {
         return (
-          <div>
-            <p>{element.score}</p>
-            <p>{element.text}</p>
+          <div className="col-12 col-md-4 col-lg-3">
+            <div className="rating-box p-2">
+              <p>
+                <i class="bi bi-person-circle me-2"></i>
+                {element.user_created.username}
+                <span className="ms-3 text-stars">
+                  <GenerateRatingStars rating={element.score} /> (
+                  {element.score})
+                </span>
+              </p>
+              <p>{element.text}</p>
+            </div>
           </div>
         );
       })}
