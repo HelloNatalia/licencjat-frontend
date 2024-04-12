@@ -1,0 +1,38 @@
+.text-transparent {
+  color: rgba(0, 0, 255, 0);
+}
+
+.info-box {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+}
+
+.address-box {
+  background-color: rgb(241, 241, 241);
+  border-radius: 15px;
+  border: 2px solid rgb(202, 202, 202, 0.3);
+}
+
+.plus-button:hover {
+  background-color: #489645 !important;
+  border-color: #489645 !important;
+}
+.plus-button:hover i {
+  color: #ffffff !important;
+  border-width: 2px !important;
+}
+
+.plus-button {
+  background-color: #ffffff !important;
+  border-color: #489645 !important;
+  border-width: 2px !important;
+}
+.plus-button i {
+  color: #489645 !important;
+  border-width: 2px !important;
+}
+
+.text-grey {
+  color: rgb(201, 201, 201);
+}

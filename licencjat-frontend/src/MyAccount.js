@@ -56,17 +56,52 @@ export default function MyAccount() {
 
   return (
     <div className="content">
-      <p>{userData.username}</p>
-      <p>
-        {userData.name} {userData.surname}
-      </p>
-      <p>{userData.email}</p>
-      <p>{userData.phone_number}</p>
-      <EditAccountForm accountData={userData} />
-      <btn className="btn btn-danger" onClick={handleDeleteAccount}>
-        Usuń konto
-      </btn>
-      <MyAddresses />
+      <div className="container p-3">
+        <p className="fs-3">Moje konto</p>
+        <div className="row my-3">
+          <div className="col">
+            <UserData
+              userData={userData}
+              handleDeleteAccount={handleDeleteAccount}
+            />
+          </div>
+        </div>
+        <div className="row my-3">
+          <MyAddresses />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UserData({ userData, handleDeleteAccount }) {
+  return (
+    <div className="row">
+      <div className="col">
+        <div className="info-box p-3">
+          <div className="row p-2">
+            <div className="col-12 col-lg-6">
+              <p className="fw-bold fs-3">{userData.username}</p>
+              <p className="fs-4">
+                {userData.name} {userData.surname}
+              </p>
+            </div>
+            <div className="col-12 col-md-6 mt-2">
+              <p>
+                <span className="text-grey me-3">email:</span> {userData.email}
+              </p>
+              <p>
+                <span className="text-grey me-3">numer telefonu:</span>{" "}
+                {userData.phone_number}
+              </p>
+              <EditAccountForm accountData={userData} />
+              <btn className="btn btn-danger" onClick={handleDeleteAccount}>
+                Usuń konto
+              </btn>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

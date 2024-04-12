@@ -15,7 +15,7 @@ export default function EditAccountForm({ accountData }) {
   return (
     <>
       <Button
-        className="btn btn-warning"
+        className="btn btn-warning me-3 edit-account-button"
         variant="primary"
         onClick={handleShow}
       >
