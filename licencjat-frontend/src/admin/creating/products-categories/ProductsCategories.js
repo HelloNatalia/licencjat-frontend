@@ -21,11 +21,40 @@ export default function ProductsCategories() {
 
   return (
     <div className="content">
-      <a href="/create-product-category">Dodaj Kategorię produktu</a>
-      <p>Kategorie produktów: </p>
-      {productsCategories.map((element) => {
-        return <p>{element.name}</p>;
-      })}
+      <div className="container p-2 px-3">
+        <p className="fs-4 m-3">
+          Kategorie produktów{" "}
+          <a className="btn btn-success ms-4" href="/create-product-category">
+            Dodaj kategorię produktów
+          </a>
+        </p>
+        <div className="row">
+          <div className="col">
+            <div className="info-box p-3">
+              <div class="table-responsive">
+                <table className="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nazwa</th>
+                      <th scope="col">Opis</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productsCategories.map((element) => {
+                      return (
+                        <tr>
+                          <th scope="row">{element.name}</th>
+                          <td>{element.description}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

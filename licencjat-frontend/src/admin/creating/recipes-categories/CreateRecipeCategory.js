@@ -6,7 +6,9 @@ import { useState } from "react";
 export default function CreateRecipeCategory() {
   return (
     <div className="content">
-      <CreateRecipeCategoryForm />
+      <div className="container p-4">
+        <CreateRecipeCategoryForm />
+      </div>
     </div>
   );
 }
@@ -30,50 +32,55 @@ function CreateRecipeCategoryForm() {
   });
 
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="row">
-          <div className="col-12 col-md-6">
-            <label className="form-label mt-3" htmlFor="name">
-              Nazwa
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="form-control"
-              name="name"
-              required="required"
-              onChange={formik.handleChange}
-              value={formik.values.name}
-            />
-          </div>
+    <div className="p-2 px-3 form-box">
+      <p className="fs-4 m-3">Tworzenie kategorii przepisów</p>
+      <div className="row">
+        <div className="col">
+          <form onSubmit={formik.handleSubmit}>
+            <div className="row">
+              <div className="col-12 col-md-6">
+                <label className="form-label mt-3" htmlFor="name">
+                  Nazwa
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  className="form-control"
+                  name="name"
+                  required="required"
+                  onChange={formik.handleChange}
+                  value={formik.values.name}
+                />
+              </div>
 
-          <div className="col-12 col-md-6">
-            <label className="form-label mt-3" htmlFor="description">
-              Opis
-            </label>
-            <input
-              type="text"
-              id="description"
-              className="form-control"
-              name="description"
-              onChange={formik.handleChange}
-              value={formik.values.description}
-            />
-          </div>
+              <div className="col-12 col-md-6">
+                <label className="form-label mt-3" htmlFor="description">
+                  Opis
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  className="form-control"
+                  name="description"
+                  onChange={formik.handleChange}
+                  value={formik.values.description}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <button
+                  type="submit"
+                  className="btn btn-success mt-4 mb-2 form-pickup-btn"
+                >
+                  Utwórz
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="row">
-          <div className="col">
-            <button
-              type="submit"
-              className="btn btn-primary mt-4 mb-2 form-pickup-btn"
-            >
-              Utwórz
-            </button>
-          </div>
-        </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 }
 
