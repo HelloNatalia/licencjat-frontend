@@ -7,7 +7,9 @@ import Select from "react-select";
 export default function CreateProduct() {
   return (
     <div className="content">
-      <CreateProductForm />
+      <div className="container p-4">
+        <CreateProductForm />
+      </div>
     </div>
   );
 }
@@ -72,62 +74,67 @@ function CreateProductForm() {
   if (isLoading) return <div>Loading ...</div>;
 
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <div className="row">
-          <div className="col-12 col-md-6">
-            <label className="form-label mt-3" htmlFor="name">
-              Nazwa
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="form-control"
-              name="name"
-              required="required"
-              onChange={formik.handleChange}
-              value={formik.values.name}
-            />
-          </div>
+    <div className="p-2 px-3 form-box">
+      <p className="fs-4 m-3">Tworzenie produktu</p>
+      <div className="row">
+        <div className="col">
+          <form onSubmit={formik.handleSubmit}>
+            <div className="row">
+              <div className="col-12 col-md-6">
+                <label className="form-label mt-3" htmlFor="name">
+                  Nazwa
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  className="form-control"
+                  name="name"
+                  required="required"
+                  onChange={formik.handleChange}
+                  value={formik.values.name}
+                />
+              </div>
 
-          <div className="col-12 col-md-6">
-            <label className="form-label mt-3" htmlFor="description">
-              Opis
-            </label>
-            <input
-              type="text"
-              id="description"
-              className="form-control"
-              name="description"
-              required="required"
-              onChange={formik.handleChange}
-              value={formik.values.description}
-            />
-          </div>
-          <div className="col-12">
-            <label className="form-label mt-3" htmlFor="product_category">
-              Kategoria
-            </label>
-            <Select
-              options={categories}
-              id="product_category"
-              onChange={handleSelectCategory}
-              placeholder="Wybierz ..."
-            />
-          </div>
+              <div className="col-12 col-md-6">
+                <label className="form-label mt-3" htmlFor="description">
+                  Opis
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  className="form-control"
+                  name="description"
+                  required="required"
+                  onChange={formik.handleChange}
+                  value={formik.values.description}
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label mt-3" htmlFor="product_category">
+                  Kategoria
+                </label>
+                <Select
+                  options={categories}
+                  id="product_category"
+                  onChange={handleSelectCategory}
+                  placeholder="Wybierz ..."
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <button
+                  type="submit"
+                  className="btn btn-success mt-4 mb-2 form-pickup-btn"
+                >
+                  Utwórz
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="row">
-          <div className="col">
-            <button
-              type="submit"
-              className="btn btn-primary mt-4 mb-2 form-pickup-btn"
-            >
-              Utwórz
-            </button>
-          </div>
-        </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 }
 

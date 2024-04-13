@@ -5,6 +5,7 @@ import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { getDates } from "./AnnouncementsMap";
 import RatingModal from "./Rating";
+import { fetchPhoto } from "./FetchPhoto";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
@@ -290,13 +291,20 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
       break;
   }
 
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   if (isLoading) return <div>Loading ...</div>;
 
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
         <a href={`/announcement-page?id=${announcement.id_announcement}`}>
-          <img src="announcement-img/1.png" alt="announcement" />
+          <img src={photoUrl} alt="announcement" />
         </a>
       </div>
       <div>
@@ -494,13 +502,20 @@ function SentRequest({ status, announcement, announcement_user, request }) {
 
   const date = getDates(announcement)[1];
 
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   if (isLoading) return <div>Loading ...</div>;
 
   return (
     <div className={"request-box d-flex"}>
       <div className="request-img d-none d-md-block me-3">
         <a href={`/announcement-page?id=${announcement.id_announcement}`}>
-          <img src="announcement-img/1.png" alt="announcement" />
+          <img src={photoUrl} alt="announcement" />
         </a>
       </div>
       <div>
