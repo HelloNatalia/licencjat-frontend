@@ -3,7 +3,7 @@ import { Button, Modal } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
-import { getDates } from "./AnnouncementsMap";
+import { getDates } from "./Announcements/AnnouncementsMap.js";
 import { fetchPhoto } from "./FetchPhoto.js";
 
 export default function MyAnnouncements() {

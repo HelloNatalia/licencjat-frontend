@@ -3,7 +3,7 @@ import "./Requests.css";
 import { Button, Modal } from "react-bootstrap";
 import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
-import { getDates } from "./AnnouncementsMap";
+import { getDates } from "./Announcements/AnnouncementsMap";
 import RatingModal from "./Rating";
 import { fetchPhoto } from "./FetchPhoto";
 import RatingStars from "./RatingStars";

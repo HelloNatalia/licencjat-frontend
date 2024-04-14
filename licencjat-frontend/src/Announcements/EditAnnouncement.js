@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./CreateAnnouncement.css";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
-import MapModel from "./MapModal";
-import Select from "react-select";
+import MapModel from "../MapModal";
 
-export default function CreateAnnouncement() {
+export default function EditAnnouncement() {
+  const { id } = useParams();
+  console.log("ID z url: ", id);
   const accessToken = getAuthTokenFromCookie();
   const [products, setProducts] = useState([]);
   const navigation = useNavigate();
-  const [productOptions, setProductOptions] = useState([]);
+  const [announcementData, setAnnouncementData] = useState();
 
   useEffect(function () {
     async function checkUser() {
@@ -24,7 +25,21 @@ export default function CreateAnnouncement() {
         if (res.status === 401) navigation("/login");
       }
     }
+    async function getAnnouncement() {
+      const res = await fetch(`http://localhost:4000/announcement/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!res.ok) {
+        navigation("/announcements");
+      }
+      const data = await res.json();
+      console.log(data);
+      setAnnouncementData(data);
+    }
     checkUser();
+    getAnnouncement();
   }, []);
 
   useEffect(function () {
@@ -32,16 +47,6 @@ export default function CreateAnnouncement() {
       const res = await fetch(`http://localhost:4000/product/product-list`);
       const data = await res.json();
       console.log(data);
-      const newArray = [];
-      if (data.length !== 0) {
-        data.map((element) => {
-          newArray.push({
-            value: element.id_product,
-            label: element.name,
-          });
-        });
-      }
-      setProductOptions(newArray);
       setProducts(data);
     }
     fetchProductsList();
@@ -52,9 +57,10 @@ export default function CreateAnnouncement() {
       <div className="container mb-4">
         <div className="row">
           <div className="col mt-3">
-            <CreateAnnouncementForm
+            <EditAnnouncementForm
               products={products}
-              productOptions={productOptions}
+              announcementData={announcementData}
+              id={id}
             />
           </div>
         </div>
@@ -63,17 +69,11 @@ export default function CreateAnnouncement() {
   );
 }
 
-function CreateAnnouncementForm({ products, productOptions }) {
+function EditAnnouncementForm({ products, announcementData, id }) {
   const navigation = useNavigate();
-  const accessToken = getAuthTokenFromCookie();
   const [pickupDates, setPickupDates] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [isMarkerSelected, setIsMarkerSelected] = useState(false);
-  const [photoFiles, setPhotoFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [addresses, setAddresses] = useState([]);
-  const [requiredMessage, setRequiredMessage] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState();
 
   const formik = useFormik({
     initialValues: {
@@ -87,43 +87,64 @@ function CreateAnnouncementForm({ products, productOptions }) {
       available_dates: "",
       product_category: "",
       product: "",
-      photos: "",
       date: "",
       pickup_date: "",
       pickup_hour_1: "",
       pickup_hour_2: "",
     },
     onSubmit: async (values) => {
-      if (
-        !values.coordinates ||
-        values.available_dates.length < 1 ||
-        !values.product_category ||
-        !values.product ||
-        values.photos.length < 1 ||
-        !values.date
-      ) {
-        setRequiredMessage(true);
-      } else {
-        const output = await Create(
-          values.title,
-          values.description,
-          values.district,
-          values.city,
-          values.street,
-          values.number,
-          values.coordinates,
-          values.available_dates,
-          values.product_category,
-          values.product,
-          values.photos,
-          values.date
-        );
-        if (output && output != "403" && uploadPhotos(photoFiles))
-          navigation("/my-announcements");
-        if (output && output == "403") navigation("/blocked");
-      }
+      const output = await Edit(
+        id,
+        values.title,
+        values.description,
+        values.district,
+        values.city,
+        values.street,
+        values.number,
+        values.coordinates,
+        values.available_dates,
+        values.product_category,
+        values.product,
+        values.date
+      );
+      navigation("/my-announcements");
     },
   });
+
+  useEffect(() => {
+    if (announcementData) {
+      const formattedDate = new Date(announcementData.date)
+        .toISOString()
+        .split("T")[0];
+
+      handleCoordinationChange(announcementData.coordinates);
+
+      formik.setValues({
+        title: announcementData.title,
+        description: announcementData.description,
+        district: announcementData.district,
+        city: announcementData.city,
+        street: announcementData.street,
+        number: announcementData.number,
+        coordinates: announcementData.coordinates,
+        available_dates: announcementData.available_dates,
+        product_category: announcementData.product_category.id_product_category,
+        product: announcementData.product.id_product,
+        date: formattedDate,
+        pickup_date: "",
+        pickup_hour_1: "",
+        pickup_hour_2: "",
+      });
+
+      const parsedPickupDates = JSON.parse(
+        announcementData.available_dates
+      ).map((entry) => ({
+        date: entry.date.split(".").reverse().join("-"),
+        hours: entry.hours.map((hour) => hour.replace(".", ":")),
+      }));
+      setPickupDates(parsedPickupDates);
+    }
+  }, [announcementData]);
 
   const handleAddDate = () => {
     if (
@@ -159,58 +180,19 @@ function CreateAnnouncementForm({ products, productOptions }) {
   }, [pickupDates]);
 
   const handleSelectProduct = (event) => {
-    // formik.handleChange(event);
-    // if (event.target.value) {
-    //   console.log("event: " + event.target.value);
-    //   const selectedProduct = products.find(
-    //     (element) => element.id_product === event.target.value
-    //   );
-    //   if (selectedProduct) {
-    //     const id_product_category =
-    //       selectedProduct.product_category.id_product_category;
-    //     formik.setFieldValue("product_category", id_product_category);
-    //   }
-    // }
-    if (event.value) {
-      setSelectedProduct(event.value);
-      const selProduct = products.find(
-        (element) => element.id_product === event.value
+    formik.handleChange(event);
+    if (event.target.value) {
+      console.log("event: " + event.target.value);
+      const selectedProduct = products.find(
+        (element) => element.id_product === event.target.value
       );
-      if (selProduct) {
+      if (selectedProduct) {
         const id_product_category =
-          selProduct.product_category.id_product_category;
+          selectedProduct.product_category.id_product_category;
         formik.setFieldValue("product_category", id_product_category);
       }
     }
   };
-
-  useEffect(() => {
-    formik.setFieldValue("product", selectedProduct);
-  }, [selectedProduct]);
-
-  useEffect(function () {
-    async function fetchAddresses() {
-      setIsLoading(true);
-      const res = await fetch(
-        `http://localhost:4000/address/get-user-addresses`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      if (!res.ok) {
-        if (res.status == 401) navigation("/");
-        else if (res.status == 404) setAddresses([]);
-      } else {
-        const data = await res.json();
-        setAddresses(data);
-      }
-      setIsLoading(false);
-    }
-    fetchAddresses();
-  }, []);
 
   const handlePhotosChange = (event) => {
     const files = event.target.files;
@@ -220,7 +202,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
       return;
     }
 
-    const updatedPhotoFiles = [...photoFiles];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fileName = file.name;
@@ -229,25 +210,14 @@ function CreateAnnouncementForm({ products, productOptions }) {
         // obsługa gdy zły format pliku
         return;
       }
-      const uniqueFileName = `${Date.now()}-${Math.round(
-        Math.random() * 1e9
-      )}.${fileExtension}`;
-      const modifiedFile = new File([file], uniqueFileName, {
-        type: file.type,
-      });
-      updatedPhotoFiles.push(modifiedFile);
-      setSelectedPhotos([...selectedPhotos, uniqueFileName]);
+      setSelectedPhotos([...selectedPhotos, fileName]);
     }
-    setPhotoFiles(updatedPhotoFiles);
   };
 
   const handleDeleteImage = (index) => {
     const updatedList = [...selectedPhotos];
-    const updatedFiles = [...photoFiles];
     updatedList.splice(index, 1);
-    updatedFiles.splice(index, 1);
     setSelectedPhotos(updatedList);
-    setPhotoFiles(updatedFiles);
   };
 
   useEffect(() => {
@@ -259,23 +229,8 @@ function CreateAnnouncementForm({ products, productOptions }) {
     setIsMarkerSelected(true);
   };
 
-  const handleInsertAddress = (address) => {
-    formik.setFieldValue("city", address.city);
-    formik.setFieldValue("district", address.district);
-    formik.setFieldValue("street", address.street);
-    formik.setFieldValue("number", address.number);
-    if (address.coordinates) handleCoordinationChange(address.coordinates);
-  };
-
   return (
     <>
-      {requiredMessage ? (
-        <div class="alert alert-danger" role="alert">
-          Nie wpisano wszystkich wymaganych
-        </div>
-      ) : (
-        ""
-      )}
       <div className="form-bg">
         <form onSubmit={formik.handleSubmit}>
           <div className="row">
@@ -308,46 +263,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
                 value={formik.values.description}
               />
             </div>
-
-            {!isLoading ? (
-              <div>
-                {addresses.length > 0 ? (
-                  <div className="row px-3 mt-3">
-                    {addresses.map((address) => {
-                      return (
-                        <div className="col-12 col-md-6 col-lg-3 my-2">
-                          <div
-                            onClick={() => handleInsertAddress(address)}
-                            className="address-box-announcement p-2 text-center"
-                          >
-                            <p>
-                              {address.street} {address.number}
-                            </p>
-                            <p>
-                              {address.postal_code} {address.city}
-                            </p>
-                            <p>
-                              {address.district ? (
-                                `(${address.district})`
-                              ) : (
-                                <span className="text-transparent">
-                                  dzielnica
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            ) : (
-              ""
-            )}
-
             <div className="col-12 col-lg-6">
               <label className="form-label mt-3" htmlFor="city">
                 Miasto*
@@ -358,7 +273,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
                 type="text"
                 className="form-control"
                 onChange={formik.handleChange}
-                required
                 value={formik.values.city}
               />
             </div>
@@ -420,41 +334,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
               </div>
             </div>
 
-            <div className="col-12 mt-3">
-              <div className="img-box p-3">
-                <label className="form-label" htmlFor="photos">
-                  Zdjęcia*
-                </label>
-                <input
-                  id="photos"
-                  name="photos"
-                  type="file"
-                  className="form-control"
-                  onChange={handlePhotosChange}
-                  multiple
-                  // value={formik.values.photos}
-                />
-                <p className="mt-3">
-                  Wybrane zdjęcia:{" "}
-                  {selectedPhotos.length > 0
-                    ? selectedPhotos.map((element, index) => {
-                        return (
-                          <p>
-                            {element}{" "}
-                            <button
-                              className="btn bg-danger"
-                              onClick={() => handleDeleteImage(index)}
-                            >
-                              -
-                            </button>
-                          </p>
-                        );
-                      })
-                    : "Brak zdjęć"}
-                </p>
-              </div>
-            </div>
-
             <div className="col-12">
               <label className="form-label mt-3" htmlFor="date">
                 Data ważności produktu*
@@ -475,14 +354,13 @@ function CreateAnnouncementForm({ products, productOptions }) {
                 <div className="row">
                   <div className="col-12">
                     <label className="form-label mt-1" htmlFor="pickup_date">
-                      Możliwa data i godzina odbioru*
+                      Możliwa data i godzina odbioru
                     </label>
                     <input
                       id="pickup_date"
                       name="pickup_date"
                       type="date"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_date}
                     />
@@ -493,7 +371,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
                       name="pickup_hour_1"
                       type="time"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_hour_1}
                     />
@@ -504,7 +381,6 @@ function CreateAnnouncementForm({ products, productOptions }) {
                       name="pickup_hour_2"
                       type="time"
                       className="form-control"
-                      required
                       onChange={formik.handleChange}
                       value={formik.values.pickup_hour_2}
                     />
@@ -561,20 +437,14 @@ function CreateAnnouncementForm({ products, productOptions }) {
               <label className="form-label mt-3" htmlFor="product">
                 Produkt*
               </label>
-              {/* <Form.Select
+              <Form.Select
                 id="product"
                 name="product"
                 className=""
                 onChange={handleSelectProduct}
                 value={formik.values.product}
-              > */}
-              <Select
-                options={productOptions}
-                id="product"
-                onChange={handleSelectProduct}
-                placeholder="Wybierz ..."
-              />
-              {/* <option className="default-product" value="">
+              >
+                <option className="default-product" value="">
                   Produkt
                 </option>
                 {products.map((element) => {
@@ -582,7 +452,7 @@ function CreateAnnouncementForm({ products, productOptions }) {
                     <option value={element.id_product}>{element.name}</option>
                   );
                 })}
-              </Form.Select> */}
+              </Form.Select>
             </div>
 
             <div className="col-12">
@@ -590,7 +460,7 @@ function CreateAnnouncementForm({ products, productOptions }) {
                 type="submit"
                 className="btn btn-primary mt-4 mb-2 signup-btn"
               >
-                Utwórz ogłoszenie
+                Zatwierdź zmiany
               </button>
             </div>
           </div>
@@ -604,7 +474,8 @@ function CreateAnnouncementForm({ products, productOptions }) {
   );
 }
 
-async function Create(
+async function Edit(
+  id,
   title,
   description,
   district,
@@ -635,53 +506,26 @@ async function Create(
 
   try {
     const accessToken = getAuthTokenFromCookie();
-    const response = await fetch("http://localhost:4000/announcement/create", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(announcementData),
-    });
+    const response = await fetch(
+      `http://localhost:4000/announcement/edit/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(announcementData),
+      }
+    );
 
     if (!response.ok) {
       // Tutaj uzyskać zwrot od api jeżeli coś nie gra
       // if (response.status === 409) return "conflict";
       // else throw new Error("Wystąpił błąd");
-      if (response.status == "403") return "403";
     }
 
     return true;
   } catch (error) {
     console.error(error);
-  }
-}
-
-async function uploadPhotos(photos) {
-  const formData = new FormData();
-
-  for (let i = 0; i < photos.length; i++) {
-    formData.append("photos", photos[i]);
-  }
-
-  try {
-    const accessToken = getAuthTokenFromCookie();
-    const response = await fetch("http://localhost:4000/file/upload", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      console.error("Błąd podczas przesyłania zdjęć:", response.statusText);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
   }
 }

@@ -3,10 +3,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./AnnouncementPage.css";
 import { useState, useEffect } from "react";
 import { getDates } from "./AnnouncementsMap";
-import RequestModal from "./RequestForm";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
-import RatingStars from "./RatingStars";
-import { fetchPhotos } from "./FetchPhoto";
+import RequestModal from "../RequestForm";
+import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
+import RatingStars from "../RatingStars";
+import { fetchPhotos } from "../FetchPhoto";
 
 export default function AnnouncementPage({ handleBack, id }) {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
-import { Images, MainInfo, PickupInfo, ProductInfo } from "../AnnouncementPage";
+import { Images, MainInfo, PickupInfo, ProductInfo } from "./AnnouncementPage";
 import { useLocation } from "react-router-dom";
-import "../AnnouncementPage.css";
+import "./AnnouncementPage.css";
 
 export default function SingleAnnouncementPage() {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);
