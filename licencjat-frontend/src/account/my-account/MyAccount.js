@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import {
   getAuthTokenFromCookie,
   removeAuthTokenCookie,
-} from "./cookies/auth-cookies";
-import EditAccountForm from "./EditAccountForm";
-import MyAddresses from "./my-account/address/MyAddresses";
-import { Ratings } from "./SpecificAccount";
+} from "../../cookies/auth-cookies";
+import EditAccountForm from "../../EditAccountForm";
+import MyAddresses from "../../my-account/address/MyAddresses";
+import { Ratings } from "../specific-account/SpecificAccount";
 
 export default function MyAccount() {
   const navigation = useNavigate();

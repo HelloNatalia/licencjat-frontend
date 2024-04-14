@@ -2,9 +2,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./SpecificAccount.css";
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
-import { GenerateRatingStars } from "./RatingStars";
-import RatingStars from "./RatingStars";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
+import { GenerateRatingStars } from "../../RatingStars";
+import RatingStars from "../../RatingStars";
 
 export default function SpecificAccount() {
   const [isLoading, setIsLoading] = useState(true);

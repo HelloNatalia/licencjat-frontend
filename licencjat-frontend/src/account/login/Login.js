@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   getAuthTokenFromCookie,
   setAuthTokenCookie,
-} from "./cookies/auth-cookies";
+} from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {

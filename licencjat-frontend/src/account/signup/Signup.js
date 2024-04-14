@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import "./Signup.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 
 export default function Signup() {
   const navigation = useNavigate();

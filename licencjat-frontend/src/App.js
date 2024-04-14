@@ -7,12 +7,12 @@ import { Helmet } from "react-helmet";
 import Requests from "./requests/Requests.js";
 import MyAnnouncements from "./Announcements/my-announcements/MyAnnouncements.js";
 import Recipes from "./recipes/Recipes.js";
-import Login from "./Login.js";
-import Signup from "./Signup.js";
+import Login from "./account/login/Login.js";
+import Signup from "./account/signup/Signup.js";
 import CreateAnnouncement from "./Announcements/CreateAnnouncement.js";
 import EditAnnouncement from "./Announcements/EditAnnouncement.js";
-import MyAccount from "./MyAccount.js";
-import SpecificAccount from "./SpecificAccount.js";
+import MyAccount from "./account/my-account/MyAccount.js";
+import SpecificAccount from "./account/specific-account/SpecificAccount.js";
 import FavouriteRecipes from "./recipes/favourite-recipes/FavouriteRecipes.js";
 import CreateTempRecipe from "./recipes/create-recipe/CreateTempRecipe.js";
 import MyTemporaryRecipes from "./recipes/my-recipes/MyTemporaryRecipes.js";
@@ -31,7 +31,7 @@ import RecipesCategories from "./admin/creating/recipes-categories/RecipesCatego
 import CreateRecipeCategory from "./admin/creating/recipes-categories/CreateRecipeCategory.js";
 import BlockedAccount from "./errors/BlockedAccount.js";
 import SingleAnnouncementPage from "./Announcements/SingleAnnouncementPage.js";
-import Tips from "./Tips.js";
+import Tips from "./tips/Tips.js";
 
 function App() {
   return (
