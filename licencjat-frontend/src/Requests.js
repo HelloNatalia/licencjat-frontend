@@ -76,6 +76,23 @@ function ReceivedRequests() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
+
+      if (data.length > 0) {
+        // Definicja kolejności statusów
+        const statusOrder = {
+          accepted: 1,
+          sent: 2,
+          received: 3,
+          reviewed: 4,
+        };
+        // Funkcja porównująca dla sortowania
+        const compareStatus = (a, b) => {
+          return statusOrder[a.status] - statusOrder[b.status];
+        };
+        // Sortowanie danych na podstawie statusów
+        data.sort(compareStatus);
+      }
+
       setReceivedRequests(data);
       setIsLoading(false);
     }
@@ -132,6 +149,22 @@ function SentRequests() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
+
+      if (data.length > 0) {
+        // Definicja kolejności statusów
+        const statusOrder = {
+          accepted: 1,
+          sent: 2,
+          received: 3,
+          reviewed: 4,
+        };
+        // Funkcja porównująca dla sortowania
+        const compareStatus = (a, b) => {
+          return statusOrder[a.status] - statusOrder[b.status];
+        };
+        // Sortowanie danych na podstawie statusów
+        data.sort(compareStatus);
+      }
       setSentRequests(data);
       setIsLoading(false);
     }

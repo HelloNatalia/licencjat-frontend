@@ -104,7 +104,6 @@ function CreateProductForm() {
                   id="description"
                   className="form-control"
                   name="description"
-                  required="required"
                   onChange={formik.handleChange}
                   value={formik.values.description}
                 />
@@ -142,7 +141,7 @@ async function sendProduct(name, description, product_category) {
   const requestData = {
     name,
     description,
-    product_category,
+    product_category_id: product_category,
   };
   const accessToken = getAuthTokenFromCookie();
 
