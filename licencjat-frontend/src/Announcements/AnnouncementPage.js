@@ -3,7 +3,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./AnnouncementPage.css";
 import { useState, useEffect } from "react";
 import { getDates } from "./AnnouncementsMap";
-import RequestModal from "../RequestForm";
+import RequestModal from "../requests/RequestForm";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import RatingStars from "../RatingStars";
 import { fetchPhotos } from "../FetchPhoto";

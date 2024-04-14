@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./HomePage";
 import Announcements from "./Announcements/Announcements.js";
 import { Helmet } from "react-helmet";
-import Requests from "./Requests.js";
+import Requests from "./requests/Requests.js";
 import MyAnnouncements from "./MyAnnouncements.js";
 import Recipes from "./Recipes.js";
 import Login from "./Login.js";
