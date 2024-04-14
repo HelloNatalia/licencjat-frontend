@@ -5,7 +5,7 @@ import HomePage from "./HomePage";
 import Announcements from "./Announcements/Announcements.js";
 import { Helmet } from "react-helmet";
 import Requests from "./requests/Requests.js";
-import MyAnnouncements from "./MyAnnouncements.js";
+import MyAnnouncements from "./Announcements/my-announcements/MyAnnouncements.js";
 import Recipes from "./Recipes.js";
 import Login from "./Login.js";
 import Signup from "./Signup.js";
