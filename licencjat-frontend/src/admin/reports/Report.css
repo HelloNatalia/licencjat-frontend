@@ -1,0 +1,19 @@
+.report-box {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+}
+
+.text-grey {
+  color: rgb(164, 164, 164);
+}
+
+.report-admin-buttons {
+  margin-left: auto;
+}
+
+.new-reports-div,
+.accepted-reports {
+  border-top: 3px solid #48964543;
+  padding-top: 15px;
+}

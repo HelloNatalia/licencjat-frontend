@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import MapModel from "./MapModal";
+import Select from "react-select";
 
 export default function CreateAnnouncement() {
   const accessToken = getAuthTokenFromCookie();
   const [products, setProducts] = useState([]);
   const navigation = useNavigate();
+  const [productOptions, setProductOptions] = useState([]);
 
   useEffect(function () {
     async function checkUser() {
@@ -30,6 +32,16 @@ export default function CreateAnnouncement() {
       const res = await fetch(`http://localhost:4000/product/product-list`);
       const data = await res.json();
       console.log(data);
+      const newArray = [];
+      if (data.length !== 0) {
+        data.map((element) => {
+          newArray.push({
+            value: element.id_product,
+            label: element.name,
+          });
+        });
+      }
+      setProductOptions(newArray);
       setProducts(data);
     }
     fetchProductsList();
@@ -37,10 +49,13 @@ export default function CreateAnnouncement() {
 
   return (
     <div className="content">
-      <div className="container">
+      <div className="container mb-4">
         <div className="row">
           <div className="col mt-3">
-            <CreateAnnouncementForm products={products} />
+            <CreateAnnouncementForm
+              products={products}
+              productOptions={productOptions}
+            />
           </div>
         </div>
       </div>
@@ -48,7 +63,7 @@ export default function CreateAnnouncement() {
   );
 }
 
-function CreateAnnouncementForm({ products }) {
+function CreateAnnouncementForm({ products, productOptions }) {
   const navigation = useNavigate();
   const accessToken = getAuthTokenFromCookie();
   const [pickupDates, setPickupDates] = useState([]);
@@ -58,6 +73,7 @@ function CreateAnnouncementForm({ products }) {
   const [isLoading, setIsLoading] = useState(true);
   const [addresses, setAddresses] = useState([]);
   const [requiredMessage, setRequiredMessage] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState();
 
   const formik = useFormik({
     initialValues: {
@@ -143,19 +159,34 @@ function CreateAnnouncementForm({ products }) {
   }, [pickupDates]);
 
   const handleSelectProduct = (event) => {
-    formik.handleChange(event);
-    if (event.target.value) {
-      console.log("event: " + event.target.value);
-      const selectedProduct = products.find(
-        (element) => element.id_product === event.target.value
+    // formik.handleChange(event);
+    // if (event.target.value) {
+    //   console.log("event: " + event.target.value);
+    //   const selectedProduct = products.find(
+    //     (element) => element.id_product === event.target.value
+    //   );
+    //   if (selectedProduct) {
+    //     const id_product_category =
+    //       selectedProduct.product_category.id_product_category;
+    //     formik.setFieldValue("product_category", id_product_category);
+    //   }
+    // }
+    if (event.value) {
+      setSelectedProduct(event.value);
+      const selProduct = products.find(
+        (element) => element.id_product === event.value
       );
-      if (selectedProduct) {
+      if (selProduct) {
         const id_product_category =
-          selectedProduct.product_category.id_product_category;
+          selProduct.product_category.id_product_category;
         formik.setFieldValue("product_category", id_product_category);
       }
     }
   };
+
+  useEffect(() => {
+    formik.setFieldValue("product", selectedProduct);
+  }, [selectedProduct]);
 
   useEffect(function () {
     async function fetchAddresses() {
@@ -277,21 +308,34 @@ function CreateAnnouncementForm({ products }) {
                 value={formik.values.description}
               />
             </div>
+
             {!isLoading ? (
               <div>
                 {addresses.length > 0 ? (
-                  <div>
+                  <div className="row px-3 mt-3">
                     {addresses.map((address) => {
                       return (
-                        <div onClick={() => handleInsertAddress(address)}>
-                          <p>
-                            {address.street} {address.number}
-                          </p>
-                          <p>
-                            {address.district}
-                            {address.district ? ", " : ""}
-                            {address.city}
-                          </p>
+                        <div className="col-12 col-md-6 col-lg-3 my-2">
+                          <div
+                            onClick={() => handleInsertAddress(address)}
+                            className="address-box-announcement p-2 text-center"
+                          >
+                            <p>
+                              {address.street} {address.number}
+                            </p>
+                            <p>
+                              {address.postal_code} {address.city}
+                            </p>
+                            <p>
+                              {address.district ? (
+                                `(${address.district})`
+                              ) : (
+                                <span className="text-transparent">
+                                  dzielnica
+                                </span>
+                              )}
+                            </p>
+                          </div>
                         </div>
                       );
                     })}
@@ -517,14 +561,20 @@ function CreateAnnouncementForm({ products }) {
               <label className="form-label mt-3" htmlFor="product">
                 Produkt*
               </label>
-              <Form.Select
+              {/* <Form.Select
                 id="product"
                 name="product"
                 className=""
                 onChange={handleSelectProduct}
                 value={formik.values.product}
-              >
-                <option className="default-product" value="">
+              > */}
+              <Select
+                options={productOptions}
+                id="product"
+                onChange={handleSelectProduct}
+                placeholder="Wybierz ..."
+              />
+              {/* <option className="default-product" value="">
                   Produkt
                 </option>
                 {products.map((element) => {
@@ -532,7 +582,7 @@ function CreateAnnouncementForm({ products }) {
                     <option value={element.id_product}>{element.name}</option>
                   );
                 })}
-              </Form.Select>
+              </Form.Select> */}
             </div>
 
             <div className="col-12">

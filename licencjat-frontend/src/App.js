@@ -31,6 +31,7 @@ import RecipesCategories from "./admin/creating/recipes-categories/RecipesCatego
 import CreateRecipeCategory from "./admin/creating/recipes-categories/CreateRecipeCategory.js";
 import BlockedAccount from "./errors/BlockedAccount.js";
 import SingleAnnouncementPage from "./Announcements/SingleAnnouncementPage.js";
+import Tips from "./Tips.js";
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
             path="/announcement-page"
             element={<SingleAnnouncementPage />}
           />
+          <Route path="/tips" element={<Tips />} />
         </Routes>
       </div>
     </Router>

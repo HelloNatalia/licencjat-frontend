@@ -121,3 +121,7 @@
   color: #489645;
   font-weight: 700;
 }
+.details-img {
+  max-height: 430px !important;
+  width: auto !important;
+}

@@ -5,13 +5,15 @@ import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { getDates } from "./AnnouncementsMap";
 import RatingModal from "./Rating";
+import { fetchPhoto } from "./FetchPhoto";
+import RatingStars from "./RatingStars";
 
 export default function Requests() {
   const [selectedRequestsType, setSelectedRequestsType] = useState("received");
   const handleRequestsTypeChange = (type) => setSelectedRequestsType(type);
 
   return (
-    <div className="content">
+    <div className="content mb-3">
       <RequestsButton
         selectedRequestsType={selectedRequestsType}
         handleRequestsTypeChange={handleRequestsTypeChange}
@@ -74,6 +76,23 @@ function ReceivedRequests() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
+
+      if (data.length > 0) {
+        // Definicja kolejności statusów
+        const statusOrder = {
+          accepted: 1,
+          sent: 2,
+          received: 3,
+          reviewed: 4,
+        };
+        // Funkcja porównująca dla sortowania
+        const compareStatus = (a, b) => {
+          return statusOrder[a.status] - statusOrder[b.status];
+        };
+        // Sortowanie danych na podstawie statusów
+        data.sort(compareStatus);
+      }
+
       setReceivedRequests(data);
       setIsLoading(false);
     }
@@ -130,6 +149,22 @@ function SentRequests() {
         if (res.status === 401) navigation("/login");
       }
       const data = await res.json();
+
+      if (data.length > 0) {
+        // Definicja kolejności statusów
+        const statusOrder = {
+          accepted: 1,
+          sent: 2,
+          received: 3,
+          reviewed: 4,
+        };
+        // Funkcja porównująca dla sortowania
+        const compareStatus = (a, b) => {
+          return statusOrder[a.status] - statusOrder[b.status];
+        };
+        // Sortowanie danych na podstawie statusów
+        data.sort(compareStatus);
+      }
       setSentRequests(data);
       setIsLoading(false);
     }
@@ -240,15 +275,32 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
     case "sent":
       message = (
         <span>
-          Użytkownik <b>{request_user.username}</b> chce zarezerwować Twój
-          produkt.
+          Użytkownik{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>{" "}
+          chce zarezerwować Twój produkt.
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          Twój produkt jest zarezerwowany dla <b>{request_user.username}</b>.
+          Twój produkt jest zarezerwowany dla{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
@@ -256,7 +308,16 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
     case "reviewed":
       message = (
         <span>
-          Oddano produkt użytkownikowi <b>{request_user.username}</b>.
+          Oddano produkt użytkownikowi{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${request_user.id}`}
+            >
+              {request_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
@@ -264,13 +325,20 @@ function ReceivedRequest({ status, announcement, request_user, request }) {
       break;
   }
 
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   if (isLoading) return <div>Loading ...</div>;
 
   return (
     <div className="request-box d-flex">
       <div className="request-img d-none d-md-block me-3">
         <a href={`/announcement-page?id=${announcement.id_announcement}`}>
-          <img src="announcement-img/1.png" alt="announcement" />
+          <img src={photoUrl} alt="announcement" />
         </a>
       </div>
       <div>
@@ -418,14 +486,30 @@ function SentRequest({ status, announcement, announcement_user, request }) {
       message = (
         <span>
           Prośba została wysłana do użytkownika{" "}
-          <b>{announcement_user.username}</b>.
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
     case "accepted":
       message = (
         <span>
-          <b>{announcement_user.username}</b> zaakceptował/a Twoją prośbę.
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>{" "}
+          zaakceptował/a Twoją prośbę.
         </span>
       );
       break;
@@ -433,7 +517,16 @@ function SentRequest({ status, announcement, announcement_user, request }) {
     case "reviewed":
       message = (
         <span>
-          Odebrano produkt od użytkownika <b>{announcement_user.username}</b>.
+          Odebrano produkt od użytkownika{" "}
+          <b>
+            <a
+              className="text-decoration-none text-black"
+              href={`/account?id=${announcement_user.id}`}
+            >
+              {announcement_user.username}
+            </a>
+          </b>
+          .
         </span>
       );
       break;
@@ -443,13 +536,20 @@ function SentRequest({ status, announcement, announcement_user, request }) {
 
   const date = getDates(announcement)[1];
 
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   if (isLoading) return <div>Loading ...</div>;
 
   return (
     <div className={"request-box d-flex"}>
       <div className="request-img d-none d-md-block me-3">
         <a href={`/announcement-page?id=${announcement.id_announcement}`}>
-          <img src="announcement-img/1.png" alt="announcement" />
+          <img src={photoUrl} alt="announcement" />
         </a>
       </div>
       <div>
@@ -552,6 +652,15 @@ function SeeDetails({ announcement, announcement_user, request }) {
 
   const link = "https://www.google.com/maps?q=" + announcement.coordinates;
 
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = announcement.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
+  console.log(request);
+
   return (
     <>
       <Button
@@ -571,7 +680,7 @@ function SeeDetails({ announcement, announcement_user, request }) {
             <div className="col-12 col-lg-6 pe-3">
               <div className="row">
                 <div className="col-12 modal-img-box text-center">
-                  <img src="announcement-img/1.png" alt="produkt" />
+                  <img src={photoUrl} alt="produkt" className="details-img" />
                 </div>
                 <div className="col-12">
                   <div className="my-3 outlined-box">
@@ -581,15 +690,10 @@ function SeeDetails({ announcement, announcement_user, request }) {
                         <b>{announcement_user.username}</b>
                       </p>
                     </div>
-                    <div className="d-flex mt-3 ms-3 pe-4 justify-content-center">
-                      <div className="mb-3">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                      </div>
-                      <p className="ms-1 stars">(15 ocen)</p>
+
+                    <div className="d-flex pe-4 justify-content-center">
+                      {/* <p className="ms-1 stars">(15 ocen)</p> */}
+                      <RatingStars userId={announcement_user.id} />
                     </div>
                     <div className="my-3 d-flex justify-content-center pe-4">
                       <i class="bi bi-telephone-fill me-2"></i>
@@ -623,7 +727,7 @@ function SeeDetails({ announcement, announcement_user, request }) {
                         alt="ikona kalendarza"
                       />
 
-                      <p className="mt-2 ms-3">{request.date.split("T")[0]}</p>
+                      <p className="mt-2 ms-3">{getDates(request)[1]}</p>
                       <p className="hours mt-1">{request.hour}</p>
                     </div>
                   </div>

@@ -28,7 +28,10 @@ export default function Admin() {
           </div>
 
           <div className="col-12 col-md-6 col-lg-4 p-3">
-            <div onClick={() => handleRedirect("#")} className="module-box p-4">
+            <div
+              onClick={() => handleRedirect("/reports")}
+              className="module-box p-4"
+            >
               <div className="module-content justify-content-center text-center">
                 <img src="report.png" className="module-img" />
                 <a href="/reports" className="ms-2">
@@ -39,7 +42,10 @@ export default function Admin() {
           </div>
 
           <div className="col-12 col-md-6 col-lg-4 p-3">
-            <div onClick={() => handleRedirect("#")} className="module-box p-4">
+            <div
+              onClick={() => handleRedirect("/create-records")}
+              className="module-box p-4"
+            >
               <div className="module-content justify-content-center text-center">
                 <img src="administration.png" className="module-img" />
                 <a href="/create-records" className="ms-2">

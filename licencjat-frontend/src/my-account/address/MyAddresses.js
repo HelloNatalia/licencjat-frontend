@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CreateAddress from "./CreateAddress";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
+import "./Addresses.css";
 
 export default function MyAddresses() {
   const [addresses, setAddresses] = useState([]);
@@ -36,18 +37,27 @@ export default function MyAddresses() {
   if (isLoading) return <div>Loading ...</div>;
 
   return (
-    <>
-      <CreateAddress />
-      <div>
-        {addresses && Array.isArray(addresses) ? (
-          addresses.map((address) => {
-            return <Address address={address} />;
-          })
-        ) : (
-          <p>Nie masz jeszcze wpisanego adresu</p>
-        )}
+    <div className="col">
+      <div className="info-box p-3">
+        <div className="row">
+          <p className="fs-4">
+            Adresy{" "}
+            <span className="ms-3">
+              <CreateAddress />
+            </span>
+          </p>
+        </div>
+        <div className="row px-3">
+          {addresses && Array.isArray(addresses) ? (
+            addresses.map((address) => {
+              return <Address address={address} />;
+            })
+          ) : (
+            <p>Nie masz jeszcze wpisanego adresu</p>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -70,19 +80,28 @@ function Address({ address }) {
     window.location.reload();
   };
   return (
-    <div>
-      <p>
-        {address.city}
+    <div className="col-12 col-md-6 col-lg-3 my-2">
+      <div className="address-box p-2 text-center">
+        <p>
+          {address.street} {address.number}
+        </p>
+        <p>
+          {address.postal_code} {address.city}
+        </p>
+        <p>
+          {address.district ? (
+            `(${address.district})`
+          ) : (
+            <span className="text-transparent">dzielnica</span>
+          )}
+        </p>
         <button
           className="btn btn-danger"
           onClick={() => handleDeleteAddress(address.id_address)}
         >
-          Usuń adres
+          <i class="bi bi-trash-fill"></i>
         </button>
-      </p>
-      <p>
-        {address.street} {address.number}
-      </p>
+      </div>
     </div>
   );
 }

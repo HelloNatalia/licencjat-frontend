@@ -9,6 +9,7 @@ import SelectComponent from "./selectComponent.js";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import { fetchPhoto } from "./FetchPhoto.js";
+import { getCategoryPhotoName } from "./icons-declaration.js";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");
@@ -300,15 +301,24 @@ function Announcement({ announcement, handleSelection }) {
     fetchPhoto(photoNamesArray[0], setPhotoUrl);
   }, []);
 
+  const categoryPhoto = getCategoryPhotoName(
+    announcement.product_category.id_product_category
+  );
+
   return (
     <div
       onClick={() => handleSelection(announcement.id_announcement)}
       className="announcement-element d-flex align-items-center"
+      style={{ height: "100%" }}
     >
-      <div className="col-3">
-        <img src="category.png" className="img-fluid p-4" alt="category" />
+      <div className="col-3 d-none d-md-block">
+        <img
+          src={`/category-imgs/${categoryPhoto}`}
+          className="img-fluid p-4"
+          alt="category"
+        />
       </div>
-      <div className="description col-6">
+      <div className="description col">
         <p className="title">{announcement.title}</p>
         <p className="area">Dzielnica: {announcement.district}</p>
         <p className="date">Data ważności: {productDate}</p>

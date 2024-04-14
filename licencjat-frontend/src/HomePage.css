@@ -1,0 +1,110 @@
+.bg-image {
+  width: 100%;
+}
+
+.img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.img-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #6b9f6a;
+  opacity: 0.6;
+}
+
+.image-text {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white; /* kolor tekstu */
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); cień tekstu */
+  /* width: 100%; */
+}
+
+@media (max-width: 992px) and (min-width: 575px) {
+  .image-text {
+    left: 50%;
+  }
+
+  .title-text {
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+  .subtitle-text {
+    font-size: 20px;
+  }
+
+  .link-text {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 992px) {
+  .image-text {
+    left: 56%;
+  }
+
+  .title-text {
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  .subtitle-text {
+    font-size: 30px;
+  }
+
+  .link-text {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 575px) {
+  .image-text {
+    left: 50%;
+    top: 25%;
+  }
+
+  .title-text {
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .subtitle-text {
+    font-size: 28px;
+  }
+
+  .link-text {
+    font-size: 15px;
+  }
+}
+
+.hp-imgs {
+  width: 100%;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 6px;
+}
+
+.bg-hp-green {
+  background-color: #a2e8a0;
+}
+
+.recipe-hp-img {
+  width: 100%;
+}
+
+.bg-grey {
+  background-color: #e4e4e4;
+}
+
+.bg-grey div img {
+  height: 50px;
+}

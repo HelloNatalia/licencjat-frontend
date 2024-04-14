@@ -5,6 +5,7 @@ import MapModel from "../../MapModal";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import "./Addresses.css";
 
 export default function CreateAddress() {
   const [show, setShow] = useState(false);
@@ -14,8 +15,8 @@ export default function CreateAddress() {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Dodaj adres
+      <Button variant="primary" className="plus-button" onClick={handleShow}>
+        <i class="bi bi-plus"></i>
       </Button>
 
       <Modal show={show} onHide={handleClose}>

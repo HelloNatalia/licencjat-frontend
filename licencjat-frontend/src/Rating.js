@@ -97,7 +97,7 @@ function RatingForm({ userRated, requestId }) {
         <option value="1">1</option>
       </select>
 
-      <label for="rating-text" class="form-label">
+      <label for="rating-text" class="form-label mt-3">
         Napisz opinię:
       </label>
       <textarea
@@ -108,7 +108,10 @@ function RatingForm({ userRated, requestId }) {
         onChange={handleChangeText}
         required
       />
-      <button className="mt-3 btn btn-primary" onClick={handleSendRating}>
+      <button
+        className="mt-3 btn btn-primary submit-button"
+        onClick={handleSendRating}
+      >
         Wyślij ocenę
       </button>
     </>

@@ -1,0 +1,50 @@
+.recipe-admin-box {
+  background-color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(41, 41, 41, 0.1);
+  width: 100%;
+}
+
+.img-admin-recipe img {
+  width: 130px;
+}
+
+.info-admin-recipe {
+}
+
+.btn-admin-recipe-edit {
+  background-color: white !important;
+  color: rgb(242, 178, 61) !important;
+  border: 2px solid rgb(242, 178, 61) !important;
+}
+
+.btn-admin-recipe-edit:hover {
+  background-color: rgb(242, 178, 61) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid rgb(242, 178, 61) !important;
+}
+
+.btn-admin-recipe-delete {
+  background-color: white !important;
+  color: rgb(217, 55, 34) !important;
+  border: 2px solid rgb(217, 55, 34) !important;
+}
+
+.btn-admin-recipe-delete:hover {
+  background-color: rgb(217, 55, 34) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid rgb(217, 55, 34) !important;
+}
+
+.btn-admin-recipe-accept {
+  background-color: white !important;
+  color: rgb(64, 209, 32) !important;
+  border: 2px solid rgb(64, 209, 32) !important;
+}
+
+.btn-admin-recipe-accept:hover {
+  background-color: rgb(64, 209, 32) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid rgb(64, 209, 32) !important;
+}

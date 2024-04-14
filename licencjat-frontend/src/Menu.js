@@ -111,7 +111,9 @@ export default function Menu() {
           ""
         )}
         <li>
-          <a href="#">WSKAZÓWKI</a>
+          <NavLink to="/tips" activeClassName="active">
+            WSKAZÓWKI
+          </NavLink>
         </li>
         <li>
           {!isLoading &&
@@ -128,7 +130,7 @@ export default function Menu() {
         <hr className="mx-3 mb-1 sidebar-bottom sidebar-divider" />
         <li className=" mb-2">
           <a href="#">
-            <img src="user.png" className="mx-2" alt="user" />
+            <img src="/user.png" className="mx-2" alt="user" />
 
             {isLoading ? (
               <NavLink to="/login">KONTO</NavLink>

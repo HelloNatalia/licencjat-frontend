@@ -15,7 +15,7 @@ export default function EditAccountForm({ accountData }) {
   return (
     <>
       <Button
-        className="btn btn-warning"
+        className="btn btn-warning me-3 edit-account-button"
         variant="primary"
         onClick={handleShow}
       >
@@ -141,7 +141,7 @@ function EditForm({ accountData, handleClose }) {
         />
 
         <label className="form-label mt-3" htmlFor="password_hash">
-          Hasło*
+          Hasło* (weryfikacja tożsamości)
         </label>
         <input
           id="password_hash"
