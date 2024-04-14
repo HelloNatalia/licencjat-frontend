@@ -1,9 +1,9 @@
 import "./CreateTempRecipe.css";
 import { useFormik } from "formik";
-import "./Signup.css";
+import "../../Signup.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { Form } from "react-bootstrap";
 import React from "react";
 import Select from "react-select";

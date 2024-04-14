@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Recipes.css";
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import Select from "react-select";
-import { fetchPhoto } from "./FetchPhoto";
+import { fetchPhoto } from "../FetchPhoto";
 
 export default function Recipes() {
   const [selectedProducts, setSelectedProducts] = useState([]);

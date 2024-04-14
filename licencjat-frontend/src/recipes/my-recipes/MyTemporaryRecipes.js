@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./MyTemporaryRecipes.css";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 
