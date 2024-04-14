@@ -65,7 +65,7 @@ export default function TopBrand() {
         <Navbar.Brand href="/announcements">
           <img
             alt=""
-            src="logo.png"
+            src="/logo.png"
             height="45"
             className="d-inline-block align-top"
           />{" "}
@@ -90,7 +90,7 @@ export default function TopBrand() {
                 Ulubione
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link href="#">Wskazówki</Nav.Link>
+            <Nav.Link href="/tips">Wskazówki</Nav.Link>
             {userData &&
             userData !== "" &&
             Array.isArray(userData) &&
