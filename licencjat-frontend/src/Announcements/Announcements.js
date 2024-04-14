@@ -299,7 +299,7 @@ function Announcement({ announcement, handleSelection }) {
   photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
   useEffect(() => {
     fetchPhoto(photoNamesArray[0], setPhotoUrl);
-  }, []);
+  }, [announcement]);
 
   const categoryPhoto = getCategoryPhotoName(
     announcement.product_category.id_product_category
