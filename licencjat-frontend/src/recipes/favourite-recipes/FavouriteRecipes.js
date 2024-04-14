@@ -3,6 +3,7 @@ import "./FavouriteRecipes.css";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "react-bootstrap";
+import { fetchPhoto } from "../../helpers/FetchPhoto";
 
 export default function FavouriteRecipes() {
   const [isLoading, setIsLoading] = useState(true);
@@ -93,6 +94,14 @@ function FavouriteRecipe({ recipe, handleRemoveFavourite }) {
     }
     fetchRecipeProducts();
   }, []);
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+  let photoNamesArray = recipe.recipe.photos.slice(1, -1).split('","');
+  photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+  useEffect(() => {
+    fetchPhoto(photoNamesArray[0], setPhotoUrl);
+  }, []);
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -102,30 +111,28 @@ function FavouriteRecipe({ recipe, handleRemoveFavourite }) {
           onClick={handleShow}
           className="recipe-box d-flex align-items-center p-2"
         >
-          <div className="description col-8">
-            <p className="title">{recipe.recipe.title}</p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              fill="currentColor"
-              class="bi bi-heart-fill me-2 heart-icon"
-              viewBox="0 0 16 16"
-              onClick={() => handleRemoveFavourite(recipe.recipe.id_recipe)}
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-              />
-            </svg>{" "}
-            Usuń z ulubionych
+          <div className=" col-8">
+            <div className="description">
+              <p className="title">{recipe.recipe.title}</p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                class="bi bi-heart-fill me-2 heart-icon"
+                viewBox="0 0 16 16"
+                onClick={() => handleRemoveFavourite(recipe.recipe.id_recipe)}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                />
+              </svg>{" "}
+              Usuń z ulubionych
+            </div>
           </div>
-          <div className="img-recipe-box col-4 p-2 text-end">
-            <img
-              src="announcement-img/1.png"
-              className="img-fluid"
-              alt="product"
-            />
+          <div className=" col-4 p-2 text-end d-none d-md-block">
+            <img src={photoUrl} className="img-fav" alt="product" />
           </div>
         </div>
       </div>
@@ -154,17 +161,21 @@ function FavouriteRecipe({ recipe, handleRemoveFavourite }) {
           <div className="row">
             <div className="col-12 col-lg-6 text-center">
               <img
-                src="announcement-img/1.png"
+                src={photoUrl}
                 className="img-fluid recipe-image"
                 alt="product"
               />
             </div>
-            <div className="col-12 col-lg-6">
+            <div className="col-12 col-lg-6 mt-4">
               <p className="fs-4">Składniki:</p>
               <ul className="fs-5">
                 {recipeProduct.length > 0
                   ? recipeProduct.map((element) => {
-                      return <li>{element.product.name}</li>;
+                      return (
+                        <li>
+                          {element.product.name} - {element.amount}
+                        </li>
+                      );
                     })
                   : ""}
               </ul>

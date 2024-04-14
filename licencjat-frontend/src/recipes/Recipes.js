@@ -296,8 +296,8 @@ function Recipe({ recipe, handleHideListView }) {
 
           <p className="date">{recipe.id_recipe_category}</p>
         </div>
-        <div className="img-recipe-box col-4 p-2 text-end">
-          <img src={photoUrl} className="img-fluid" alt="product" />
+        <div className="col-4 p-2 text-end d-none d-md-block">
+          <img src={photoUrl} className="img img-recipe-mp" alt="product" />
         </div>
       </div>
     </div>

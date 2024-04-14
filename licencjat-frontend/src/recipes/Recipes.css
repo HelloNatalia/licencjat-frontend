@@ -55,6 +55,7 @@
 
 .recipe-img {
   max-width: 300px;
+  width: 100%;
 }
 
 .have-info {
@@ -82,4 +83,8 @@ td,
 th {
   padding-top: 5px; /* Dostosuj wartość według preferencji */
   padding-bottom: 5px; /* Dostosuj wartość według preferencji */
+}
+
+.img-recipe-mp {
+  width: 80%;
 }
