@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { Button, Modal } from "react-bootstrap";
 import "./RecipePanel.css";
-import { fetchPhoto } from "../FetchPhoto";
+import { fetchPhoto } from "../helpers/FetchPhoto";
 
 export default function RecipesPanel() {
   return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { Button, Modal } from "react-bootstrap";
-import { fetchPhoto } from "../FetchPhoto";
+import { fetchPhoto } from "../helpers/FetchPhoto";
 import "./RecipePanel.css";
 
 export default function TempRecipesPanel() {

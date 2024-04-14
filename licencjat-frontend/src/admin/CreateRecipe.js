@@ -1,6 +1,6 @@
-import "../CreateTempRecipe.css";
+import "../recipes/create-recipe/CreateTempRecipe.css";
 import { useFormik } from "formik";
-import "../Signup.css";
+import "../account/signup/Signup.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";

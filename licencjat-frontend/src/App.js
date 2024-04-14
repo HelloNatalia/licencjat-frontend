@@ -1,21 +1,21 @@
-import TopBrand from "./TopBrand";
-import Menu from "./Menu";
+import TopBrand from "./layout/TopBrand.js";
+import Menu from "./layout/Menu.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./HomePage";
-import Announcements from "./Announcements";
+import HomePage from "./home-page/HomePage.js";
+import Announcements from "./Announcements/Announcements.js";
 import { Helmet } from "react-helmet";
-import Requests from "./Requests.js";
-import MyAnnouncements from "./MyAnnouncements.js";
-import Recipes from "./Recipes.js";
-import Login from "./Login.js";
-import Signup from "./Signup.js";
-import CreateAnnouncement from "./CreateAnnouncement.js";
-import EditAnnouncement from "./EditAnnouncement.js";
-import MyAccount from "./MyAccount.js";
-import SpecificAccount from "./SpecificAccount.js";
-import FavouriteRecipes from "./FavouriteRecipes.js";
-import CreateTempRecipe from "./CreateTempRecipe.js";
-import MyTemporaryRecipes from "./MyTemporaryRecipes.js";
+import Requests from "./requests/Requests.js";
+import MyAnnouncements from "./Announcements/my-announcements/MyAnnouncements.js";
+import Recipes from "./recipes/Recipes.js";
+import Login from "./account/login/Login.js";
+import Signup from "./account/signup/Signup.js";
+import CreateAnnouncement from "./Announcements/CreateAnnouncement.js";
+import EditAnnouncement from "./Announcements/EditAnnouncement.js";
+import MyAccount from "./account/my-account/MyAccount.js";
+import SpecificAccount from "./account/specific-account/SpecificAccount.js";
+import FavouriteRecipes from "./recipes/favourite-recipes/FavouriteRecipes.js";
+import CreateTempRecipe from "./recipes/create-recipe/CreateTempRecipe.js";
+import MyTemporaryRecipes from "./recipes/my-recipes/MyTemporaryRecipes.js";
 import Admin from "./admin/Admin.js";
 import RecipesPanel from "./admin/RecipesPanel.js";
 import TempRecipesPanel from "./admin/TempRecipesPanel.js";
@@ -31,7 +31,7 @@ import RecipesCategories from "./admin/creating/recipes-categories/RecipesCatego
 import CreateRecipeCategory from "./admin/creating/recipes-categories/CreateRecipeCategory.js";
 import BlockedAccount from "./errors/BlockedAccount.js";
 import SingleAnnouncementPage from "./Announcements/SingleAnnouncementPage.js";
-import Tips from "./Tips.js";
+import Tips from "./tips/Tips.js";
 
 function App() {
   return (

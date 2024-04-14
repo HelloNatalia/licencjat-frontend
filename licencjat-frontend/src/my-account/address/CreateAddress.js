@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MapModel from "../../MapModal";
+import MapModel from "../../map/MapModal";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";

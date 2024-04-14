@@ -1,16 +1,14 @@
-import "../recipes/create-recipe/CreateTempRecipe.css";
+import "./CreateTempRecipe.css";
 import { useFormik } from "formik";
-import "../account/signup/Signup.css";
+import "../../account/signup/Signup.css";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
+import { useNavigate } from "react-router-dom";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { Form } from "react-bootstrap";
 import React from "react";
 import Select from "react-select";
 
-export default function EditRecipe() {
-  const { id } = useParams("id");
-  console.log("ID z URL: ", id);
+export default function CreateTempRecipe() {
   const navigation = useNavigate();
   const accessToken = getAuthTokenFromCookie();
 
@@ -22,12 +20,12 @@ export default function EditRecipe() {
 
   return (
     <div className="content">
-      <CreateRecipeForm id={id} />
+      <CreateRecipeForm />
     </div>
   );
 }
 
-function CreateRecipeForm({ id }) {
+function CreateRecipeForm() {
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,77 +33,49 @@ function CreateRecipeForm({ id }) {
   const [selectedProductsNames, setSelectedProductsNames] = useState([]);
   const [productsOptions, setProductsOptions] = useState();
   const [selectedCategory, setSelectedCategory] = useState();
-  const [recipeData, setRecipeData] = useState();
-  const [recipeProductData, setRecipeProductData] = useState();
-  const accessToken = getAuthTokenFromCookie();
-  const [selectedProductOption, setSelectedProductOption] = useState();
+  const [photoFiles, setPhotoFiles] = useState([]);
   const navigation = useNavigate();
+  const [selectedProductOption, setSelectedProductOption] = useState();
   const [listAmount, setListAmount] = useState([]);
   const [requiredMessage, setRequiredMessage] = useState(false);
 
-  useEffect(function () {
-    async function checkUser() {
-      const res = await fetch(`http://localhost:4000/auth/is-admin`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  const handlePhotosChange = (event) => {
+    const files = event.target.files;
+
+    if (files.length > 2) {
+      // obsługa gdy plików jest więcej niż 2
+      return;
+    }
+
+    const updatedPhotoFiles = [...photoFiles];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = file.name;
+      const fileExtension = fileName.split(".").pop().toLowerCase();
+      if (fileExtension !== "png" && fileExtension !== "jpg") {
+        // obsługa gdy zły format pliku
+        return;
+      }
+      const uniqueFileName = `${Date.now()}-${Math.round(
+        Math.random() * 1e9
+      )}.${fileExtension}`;
+      const modifiedFile = new File([file], uniqueFileName, {
+        type: file.type,
       });
-      if (!res.ok) {
-        if (res.status === 401) navigation("/login");
-      }
+      updatedPhotoFiles.push(modifiedFile);
+      setSelectedPhotos([...selectedPhotos, uniqueFileName]);
     }
-    async function getRecipeData() {
-      const res = await fetch(
-        `http://localhost:4000/recipe/only-recipe/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (!res.ok) {
-        // navigation("/announcements");
-        console.log("Dane zwykle przepisu!");
-      }
-      const data = await res.json();
-      console.log(data);
-      setRecipeData(data);
-      setSelectedCategory(data.recipe_category.id_recipe_category);
-    }
-    async function getRecipeProductData() {
-      const res = await fetch(`http://localhost:4000/recipe/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (!res.ok) {
-        // navigation("/announcements");
-      }
-      const data = await res.json();
-      console.log(data);
-      const newArrayId = [];
-      const newArrayName = [];
-      const arrayAmount = [];
-      if (data && data.length > 0) {
-        data.map((element) => {
-          newArrayId.push(element.product.id_product);
-          newArrayName.push(element.product.name);
-          arrayAmount.push({
-            id: element.product.id_product,
-            amount: element.amount,
-          });
-        });
-        setSelectedProductsId(newArrayId);
-        setSelectedProductsNames(newArrayName);
-        setListAmount(arrayAmount);
-      } else setRecipeProductData([]);
-    }
-    setIsLoading(true);
-    checkUser();
-    getRecipeData();
-    getRecipeProductData();
-    setIsLoading(false);
-  }, []);
+    setPhotoFiles(updatedPhotoFiles);
+  };
+
+  const handleDeleteImage = (index) => {
+    const updatedList = [...selectedPhotos];
+    const updatedFiles = [...photoFiles];
+    updatedList.splice(index, 1);
+    updatedFiles.splice(index, 1);
+    setSelectedPhotos(updatedList);
+    setPhotoFiles(updatedFiles);
+  };
 
   const handleAddProductAndAmount = (option, amount) => {
     if (!option || !amount) return;
@@ -138,6 +108,10 @@ function CreateRecipeForm({ id }) {
   useEffect(() => {
     formik.setFieldValue("list_amount", listAmount);
   }, [listAmount]);
+
+  useEffect(() => {
+    formik.setFieldValue("photos", selectedPhotos);
+  }, [selectedPhotos]);
 
   useEffect(() => {
     formik.setFieldValue("list_id_products", selectedProductsIds);
@@ -183,6 +157,7 @@ function CreateRecipeForm({ id }) {
     initialValues: {
       title: "",
       text: "",
+      photos: "",
       id_recipe_category: "",
       list_id_products: "",
       list_amount: "",
@@ -190,43 +165,27 @@ function CreateRecipeForm({ id }) {
     },
     onSubmit: async (values) => {
       if (
+        values.photos.length < 1 ||
         !values.id_recipe_category ||
         values.list_id_products.length < 1 ||
         values.list_amount.length < 1
       ) {
         setRequiredMessage(true);
       } else {
-        const output = await EditRecipeAdmin(
-          recipeData.id_recipe,
+        const output = await CreateRecipe(
           values.title,
           values.text,
+          values.photos,
           values.id_recipe_category,
           values.list_id_products,
           values.list_amount
         );
-        if (output) navigation("/recipes-panel");
+        if (output && uploadPhotos(photoFiles)) navigation("/recipes");
       }
     },
   });
+  //   if (isLoading) return <div className="content">Loading ...</div>;
 
-  useEffect(() => {
-    if (recipeData) {
-      console.log(recipeData);
-      formik.setValues({
-        title: recipeData.title,
-        text: recipeData.text,
-        id_recipe_category: recipeData.id_recipe_category,
-        list_id_products: selectedProductsIds,
-        list_amount: listAmount,
-      });
-    }
-  }, [recipeData]);
-
-  if (isLoading) return <div className="content">Loading ...</div>;
-
-  console.log("Listy");
-  console.log(formik.values.id_recipe_category);
-  console.log(formik.values.list_amount);
   return (
     <div className="p-3">
       {requiredMessage ? (
@@ -237,7 +196,7 @@ function CreateRecipeForm({ id }) {
         ""
       )}
       <div className="container form-box p-2 px-3">
-        <p className="fs-4 mb-1">Edycja przepisu</p>
+        <p className="fs-4 mb-1">Tworzenie przepisu</p>
         <form onSubmit={formik.handleSubmit}>
           <label className="form-label mt-3" htmlFor="title">
             Tytuł*
@@ -259,11 +218,45 @@ function CreateRecipeForm({ id }) {
             id="text"
             name="text"
             type="text"
+            rows="5"
             className="form-control"
             required="required"
             onChange={formik.handleChange}
             value={formik.values.text}
           />
+
+          <div className="img-box p-3 mt-4">
+            <label className="form-label" htmlFor="photos">
+              Zdjęcia*
+            </label>
+            <input
+              id="photos"
+              name="photos"
+              type="file"
+              className="form-control"
+              onChange={handlePhotosChange}
+              multiple
+              // value={formik.values.photos}
+            />
+            <p className="mt-3">
+              Wybrane zdjęcia:{" "}
+              {selectedPhotos.length > 0
+                ? selectedPhotos.map((element, index) => {
+                    return (
+                      <p>
+                        {element}{" "}
+                        <button
+                          className="btn bg-danger"
+                          onClick={() => handleDeleteImage(index)}
+                        >
+                          -
+                        </button>
+                      </p>
+                    );
+                  })
+                : "Brak zdjęć"}
+            </p>
+          </div>
 
           <label className="form-label mt-3" htmlFor="id_recipe_category">
             Kategoria*
@@ -294,6 +287,7 @@ function CreateRecipeForm({ id }) {
                   name="amount"
                   type="text"
                   className="form-control"
+                  required="required"
                   onChange={formik.handleChange}
                   value={formik.values.amount}
                   placeholder="ilość (np. 1/2 szklanki)"
@@ -347,7 +341,7 @@ function CreateRecipeForm({ id }) {
             type="submit"
             className="btn btn-primary mt-4 mb-2 signup-btn"
           >
-            Zatwierdź zmiany
+            Utwórz przepis
           </button>
         </form>
       </div>
@@ -355,15 +349,14 @@ function CreateRecipeForm({ id }) {
   );
 }
 
-async function EditRecipeAdmin(
-  id,
+async function CreateRecipe(
   title,
   text,
+  photos,
   id_recipe_category,
   list_id_products,
   list_amount
 ) {
-  const photos = "";
   const recipeData = {
     title,
     text,
@@ -377,9 +370,9 @@ async function EditRecipeAdmin(
 
   try {
     const response = await fetch(
-      `http://localhost:4000/recipe/edit-recipe/${id}`,
+      "http://localhost:4000/recipe/create-temporary-recipe",
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -393,6 +386,34 @@ async function EditRecipeAdmin(
       if (response.status === 404) return "not found";
       else throw new Error("Wystąpił błąd");
     }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+async function uploadPhotos(photos) {
+  const formData = new FormData();
+
+  for (let i = 0; i < photos.length; i++) {
+    formData.append("photos", photos[i]);
+  }
+
+  try {
+    const accessToken = getAuthTokenFromCookie();
+    const response = await fetch("http://localhost:4000/file/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error("Błąd podczas przesyłania zdjęć:", response.statusText);
+      return false;
+    }
+
     return true;
   } catch (error) {
     console.error(error);
