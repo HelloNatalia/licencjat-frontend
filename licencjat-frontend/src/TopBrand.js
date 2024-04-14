@@ -67,7 +67,13 @@ export default function TopBrand() {
             alt=""
             src="/logo.png"
             height="45"
-            className="d-inline-block align-top"
+            className="d-inline-block align-top d-none d-sm-block"
+          />
+          <img
+            alt=""
+            src="/logo-sm.png"
+            height="45"
+            className="d-inline-block align-top d-block d-sm-none"
           />{" "}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -91,9 +97,10 @@ export default function TopBrand() {
               </NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="/tips">Wskazówki</Nav.Link>
-            {userData &&
+            {!isLoading &&
+            userData &&
             userData !== "" &&
-            Array.isArray(userData) &&
+            userData.roles &&
             userData.roles.includes("admin") ? (
               <Nav.Link href="/admin">Panel zarządzania</Nav.Link>
             ) : (

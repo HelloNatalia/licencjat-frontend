@@ -74,16 +74,62 @@ export default function HomePage() {
           </div>
         </div>
 
+        <div className="bg-white mt-0">
+          <div className="row p-4">
+            <div className="col">
+              <p>Przydatne linki:</p>
+              <ul>
+                <li>
+                  <a
+                    className="text-black"
+                    href="https://bankizywnosci.pl/"
+                    target="blank"
+                  >
+                    Banki żywności
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-black"
+                    href="https://www.google.com/maps/d/u/0/viewer?mid=1vpCSdHuflmBIw4WWV3VFCQ4L2sU&hl=en_US&ll=52.312036133499134%2C18.84976390000004&z=6"
+                    target="blank"
+                  >
+                    Jadłodzielnie w Polsce
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* <img
+            alt=""
+            src="/logo.png"
+            height="45"
+            className="d-inline-block align-top d-none d-sm-block"
+          />
+          <img
+            alt=""
+            src="/logo-sm.png"
+            height="45"
+            className="d-inline-block align-top d-block d-sm-none"
+          /> */}
+
         <div>
           <div className="row bg-grey p-3 ps-5">
-            <div className="col-6 col-md-4">
+            <div className="col-6 col-md-4 d-none d-sm-block">
               <img src="logo.png" />
             </div>
+            <div className="col-6 col-md-4 d-block d-sm-none">
+              <img src="logo-sm.png" className="text-center" />
+            </div>
             <div className="col-6 col-md-4">
-              <p className="text-grey mb-0 mt-1">Twórca: Natalia Tucka</p>
+              <p className="text-grey mb-0 mt-2 text-center">
+                Twórca: Natalia Tucka
+              </p>
             </div>
             <div className="col">
-              <p className="text-grey mb-0 mt-1">
+              <p className="text-grey mb-0 mt-2 text-center">
                 Kontakt: nataliatucka01@gmail.com
               </p>
             </div>
