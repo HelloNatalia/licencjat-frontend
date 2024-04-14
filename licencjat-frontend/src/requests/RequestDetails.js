@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchPhoto } from "../helpers/FetchPhoto";
 import { Button, Modal } from "react-bootstrap";
-import RatingStars from "../RatingStars";
+import RatingStars from "../ratings/RatingStars";
 import { getDates } from "../Announcements/AnnouncementsMap";
 import "./Requests.css";
 

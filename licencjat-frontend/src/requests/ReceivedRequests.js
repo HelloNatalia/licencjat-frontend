@@ -3,7 +3,7 @@ import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { getDates } from "../Announcements/AnnouncementsMap";
 import { Button } from "react-bootstrap";
-import RatingModal from "../Rating";
+import RatingModal from "../ratings/Rating";
 import { fetchPhoto } from "../helpers/FetchPhoto";
 import "./Requests.css";
 

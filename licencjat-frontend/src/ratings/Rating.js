@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Rating.css";
 import { Button, Modal } from "react-bootstrap";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 
 export default function RatingModal({ userRated, requestId }) {
   const [show, setShow] = useState(false);

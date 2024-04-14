@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   getAuthTokenFromCookie,
   removeAuthTokenCookie,
-} from "./cookies/auth-cookies";
+} from "../cookies/auth-cookies";
 
 export default function Menu() {
   const accessToken = getAuthTokenFromCookie();

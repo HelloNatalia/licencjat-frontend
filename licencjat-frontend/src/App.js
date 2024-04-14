@@ -1,7 +1,7 @@
-import TopBrand from "./TopBrand";
-import Menu from "./Menu";
+import TopBrand from "./layout/TopBrand.js";
+import Menu from "./layout/Menu.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./HomePage";
+import HomePage from "./home-page/HomePage.js";
 import Announcements from "./Announcements/Announcements.js";
 import { Helmet } from "react-helmet";
 import Requests from "./requests/Requests.js";

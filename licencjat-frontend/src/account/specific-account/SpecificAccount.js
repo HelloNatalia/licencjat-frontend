@@ -3,8 +3,8 @@ import "./SpecificAccount.css";
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
-import { GenerateRatingStars } from "../../RatingStars";
-import RatingStars from "../../RatingStars";
+import { GenerateRatingStars } from "../../ratings/RatingStars";
+import RatingStars from "../../ratings/RatingStars";
 
 export default function SpecificAccount() {
   const [isLoading, setIsLoading] = useState(true);
