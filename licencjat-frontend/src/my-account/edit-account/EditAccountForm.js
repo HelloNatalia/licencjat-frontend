@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { getAuthTokenFromCookie } from "./cookies/auth-cookies";
+import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 
 export default function EditAccountForm({ accountData }) {

@@ -5,7 +5,7 @@ import { getDates } from "../Announcements/AnnouncementsMap";
 import { Button } from "react-bootstrap";
 import RatingModal from "../Rating";
 import SeeDetails from "./RequestDetails";
-import { fetchPhoto } from "../FetchPhoto";
+import { fetchPhoto } from "../helpers/FetchPhoto";
 import "./Requests.css";
 
 export default function SentRequests() {

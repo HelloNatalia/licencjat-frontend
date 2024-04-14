@@ -5,11 +5,11 @@ import "./Announcements.css";
 import AnnouncementPage from "./AnnouncementPage.js";
 import AnnouncementsMap from "./AnnouncementsMap.js";
 import { getDates } from "./AnnouncementsMap.js";
-import SelectComponent from "../selectComponent.js";
+import SelectComponent from "./selectComponent.js";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
-import { fetchPhoto } from "../FetchPhoto.js";
-import { getCategoryPhotoName } from "../icons-declaration.js";
+import { fetchPhoto } from "../helpers/FetchPhoto.js";
+import { getCategoryPhotoName } from "../helpers/icons-declaration.js";
 
 export default function Announcements() {
   const [inputTitle, setInputTitle] = useState("");

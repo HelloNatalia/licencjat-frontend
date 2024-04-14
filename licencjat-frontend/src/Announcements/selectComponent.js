@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import parseXML from "./XMLparse";
+import parseXML from "../map/XMLparse";
 
 const SelectComponent = ({ setMapCenter, setInputCityName }) => {
   const [selectedOption, setSelectedOption] = useState(null);

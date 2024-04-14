@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies.js";
 import { getDates } from "../AnnouncementsMap.js";
-import { fetchPhoto } from "../../FetchPhoto.js";
+import { fetchPhoto } from "../../helpers/FetchPhoto.js";
 
 export default function MyAnnouncements() {
   const navigation = useNavigate();

@@ -4,7 +4,7 @@ import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
-import MapModel from "../MapModal";
+import MapModel from "../map/MapModal";
 import Select from "react-select";
 
 export default function CreateAnnouncement() {

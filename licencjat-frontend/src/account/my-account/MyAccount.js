@@ -5,7 +5,7 @@ import {
   getAuthTokenFromCookie,
   removeAuthTokenCookie,
 } from "../../cookies/auth-cookies";
-import EditAccountForm from "../../EditAccountForm";
+import EditAccountForm from "../../my-account/edit-account/EditAccountForm";
 import MyAddresses from "../../my-account/address/MyAddresses";
 import { Ratings } from "../specific-account/SpecificAccount";
 

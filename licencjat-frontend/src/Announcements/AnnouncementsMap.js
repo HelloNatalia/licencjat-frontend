@@ -9,9 +9,9 @@ import "leaflet/dist/leaflet.css";
 // https://github.com/PaulLeCam/react-leaflet/issues/1052
 import "./AnnouncementsMap.css";
 import { useState, useEffect } from "react";
-import { fetchPhoto } from "../FetchPhoto.js";
+import { fetchPhoto } from "../helpers/FetchPhoto.js";
 
-import { CategoryMarker } from "../icons-declaration.js";
+import { CategoryMarker } from "../helpers/icons-declaration.js";
 
 export default function AnnouncementsMap({
   handleSelection,

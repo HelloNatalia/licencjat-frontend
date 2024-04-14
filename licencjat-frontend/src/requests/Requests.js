@@ -5,7 +5,7 @@ import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { getDates } from "../Announcements/AnnouncementsMap";
 import RatingModal from "../Rating";
-import { fetchPhoto } from "../FetchPhoto";
+import { fetchPhoto } from "../helpers/FetchPhoto";
 import RatingStars from "../RatingStars";
 import SeeDetails from "./RequestDetails";
 import SentRequests from "./SentRequests";

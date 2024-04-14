@@ -6,7 +6,7 @@ import { getDates } from "./AnnouncementsMap";
 import RequestModal from "../requests/RequestForm";
 import { getAuthTokenFromCookie } from "../cookies/auth-cookies";
 import RatingStars from "../RatingStars";
-import { fetchPhotos } from "../FetchPhoto";
+import { fetchPhotos } from "../helpers/FetchPhoto";
 
 export default function AnnouncementPage({ handleBack, id }) {
   const [selected_announcement, setSelectedAnnouncement] = useState(null);
