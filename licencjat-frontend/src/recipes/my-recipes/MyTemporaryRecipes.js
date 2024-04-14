@@ -3,6 +3,7 @@ import "./MyTemporaryRecipes.css";
 import { getAuthTokenFromCookie } from "../../cookies/auth-cookies";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "react-bootstrap";
+import { fetchPhoto } from "../../helpers/FetchPhoto";
 
 export default function MyTemporaryRecipes() {
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +83,13 @@ export default function MyTemporaryRecipes() {
       fetchRecipeProducts();
     }, []);
 
+    const [photoUrl, setPhotoUrl] = useState(null);
+    let photoNamesArray = recipe.photos.slice(1, -1).split('","');
+    photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
+    useEffect(() => {
+      fetchPhoto(photoNamesArray[0], setPhotoUrl);
+    }, []);
+
     if (isLoading) return <div>Loading...</div>;
 
     return (
@@ -107,12 +115,8 @@ export default function MyTemporaryRecipes() {
                 )}
               </p>
             </div>
-            <div className="img-recipe-box col-4 p-2 text-end">
-              <img
-                src="announcement-img/1.png"
-                className="img-fluid"
-                alt="product"
-              />
+            <div className="img-recipe-box col-4 p-2 text-end d-none d-md-block">
+              <img src={photoUrl} className="img-fluid" alt="product" />
             </div>
           </div>
         </div>
@@ -136,7 +140,7 @@ export default function MyTemporaryRecipes() {
             <div className="row">
               <div className="col-12 col-lg-6 text-center">
                 <img
-                  src="announcement-img/1.png"
+                  src={photoUrl}
                   className="img-fluid recipe-image"
                   alt="product"
                 />
@@ -146,7 +150,11 @@ export default function MyTemporaryRecipes() {
                 <ul className="fs-5">
                   {recipeProduct.length > 0
                     ? recipeProduct.map((element) => {
-                        return <li>{element.product.name}</li>;
+                        return (
+                          <li>
+                            {element.product.name} - {element.amount}
+                          </li>
+                        );
                       })
                     : ""}
                 </ul>
