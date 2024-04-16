@@ -1,12 +1,17 @@
 # ShareIT and eat
-**A new way to minimize the problem of food waste 🌱🧡**
+**A new way to minimize the food waste problem 🌱🧡**
 
 <img src="https://github.com/HelloNatalia/licencjat-frontend/blob/main/licencjat-frontend/readme-img/screen.png"/>
+
+## Application overview in a video 📽👀
+
+Click here(https://drive.google.com/file/d/13uAb_8Ez_j-lIHcUO7ImND2hBWEMYkLi/view?usp=drive_link) 
+(polish audio)
 
 
 ## 🔍 Project Overview
 
-This front-end application is designed with the aim of reducing the problem of food waste. Back-end side is [here](https://github.com/HelloNatalia/licencjat-backend).
+This application is designed with the aim of reducing the food waste problem. In this repository is front-end application, back-end is [here](https://github.com/HelloNatalia/licencjat-backend).
 
 It is separated into few modules:
 
@@ -28,4 +33,4 @@ It is another important piece of application. Here users can choose which produc
 
 ### Account 👩‍🌾
 
-Every user can register and log in. At "account" site are all informations about account. There is possibility to edit or delet account. Here is also the place to create address. Thanks to that while for example creating announcement, the address can be typed in by only one click. Another advantage of this is showing right city next to the missing products in recipe, because many of the users can use for example VPN with changed real location.
+Every user can register and log in. At "account" site are all informations about account. There is possibility to edit or delete account. Here is also the place to create address. Thanks to that while for example creating announcement, the address can be typed in by only one click. Another advantage of this is showing right city next to the missing products in recipe, because many of the users can use for example VPN with changed real location.
