@@ -196,6 +196,7 @@ function Forms({
             categories={categories}
             setMapCenter={setMapCenter}
             handleDeleteFilters={handleDeleteFilters}
+            setInputCityName={setInputCityName}
           />
         </div>
         {/* Widoczne tylko dla lg i większych */}
@@ -276,7 +277,7 @@ function FixedButtons({ handleMapView, handleListView, mapView }) {
 function AnnouncementsList({ handleSelection, announcements_aray }) {
   return (
     <>
-      <div className="row mt-2 mx-3">
+      <div className="row mt-2 mb-5 mx-3">
         {announcements_aray.map((element) => (
           <div className="col-12 col-xl-6 mt-3">
             <Announcement
@@ -337,6 +338,7 @@ function FiltersModal({
   categories,
   setMapCenter,
   handleDeleteFilters,
+  setInputCityName,
 }) {
   const [show, setShow] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -389,7 +391,10 @@ function FiltersModal({
             </div>
             <div className="col-12 my-4">
               <Form.Label className="ms-1">Miasto:</Form.Label>
-              <SelectComponent setMapCenter={setMapCenter} />
+              <SelectComponent
+                setMapCenter={setMapCenter}
+                setInputCityName={setInputCityName}
+              />
             </div>
           </div>
         </Modal.Body>

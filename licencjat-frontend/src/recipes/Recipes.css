@@ -86,5 +86,6 @@ th {
 }
 
 .img-recipe-mp {
-  width: 80%;
+  /* width: 80%; */
+  height: 115px;
 }

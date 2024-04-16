@@ -26,6 +26,14 @@ export function CategoryMarker(category_id) {
       return violetMarker;
     case "2b8bab7e-a3ce-43be-8dc0-00bb32413d2d":
       return organicMarker;
+    case "30af6c2d-aded-47d2-9ce7-e34ba6f470b4":
+      return wegeMarker;
+    case "e117ece9-30f0-4d5a-ae14-03bc7e2911c0":
+      return mealMarker;
+    case "5139d0ff-838f-47df-86c2-c54544dd1afb":
+      return snacksMarker;
+    case "22560c7b8-bc87-4a05-9077-9d48ccbc8901":
+      return otherMarker;
     default:
       return orangeMarker;
   }
@@ -151,6 +159,46 @@ const organicMarker = L.icon({
   popupAnchor: [-0, -33], // point from which the popup should open relative to the iconAnchor
 });
 
+const wegeMarker = L.icon({
+  iconUrl: "markers/wege.png",
+  // shadowUrl: "leaf-shadow.png",
+  iconSize: [38, 38], // size of the icon
+  // shadowSize: [50, 64],
+  iconAnchor: [19, 37], // point of the icon which will correspond to marker's location
+  // shadowAnchor: [4, 62],
+  popupAnchor: [-0, -33], // point from which the popup should open relative to the iconAnchor
+});
+
+const mealMarker = L.icon({
+  iconUrl: "markers/potrawy.png",
+  // shadowUrl: "leaf-shadow.png",
+  iconSize: [38, 38], // size of the icon
+  // shadowSize: [50, 64],
+  iconAnchor: [19, 37], // point of the icon which will correspond to marker's location
+  // shadowAnchor: [4, 62],
+  popupAnchor: [-0, -33], // point from which the popup should open relative to the iconAnchor
+});
+
+const snacksMarker = L.icon({
+  iconUrl: "markers/przekaski.png",
+  // shadowUrl: "leaf-shadow.png",
+  iconSize: [38, 38], // size of the icon
+  // shadowSize: [50, 64],
+  iconAnchor: [19, 37], // point of the icon which will correspond to marker's location
+  // shadowAnchor: [4, 62],
+  popupAnchor: [-0, -33], // point from which the popup should open relative to the iconAnchor
+});
+
+const otherMarker = L.icon({
+  iconUrl: "markers/inne.png",
+  // shadowUrl: "leaf-shadow.png",
+  iconSize: [38, 38], // size of the icon
+  // shadowSize: [50, 64],
+  iconAnchor: [19, 37], // point of the icon which will correspond to marker's location
+  // shadowAnchor: [4, 62],
+  popupAnchor: [-0, -33], // point from which the popup should open relative to the iconAnchor
+});
+
 export function getCategoryPhotoName(category_id) {
   switch (category_id) {
     case "b50911cb-569d-489d-befa-eed78def1d8f":
@@ -177,6 +225,14 @@ export function getCategoryPhotoName(category_id) {
       return "dietetyczne-cat.png";
     case "2b8bab7e-a3ce-43be-8dc0-00bb32413d2d":
       return "organiczne-cat.png";
+    case "30af6c2d-aded-47d2-9ce7-e34ba6f470b4":
+      return "wege-cat.png";
+    case "e117ece9-30f0-4d5a-ae14-03bc7e2911c0":
+      return "potrawy-cat.png";
+    case "5139d0ff-838f-47df-86c2-c54544dd1afb":
+      return "przekaski-cat.png";
+    case "22560c7b8-bc87-4a05-9077-9d48ccbc8901":
+      return "inne-cat.png";
     default:
       return "pieczywo-cat.png";
   }

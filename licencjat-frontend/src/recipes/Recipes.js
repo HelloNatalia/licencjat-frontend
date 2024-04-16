@@ -388,7 +388,7 @@ function RecipeContent({ recipeProductData, recipeData, selectedProductsId }) {
   photoNamesArray = photoNamesArray.map((name) => name.replace(/^"|"$/g, ""));
   useEffect(() => {
     fetchPhoto(photoNamesArray[0], setPhotoUrl);
-  }, []);
+  }, [recipeData]);
 
   useEffect(function () {
     async function isFavourite() {
