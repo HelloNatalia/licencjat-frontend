@@ -1,4 +1,5 @@
 # ShareIT and eat
+
 ** A Fresh Approach to Tackling Food Waste 🌱🧡**
 
 <img src="https://github.com/HelloNatalia/licencjat-frontend/blob/main/licencjat-frontend/readme-img/screen.png"/>
@@ -32,6 +33,7 @@ Announcements can be displayed on a map or as a list. It also contains different
 When a user is interested in any product, by being logged in he/she can send requests to pick it up. When creating a request, users must specify the pickup date and time to help the announcement owner make a decision. The owner can accept or decline the request, and once accepted, there is an option to mark the request as received.
 
 Once the product from the announcement is received, both users can create **ratings** to indicate the reliability of the person.
+
 <br>
 
 ### Recipes 🥗
