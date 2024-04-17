@@ -1,6 +1,8 @@
 # ShareIT and eat
 
+
 ** A Fresh Approach to Tackling Food Waste 🌱🧡 **
+
 
 <img src="https://github.com/HelloNatalia/licencjat-frontend/blob/main/licencjat-frontend/readme-img/screen.png"/>
 
