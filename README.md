@@ -1,7 +1,7 @@
 # ShareIT and eat
 
 
-** A Fresh Approach to Tackling Food Waste 🌱🧡 **
+**A Fresh Approach to Tackling Food Waste 🌱🧡**
 
 
 <img src="https://github.com/HelloNatalia/licencjat-frontend/blob/main/licencjat-frontend/readme-img/screen.png"/>
@@ -17,7 +17,7 @@
 
 ## 🔍 Project Overview
 
-This application is designed to reduce the food waste problem. In this repository is a front-end application, back-end is located [here](https://github.com/HelloNatalia/licencjat-backend).
+This application is designed to reduce the food waste problem. In this repository is a **front-end** application, **back-end** is located [here](https://github.com/HelloNatalia/licencjat-backend).
 
 It's divided into several modules:
 
@@ -41,6 +41,8 @@ Once the product from the announcement is received, both users can create **rati
 ### Recipes 🥗
 
 This is another important feature of the application. Here users can choose which product they have and the application shows them recipes they can make. If recipes with missing products are shown, the information will show next to the missing ones in the recipe. The information is about available announcements for this product in the users’ area. So the two main functionalities are combined.
+
+Here, users can create recipes for the application that need to be confirmed by the admin. They can also add recipes to their favorites for easy access.
 
 <br>
 
