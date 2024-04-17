@@ -1,4 +1,4 @@
-# ShareIT and eat
+# 🍵 ShareIT and eat
 
 
 **A Fresh Approach to Tackling Food Waste 🌱🧡**
@@ -6,7 +6,7 @@
 
 <img src="https://github.com/HelloNatalia/licencjat-frontend/blob/main/licencjat-frontend/readme-img/screen.png"/>
 
-## Application overview in a video 📽👀
+## 📽👀 Application overview in a video 
 
 [Click here](https://drive.google.com/file/d/13uAb_8Ez_j-lIHcUO7ImND2hBWEMYkLi/view?usp=drive_link) 
 ⏱3m 39s (x2 speed)
