@@ -99,4 +99,6 @@ This is my first major React application that I've developed independently. I le
 
 e-mail: nataliatucka01@gmail.com
 
+linkedin: [link](https://www.linkedin.com/in/natalia-tucka-93b617243/)
+
 
