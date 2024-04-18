@@ -90,7 +90,7 @@ Designs:
 
 ## 😎 What have I learned?
 
-This is my first major React application that I made on my own. I learned many aspects of React during this extensive project.
+This is my first major React application that I've developed independently. I learned many aspects of React during this extensive project.
 
 
 <br>
